@@ -197,7 +197,10 @@
             font-size: 0.85rem;
         }
         footer a { color: rgba(255,255,255,0.8); }
-        /* RESPONSIVE */
+        @keyframes flash {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(1.05); }
+        }
         @media (max-width: 700px) {
             .hero h1 { font-size: 1.8rem; }
             .day-meta { grid-template-columns: 1fr; }
@@ -234,7 +237,7 @@
     <a href="#payment">Payment</a>
     <a href="#visa">Visa</a>
     <a href="#tips">Tips</a>
-    <a href="vietnam_rsvp.html" style="background:var(--deep-purple);color:var(--white);border-radius:20px;">RSVP Now</a>
+    <a href="vietnam_rsvp.html" style="background:var(--deep-purple);color:var(--white);border-radius:20px;animation:flash 1.5s ease-in-out infinite;">RSVP Now</a>
 </nav>
 <!-- WELCOME -->
 <section id="welcome">

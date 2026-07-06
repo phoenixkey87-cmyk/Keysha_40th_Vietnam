@@ -23,6 +23,19 @@
             line-height: 1.65;
             background: var(--white);
         }
+        body::after {
+            content: '';
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 400px;
+            height: 400px;
+            background: url('Phoenix-01.png') center/contain no-repeat;
+            opacity: 0.04;
+            pointer-events: none;
+            z-index: 0;
+        }
         /* HERO */
         .hero {
             background: url('Vietnam.webp') center/cover no-repeat;
@@ -39,7 +52,7 @@
             z-index: 0;
         }
         .hero > * { position: relative; z-index: 1; }
-        .hero img { max-width: 120px; margin-bottom: 16px; opacity: 0.3; mix-blend-mode: multiply; }
+        .hero img { max-width: 120px; margin-bottom: 16px; }
         .hero h1 { font-size: 2.4rem; margin-bottom: 6px; font-weight: 700; color: var(--deep-purple); }
         .hero .tagline { font-size: 1.15rem; color: var(--medium-purple); }
         .hero .dates { font-size: 1rem; color: #555; margin-top: 8px; }

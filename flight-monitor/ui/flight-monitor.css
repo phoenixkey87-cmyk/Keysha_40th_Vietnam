@@ -1,0 +1,97 @@
+/* Flight Monitor styles. Themed only through --fm-* variables (each page maps them to its palette). */
+.fm {
+  --_surface: var(--fm-surface, #ffffff);
+  --_text: var(--fm-text, #232826);
+  --_muted: var(--fm-muted, #5b625f);
+  --_line: var(--fm-line, rgba(35, 40, 38, 0.18));
+  --_accent: var(--fm-accent, #0b4d3a);
+  --_head-bg: var(--fm-head-bg, #0b4d3a);
+  --_head-text: var(--fm-head-text, #ffffff);
+  --_up: var(--fm-up, #a4262c);
+  --_down: var(--fm-down, #1b6b3a);
+  --_badge-bg: var(--fm-badge-bg, rgba(11, 77, 58, 0.1));
+  --_mixed: var(--fm-mixed, var(--fm-accent, #6b3fa0));
+  --_mixed-bg: var(--fm-mixed-bg, rgba(107, 63, 160, 0.1));
+  --_warn: var(--fm-warn, var(--fm-up, #a4262c));
+  max-width: 100%;
+  color: var(--_text);
+  font-family: inherit;
+  overflow-wrap: anywhere;
+}
+.fm *, .fm *::before, .fm *::after { box-sizing: border-box; }
+.fm-sr {
+  position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+}
+.fm-meta { margin: 0 0 0.35rem; font-weight: 600; }
+.fm-status, .fm-note { margin: 0.25rem 0 0.9rem; color: var(--_muted); font-size: 0.92rem; line-height: 1.5; }
+.fm-note { margin: 0.9rem 0 0; font-size: 0.85rem; }
+.fm-table-wrap { max-width: 100%; }
+.fm-table { width: 100%; border-collapse: collapse; background: var(--_surface); color: var(--_text); font-size: 0.93rem; }
+.fm-table th, .fm-table td { padding: 0.65rem 0.7rem; text-align: left; vertical-align: top; border-bottom: 1px solid var(--_line); }
+.fm-table thead th { background: var(--_head-bg); color: var(--_head-text); font-weight: 600; white-space: nowrap; }
+.fm-sub { display: block; margin-top: 0.15rem; color: var(--_muted); font-size: 0.82rem; }
+.fm-muted { color: var(--_muted); }
+.fm-price { font-weight: 600; }
+.fm-link { color: var(--_accent); text-decoration: underline; text-underline-offset: 2px; }
+.fm-link:hover { text-decoration-thickness: 2px; }
+.fm-link:focus-visible, .fm a:focus-visible { outline: 3px solid var(--_accent); outline-offset: 2px; border-radius: 2px; }
+.fm-up { color: var(--_up); font-weight: 600; }
+.fm-down { color: var(--_down); font-weight: 600; }
+.fm-badges { list-style: none; margin: 0.4rem 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.3rem; }
+.fm-badge { display: inline-block; padding: 0.15rem 0.5rem; border: 1px solid var(--_accent); border-radius: 999px; background: var(--_badge-bg); color: var(--_text); font-size: 0.78rem; font-weight: 600; line-height: 1.35; }
+.fm-b-drop { border-color: var(--_down); }
+.fm-b-shift, .fm-b-alt { border-style: dashed; }
+.fm-b-slip { border-color: var(--_warn); color: var(--_warn); }
+.fm-b-tight { border-color: var(--_warn); border-style: dashed; color: var(--_warn); }
+.fm-b-mixed { border-color: var(--_mixed); background: var(--_mixed-bg); color: var(--_mixed); }
+
+/* Mixed-cabin row accent + per-person breakdown */
+.fm-kind-mixed_cabin td { border-left: 3px solid var(--_mixed); }
+.fm-kind-mixed_cabin td:first-child { border-left: 0; }
+.fm-breakdown { list-style: none; margin: 0.35rem 0 0; padding: 0; color: var(--_muted); font-size: 0.82rem; line-height: 1.5; }
+.fm-breakdown li { margin: 0; }
+
+/* Departure-timing view + recommendation card */
+.fm-sub-head { margin: 1.1rem 0 0.4rem; font-size: 1rem; font-weight: 700; color: var(--_text); }
+.fm-reco { margin: 0.6rem 0 0.4rem; padding: 0.7rem 0.9rem; border: 1px solid var(--_mixed); border-radius: 8px; background: var(--_mixed-bg); }
+.fm-reco .fm-sub-head { margin-top: 0; }
+.fm-reco-date { margin: 0 0 0.4rem; font-weight: 700; }
+.fm-reco-rationale { margin: 0; padding-left: 1.1rem; color: var(--_text); font-size: 0.9rem; line-height: 1.5; }
+.fm-reco-rationale li { margin: 0.15rem 0; }
+.fm-timing { margin: 0.6rem 0 0.4rem; }
+.fm-timing-card { margin: 0 0 0.7rem; padding: 0.6rem 0.8rem; border: 1px solid var(--_line); border-radius: 8px; background: var(--_surface); }
+.fm-timing-date { margin: 0 0 0.3rem; font-size: 0.95rem; font-weight: 700; color: var(--_text); }
+.fm-timing-airline { margin: 0 0 0.35rem; color: var(--_muted); font-size: 0.88rem; }
+.fm-segments { margin: 0.2rem 0; padding-left: 1.2rem; font-size: 0.9rem; line-height: 1.5; }
+.fm-segments li { margin: 0.1rem 0; }
+.fm-seg-route { font-weight: 600; }
+.fm-seg-time { color: var(--_text); }
+
+@media (max-width: 720px) {
+  .fm-table, .fm-table tbody, .fm-table tr, .fm-table td { display: block; width: 100%; }
+  .fm-table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); }
+  .fm-table tr { margin: 0 0 0.9rem; border: 1px solid var(--_line); border-radius: 8px; overflow: hidden; }
+  .fm-table td { display: grid; grid-template-columns: minmax(0, 7.5rem) minmax(0, 1fr); gap: 0.5rem; padding: 0.5rem 0.75rem; }
+  .fm-table td::before { content: attr(data-label); color: var(--_muted); font-size: 0.8rem; font-weight: 600; }
+  .fm-table td:last-child { border-bottom: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fm, .fm * { transition: none !important; animation: none !important; scroll-behavior: auto !important; }
+}
+
+@media print {
+  .fm { color: #000; }
+  .fm-table { display: table; background: #fff; color: #000; }
+  .fm-table thead { position: static; width: auto; height: auto; clip: auto; }
+  .fm-table tbody { display: table-row-group; }
+  .fm-table tr { display: table-row; border: 0; margin: 0; break-inside: avoid; }
+  .fm-table td { display: table-cell; width: auto; padding: 0.3rem 0.4rem; }
+  .fm-table td::before { content: none; }
+  .fm-table thead th { background: #fff; color: #000; border-bottom: 2px solid #000; }
+  .fm-badge { border: 1px solid #000; background: #fff; color: #000; }
+  .fm-link { color: #000; }
+  .fm-reco, .fm-timing-card { border: 1px solid #000; background: #fff; break-inside: avoid; }
+  .fm-kind-mixed_cabin td { border-left: 0; }
+}

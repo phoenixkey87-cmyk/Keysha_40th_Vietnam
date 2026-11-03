@@ -1,0 +1,16 @@
+﻿# Secrets: never commit real keys. .env.example is the committed template.
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Flight Monitor local history and sample-mode output
+flight-monitor/data/history.sqlite*
+flight-monitor/data/sample/
+
+# Browser-verification artifacts (screenshots, reports) — dev-only, never committed
+verification/

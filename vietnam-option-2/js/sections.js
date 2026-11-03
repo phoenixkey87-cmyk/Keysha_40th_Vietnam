@@ -45,6 +45,16 @@
   }
   function dashEl() { return el('span', { cls: 'muted-dash', text: '—', attrs: { 'aria-label': 'No published value' } }); }
 
+  /* Instagram link showing @handle, derived from the URL's last path segment, linking the full URL.
+     Reuses extLink so target=_blank rel="noopener noreferrer" are set. Returns null when no url. */
+  function igLink(url) {
+    if (!url) return null;
+    var seg = String(url).replace(/[?#].*$/, '').replace(/\/+$/, '');
+    var parts = seg.split('/');
+    var handle = parts[parts.length - 1] || '';
+    return extLink('@' + handle, url);
+  }
+
   /* ---------- booking / reservation / inquiry links ----------
      Each record may carry bookingLinks: [{ kind: 'book'|'reserve'|'inquire', via: 'official'|'ota', otaName, url, check, note }].
      Only https links are rendered. With no link the card shows a short how-to-reserve line. */
@@ -372,6 +382,7 @@
       addRow(dl, 'Amenities', list(h.amenities).length ? list(h.amenities).join('; ') : null);
       addRow(dl, 'Distances', distNode(h));
       addRow(dl, 'Guest reviews', reviewNode(h));
+      addRow(dl, 'Instagram', igLink(h.instagram));
       body.appendChild(dl);
       body.appendChild(priceNodes(h));
       if (h.roomNote) body.appendChild(el('p', { cls: 'fine-print', text: h.roomNote }));
@@ -534,6 +545,7 @@
       addRow(dl, 'Price estimate', factText(r.priceEstimate), r.priceEstimate ? r.priceEstimate.status : null);
       if (r.deposit) addRow(dl, 'Reservation terms', factText(r.deposit));
       if (r.accessibility) addRow(dl, 'Accessibility', r.accessibility);
+      addRow(dl, 'Instagram', igLink(r.instagram));
       addRow(dl, 'Map', mapLinkNode(r.id, null));
       b.appendChild(dl);
       if (r.note) b.appendChild(el('p', { cls: 'fine-print', text: r.note }));

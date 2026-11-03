@@ -583,6 +583,91 @@ main:focus { outline: none; }
 .book-via { font-size: 0.75rem; font-weight: 600; opacity: 0.85; }
 .book-pending { color: var(--muted); font-style: italic; font-size: 0.9rem; }
 .link-notice { margin-top: 0.6rem; }
+
+/* ===== Stacked card system: Hotels + Featured Dinners (no horizontal scroll) =====
+   One card per row, full width. On desktop each card is horizontal (image ~40% left,
+   details right); under ~640px it collapses to image on top, details below. Scoped to
+   #hotels and #dining so the day scroller and the other directory sections are left
+   untouched. */
+#hotels .hotel-grid,
+#dining .card-stack {
+  grid-template-columns: 1fr;
+  gap: 1.4rem;
+  max-width: 100%;
+}
+#hotels .hotel-grid .dir-card,
+#dining .card-stack .dir-card {
+  display: grid;
+  grid-template-columns: 1fr;
+  align-items: stretch;
+}
+#hotels .hotel-grid .dir-card .card-media,
+#dining .card-stack .dir-card .card-media { position: relative; }
+/* One image per card at a consistent 4:3 box. */
+#hotels .hotel-grid .dir-card .img-wrap,
+#dining .card-stack .dir-card .img-wrap {
+  aspect-ratio: 4 / 3;
+  height: auto;
+}
+#hotels .hotel-grid .dir-card .card-body,
+#dining .card-stack .dir-card .card-body { padding: 1.3rem 1.4rem 1.4rem; font-size: 1rem; }
+#hotels .hotel-grid .dir-card .card-body h3,
+#dining .card-stack .dir-card .card-body h3 { margin: 0.1rem 0 0.3rem; }
+#dining .card-stack .dir-card .card-desc { color: var(--text); margin: 0.2rem 0 0.6rem; }
+
+/* Neutral, palette-matched placeholder used for hotels with no own/verified photo. */
+.media-placeholder {
+  aspect-ratio: 4 / 3;
+  display: flex; align-items: center; justify-content: center; text-align: center;
+  padding: 1.2rem;
+  background:
+    radial-gradient(circle at 25% 20%, rgba(201, 162, 75, 0.28), transparent 55%),
+    linear-gradient(135deg, var(--emerald-deep), var(--emerald) 60%, #14201c);
+  border-right: 3px solid var(--gold);
+}
+.media-placeholder-text {
+  font-family: var(--font-serif); font-weight: 700; font-size: 1.1rem;
+  color: var(--gold-soft); line-height: 1.3; text-shadow: 0 1px 3px rgba(0, 0, 0, 0.45);
+}
+
+/* Dinner key-facts grid: 2 columns on desktop, 1 on mobile. */
+#dining .facts-grid { grid-template-columns: 1fr; column-gap: 1.5rem; }
+#dining .facts-grid dt { margin-top: 0.6rem; }
+
+/* "More details" expandable toggle. */
+#dining .more-toggle {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  min-height: 44px; margin-top: 0.4rem; padding: 0.4rem 0.9rem;
+  border: 1px solid var(--line); border-radius: 10px;
+  background: var(--surface); color: var(--accent-text);
+  font: inherit; font-weight: 700; cursor: pointer;
+}
+#dining .more-toggle::after {
+  content: ""; width: 9px; height: 9px;
+  border-right: 2px solid currentColor; border-bottom: 2px solid currentColor;
+  transform: rotate(45deg); transition: transform 0.3s;
+}
+#dining .more-toggle[aria-expanded="true"]::after { transform: rotate(-135deg); }
+#dining .more-toggle:hover { background: rgba(201, 162, 75, 0.14); }
+#dining .more-details { margin-top: 0.8rem; }
+#dining .action-row { margin-top: 1rem; }
+
+/* Desktop: image left (~40%), details right. */
+@media (min-width: 641px) {
+  #hotels .hotel-grid .dir-card,
+  #dining .card-stack .dir-card { grid-template-columns: minmax(0, 40%) 1fr; }
+  #hotels .hotel-grid .dir-card .card-media,
+  #dining .card-stack .dir-card .card-media { height: 100%; }
+  #hotels .hotel-grid .dir-card .img-wrap,
+  #dining .card-stack .dir-card .img-wrap,
+  #hotels .hotel-grid .dir-card .media-placeholder { aspect-ratio: auto; height: 100%; min-height: 100%; }
+  #dining .facts-grid { grid-template-columns: 1fr 1fr; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #dining .more-toggle::after { transition: none; }
+}
+
 .flights-box { margin-top: 1.5rem; }
 
 /* Flight Monitor: map the shared --fm-* variables to the luxury palette (light + dark). */

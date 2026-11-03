@@ -39,6 +39,18 @@
   .day-scroll-btn { display: none !important; }
 }
 
+/* Hotels and Featured Dinners print one card per row with dinner details expanded. */
+@media print {
+  #hotels .hotel-grid,
+  #dining .card-stack { display: block !important; }
+  #hotels .hotel-grid .dir-card,
+  #dining .card-stack .dir-card { display: block !important; width: 100% !important; margin: 0 0 10pt !important; break-inside: avoid; }
+  #dining .more-details, #dining .more-details[hidden] { display: block !important; }
+  #dining .more-toggle { display: none !important; }
+  .media-placeholder { border: 1px solid #000 !important; background: #fff !important; }
+  .media-placeholder-text { color: #000 !important; text-shadow: none !important; }
+}
+
 /* Flight Monitor prints as a plain table. */
 @media print {
   #flights { break-inside: avoid; }

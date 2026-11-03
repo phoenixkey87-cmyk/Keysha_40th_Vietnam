@@ -368,8 +368,18 @@
     }
     function areaText(h) { return h.beachfront ? 'Beachfront' : (h.district1 ? 'District 1' : null); }
 
+    /* No hotel in the data has an own/verified photo of itself (every image is a
+       context/area photo, and the four Da Nang hotels all share one beach asset).
+       To avoid reusing another hotel's photo, each hotel card gets a neutral,
+       palette-matched CSS placeholder labelled with the hotel name. */
     function hotelCard(h) {
-      var card = cardShell(h);
+      var card = el('article', { cls: 'card dir-card', attrs: { 'data-id': h.id, tabindex: '0' } });
+      var media = el('div', { cls: 'card-media' });
+      var ph = el('div', { cls: 'media-placeholder', attrs: { role: 'img', 'aria-label': h.name } });
+      ph.appendChild(el('span', { cls: 'media-placeholder-text', text: h.name, attrs: { 'aria-hidden': 'true' } }));
+      media.appendChild(ph);
+      card.appendChild(media);
+      card.appendChild(VO2.heartButton(h.id, h.name));
       var body = el('div', { cls: 'card-body' });
       body.appendChild(el('p', { cls: 'card-city', text: h.city + (h.neighborhood ? ' · ' + h.neighborhood : '') }));
       body.appendChild(el('h3', { text: h.name }));
@@ -503,7 +513,6 @@
     }
     render();
     renderCompare();
-    scrollerize(grid, '.dir-card');
   })();
 
   /* ================= DINING ================= */

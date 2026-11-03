@@ -640,7 +640,7 @@
       addRow(dl, 'VIP / tables', vipText || null, v.tableInfo ? v.tableInfo.status : null);
       if (v.ageLimit) addRow(dl, 'Age', v.ageLimit);
       addRow(dl, 'Website', v.website ? extLink('Visit page', v.website) : null);
-      addRow(dl, 'Instagram', v.instagram ? extLink('Instagram', v.instagram) : null);
+      addRow(dl, 'Instagram', igLink(v.instagram));
       addRow(dl, 'Map', mapLinkNode(v.id, v.mapQuery));
       b.appendChild(dl);
       b.appendChild(bookBlock(v));

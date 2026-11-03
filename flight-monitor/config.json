@@ -1,0 +1,59 @@
+{
+  "home_airport": "STL",
+  "alternate_origins": ["MCI", "ORD", "ATL"],
+  "provider": "serpapi",
+  "thresholds": {
+    "drop_pct": 10,
+    "shift_usd": 200,
+    "alt_origin_usd": 300,
+    "shift_days": 3,
+    "low_window_days": 30
+  },
+  "cabins_by_kind": {
+    "primary": ["economy", "business", "first"],
+    "alternate": ["economy"],
+    "traveler": ["economy"],
+    "shift": ["economy"]
+  },
+  "max_calls_per_run": 40,
+  "shift_check_interval_days": 7,
+  "schedule": { "time": "06:00", "frequency": "weekly" },
+  "mixed_cabin": {
+    "enabled": true,
+    "longhaul_rule": "longest_oceanic_segment",
+    "components": { "longhaul": "business", "other": "economy" },
+    "pricing_unit": "per_person"
+  },
+  "travelers": [],
+  "travelers_example": [
+    { "name": "Example Name", "home_airport": "XXX" }
+  ],
+  "itineraries": {
+    "option2": {
+      "label": "Vietnam Option 2",
+      "arrive": "DAD",
+      "depart": "SGN",
+      "outbound_date": "2027-11-19",
+      "return_date": "2027-11-29",
+      "travelers": "[TRAVELER COUNT]",
+      "travelers_source": "pending user-supplied traveler count",
+      "arrival_requirement": {
+        "land_by": "2027-11-21",
+        "candidate_departures": ["2027-11-19", "2027-11-20"]
+      }
+    },
+    "original": {
+      "label": "Original itinerary",
+      "arrive": "HAN",
+      "depart": "SGN",
+      "outbound_date": "2027-11-19",
+      "return_date": "2027-11-29",
+      "travelers": "[TRAVELER COUNT]",
+      "travelers_source": "pending user-supplied traveler count",
+      "arrival_requirement": {
+        "land_by": "2027-11-21",
+        "candidate_departures": ["2027-11-19", "2027-11-20"]
+      }
+    }
+  }
+}

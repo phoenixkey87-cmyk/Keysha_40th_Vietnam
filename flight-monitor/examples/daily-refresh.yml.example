@@ -1,0 +1,35 @@
+# EXAMPLE ONLY. Not enabled: it lives outside .github/workflows on purpose.
+# To use it: copy to .github/workflows/daily-refresh.yml, add the repository secret
+# SERPAPI_API_KEY (Settings > Secrets and variables > Actions). Never put the key in the repo.
+# Cron runs in UTC. Keep it in step with schedule.time in flight-monitor/config.json.
+name: Flight Monitor daily refresh
+
+on:
+  schedule:
+    - cron: "0 12 * * *"   # 12:00 UTC daily
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Run Flight Monitor
+        env:
+          SERPAPI_API_KEY: ${{ secrets.SERPAPI_API_KEY }}
+        run: python flight-monitor/run_monitor.py
+      # Note: price history (history.sqlite) is not committed, so on a fresh runner there is no
+      # previous check and "change since last check" and the 30-day low start over each run.
+      - name: Commit refreshed snapshot
+        run: |
+          git config user.name "flight-monitor-bot"
+          git config user.email "flight-monitor-bot@users.noreply.github.com"
+          git add flight-monitor/data/latest.json flight-monitor/data/latest.js
+          git diff --cached --quiet || git commit -m "chore: refresh flight monitor snapshot"
+          git push

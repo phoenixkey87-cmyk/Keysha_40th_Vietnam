@@ -1,0 +1,15 @@
+{
+  "_comment": "SAMPLE DATA for tests only. These prices are invented and must never appear in the production UI.",
+  "fares": {
+    "STL|DAD|SGN|economy|*": {"status": "ok", "price_usd": 2000, "airline": "SampleAir", "stops": 1, "duration_min": 1200, "layovers": ["ICN"], "booking_url": "https://example.com/sample"},
+    "STL|DAD|SGN|business|*": {"status": "ok", "price_usd": 5000, "airline": "SampleAir", "stops": 1, "duration_min": 1200, "layovers": ["ICN"]},
+    "STL|DAD|SGN|first|*": {"status": "empty"},
+    "STL|DAD|SGN|economy|2027-11-16": {"status": "ok", "price_usd": 1750, "airline": "SampleAir", "stops": 1, "duration_min": 1300, "layovers": ["ICN"]},
+    "STL|DAD|SGN|economy|2027-11-22": {"status": "ok", "price_usd": 1950},
+    "ORD|DAD|SGN|economy|*": {"status": "ok", "price_usd": 1600, "airline": "SampleAir", "stops": 1, "duration_min": 1100, "layovers": ["ICN"]},
+    "MCI|DAD|SGN|economy|*": {"status": "ok", "price_usd": 1800},
+    "STL|HAN|SGN|economy|*": {"status": "ok", "price_usd": 1900, "airline": "SampleAir", "stops": 1, "duration_min": 1100, "layovers": ["ICN"]},
+    "STL|HAN|SGN|business|*": {"status": "empty"},
+    "STL|HAN|SGN|first|*": {"status": "ok", "price_usd": 9000, "cabin": "business"}
+  }
+}

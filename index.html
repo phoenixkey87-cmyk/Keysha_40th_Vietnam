@@ -180,6 +180,78 @@
             margin-top: 8px;
             font-style: italic;
         }
+        /* HORIZONTAL DAY SCROLLER (day-by-day itinerary only) */
+        .day-scroller { position: relative; }
+        .day-track {
+            display: flex;
+            gap: 16px;
+            overflow-x: auto;
+            overflow-y: visible;
+            scroll-snap-type: x mandatory;
+            align-items: flex-start;
+            padding: 6px 2px 14px;
+            scrollbar-width: thin;
+            scrollbar-color: var(--medium-purple) transparent;
+            -webkit-mask-image: linear-gradient(to right, transparent 0, #000 22px, #000 calc(100% - 22px), transparent 100%);
+            mask-image: linear-gradient(to right, transparent 0, #000 22px, #000 calc(100% - 22px), transparent 100%);
+        }
+        .day-track::-webkit-scrollbar { height: 8px; }
+        .day-track::-webkit-scrollbar-thumb { background: var(--medium-purple); border-radius: 8px; }
+        .day-track::-webkit-scrollbar-track { background: var(--soft-purple); border-radius: 8px; }
+        .day-track .day-card {
+            scroll-snap-align: start;
+            flex: 0 0 auto;
+            width: clamp(260px, 85vw, 340px);
+            margin: 0;
+            align-self: flex-start;
+        }
+        .day-track .day-card h3,
+        .day-track .day-card li,
+        .day-track .day-note,
+        .day-track .wear { overflow-wrap: anywhere; }
+        .day-track .day-card:focus-visible,
+        .day-track .day-card:focus { outline: 3px solid var(--medium-purple); outline-offset: 2px; }
+        @media (min-width: 760px) { .day-track .day-card { width: 340px; } }
+        .day-scroll-btn {
+            position: absolute; top: 40px; z-index: 3;
+            width: 44px; height: 44px; border-radius: 50%;
+            border: 1px solid var(--border); background: var(--white); color: var(--deep-purple);
+            box-shadow: 0 4px 14px rgba(0,0,0,0.18); cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .day-scroll-prev { left: -6px; }
+        .day-scroll-next { right: -6px; }
+        .day-scroll-btn:hover { background: var(--soft-purple); }
+        .day-scroll-btn:disabled { opacity: 0.35; cursor: default; }
+        .day-scroll-btn:focus-visible { outline: 3px solid var(--medium-purple); outline-offset: 2px; }
+        .day-scroll-icon { width: 11px; height: 11px; border-top: 2px solid currentColor; border-right: 2px solid currentColor; display: inline-block; }
+        .day-scroll-prev .day-scroll-icon { transform: rotate(-135deg); margin-left: 4px; }
+        .day-scroll-next .day-scroll-icon { transform: rotate(45deg); margin-right: 4px; }
+        @media (prefers-reduced-motion: reduce) { .day-track { scroll-behavior: auto; } }
+        /* ORIGINAL | OPTION 2 SEGMENTED TOGGLE (sticky below nav) */
+        .itinerary-switch {
+            position: sticky; top: 52px; z-index: 99;
+            display: flex; justify-content: center; padding: 8px 12px;
+            pointer-events: none;
+        }
+        .itinerary-switch-inner {
+            pointer-events: auto; display: inline-flex; gap: 4px; padding: 4px;
+            background: var(--white); border: 1px solid var(--border);
+            border-radius: 999px; box-shadow: 0 4px 14px rgba(91,33,127,0.18);
+        }
+        .switch-seg {
+            display: inline-flex; align-items: center; justify-content: center;
+            min-height: 44px; min-width: 110px; padding: 0 1.2rem;
+            border-radius: 999px; text-decoration: none; font-weight: 700; font-size: 0.95rem;
+            color: var(--deep-purple); white-space: nowrap;
+        }
+        .switch-seg:hover { background: var(--soft-purple); }
+        .switch-seg.is-active { background: var(--deep-purple); color: var(--white); }
+        .switch-seg:focus-visible { outline: 3px solid var(--bronze); outline-offset: 2px; }
+        @media (max-width: 420px) {
+            .switch-seg { min-width: 0; flex: 1 1 auto; padding: 0 0.9rem; }
+            .itinerary-switch-inner { width: 100%; max-width: 360px; }
+        }
         /* LISTS */
         ul.clean { list-style: none; padding: 0; }
         ul.clean li { padding: 6px 0 6px 20px; position: relative; font-size: 0.9rem; }
@@ -221,6 +293,51 @@
             .hotel-grid { grid-template-columns: 1fr; }
             .nav a { font-size: 0.7rem; padding: 5px 8px; }
         }
+        /* PRINT: plain black on white; print the inline Travel Options summary cleanly
+           (mirrors Option 2's #flights / #travelOptions print rules). */
+        @media print {
+            * { box-shadow: none !important; text-shadow: none !important; animation: none !important; transition: none !important; }
+            body { background: #fff !important; color: #000 !important; }
+            body::after, .hero::before { display: none !important; }
+            .hero { background: none !important; color: #000 !important; padding: 12pt 0 !important; }
+            .hero h1, .hero .tagline, .hero .dates, .hero .route { color: #000 !important; }
+            .nav, #copyTextBtn, #copyTextStatus { display: none !important; }
+            section { padding: 12pt 0 !important; border-bottom: 1px solid #000 !important; break-inside: avoid; }
+            #travel-options { break-inside: avoid; background: #fff !important; color: #000 !important; }
+            #travel-options a, a { color: #000 !important; text-decoration: underline; }
+            #travel-options .callout { background: #fff !important; border-left: 2px solid #000 !important; }
+            #travel-options table { width: 100% !important; }
+            #travel-options thead th { background: #fff !important; color: #000 !important; border-bottom: 1px solid #000 !important; }
+            #travel-options tbody td { border-bottom: 1px solid #000 !important; }
+            #travel-options tbody tr:nth-child(even) { background: #fff !important; }
+            /* Day-cell scroller prints as wrapped rows so every day is on paper. */
+            .day-track {
+                display: flex !important;
+                flex-wrap: wrap !important;
+                overflow: visible !important;
+                scroll-snap-type: none !important;
+                -webkit-mask-image: none !important;
+                mask-image: none !important;
+                gap: 8pt !important;
+            }
+            .day-track .day-card { width: 46% !important; flex: 0 0 46% !important; break-inside: avoid; }
+            .day-scroll-btn { display: none !important; }
+        }
+    </style>
+    <link rel="stylesheet" href="flight-monitor/ui/flight-monitor.css">
+    <style>
+        /* Flight Monitor (additive): map shared --fm-* variables to the purple/bronze palette. */
+        #flights {
+            --fm-surface: var(--white);
+            --fm-text: var(--dark);
+            --fm-muted: #5f5870;
+            --fm-line: var(--border);
+            --fm-accent: var(--deep-purple);
+            --fm-head-bg: var(--deep-purple);
+            --fm-head-text: var(--white);
+            --fm-badge-bg: var(--soft-purple);
+        }
+        #flights p { margin-bottom: 12px; }
     </style>
 </head>
 <body>
@@ -240,6 +357,8 @@
 <nav class="nav">
     <a href="#welcome">Welcome</a>
     <a href="#snapshot">Snapshot</a>
+    <a href="#flights">Flights</a>
+    <a href="#travel-options">Travel Options</a>
     <a href="#destinations">Destinations</a>
     <a href="#itinerary">Day-by-Day</a>
     <a href="#hotels">Hotels</a>
@@ -253,6 +372,13 @@
     <a href="#tips">Tips</a>
     <a href="vietnam_rsvp.html" style="background:var(--bronze);color:var(--white);border-radius:20px;animation:flash 2s ease-out infinite;">RSVP Now — by 12/4/26</a>
 </nav>
+<!-- ITINERARY SWITCH -->
+<div class="itinerary-switch" role="navigation" aria-label="Switch itinerary">
+    <div class="itinerary-switch-inner" role="group" aria-label="Choose itinerary">
+        <a class="switch-seg is-active" id="switchOriginal" href="vietnam_itinerary_site.html" aria-current="page" aria-label="Viewing the original itinerary">Original</a>
+        <a class="switch-seg" id="switchOption2" href="Vietnam_Option_2.html" aria-label="View Option 2 itinerary">Option 2</a>
+    </div>
+</div>
 <!-- WELCOME -->
 <section id="welcome">
 <div class="container">
@@ -296,6 +422,91 @@
     </table>
 </div>
 </section>
+<!-- FLIGHT MONITOR -->
+<section id="flights">
+<div class="container">
+    <h2>Flight Monitor</h2>
+    <p>Lowest round-trip fares per person from St. Louis (STL) into Hanoi (HAN), home from Ho Chi Minh City (SGN), checked daily. Fares the data source did not return are marked not verified, never estimated.</p>
+    <div data-flight-monitor data-itinerary="original" data-origin="STL" data-arrive="HAN" data-depart="SGN"></div>
+</div>
+</section>
+<!-- TRAVEL OPTIONS (lighter inline summary; full interactive version lives on Option 2) -->
+<section id="travel-options">
+<div class="container">
+    <h2>Travel Options</h2>
+    <p>
+        A quick summary for Itinerary A (arrive Hanoi, depart Ho Chi Minh City). The full interactive
+        version — live flight monitor, departure-timing view, and side-by-side train comparison — lives on
+        <a href="Vietnam_Option_2.html#travelOptions" style="color:var(--medium-purple)">Option 2</a>.
+    </p>
+    <div class="callout">
+        <strong>Recommended provisional departure:</strong> November 19, 2027 from St. Louis (STL).
+        Landing in Vietnam on November 21, 2027 is fixed; the departure date stays provisional until Part 1
+        schedule data exists.<br>
+        <strong>Mixed cabin</strong> (business long-haul + economy elsewhere, not a single-ticket quote):
+        <strong>not verified</strong> — a per-person headline shows only when live fares return for both
+        searches, and group totals wait on a confirmed traveler count.
+    </div>
+    <p>
+        <strong style="color:var(--medium-purple)">Fly vs. train takeaway:</strong> fly the short domestic
+        hops to save a travel day; take the train only for the scenery. A train is only ever compared with
+        the domestic flight it could replace — it never replaces the transpacific flight. The Hanoi → Da Nang
+        run is the one worth doing by rail for the Hue–Da Nang Hai Van Pass stretch; the Da Nang → Ho Chi Minh
+        City rail run is long (about 16 hours), so most groups fly it. No November 2027 rail fare is published
+        yet, so every price below is <strong>not verified</strong> with a link to check.
+    </p>
+    <h3>Itinerary A — train options (compared only against domestic flights)</h3>
+    <table>
+        <thead>
+            <tr><th>Route / segment</th><th>Class</th><th>Price per person</th><th>Journey time</th><th>Source / checked</th></tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>Hanoi → Da Nang</strong><br>primary; includes the scenic Hue–Da Nang (Hai Van Pass) stretch</td>
+                <td>Soft sleeper berth (4-/6-berth; tourist cabins)</td>
+                <td>not verified — <a href="https://dsvn.vn/" target="_blank" style="color:var(--medium-purple)">check Vietnam Railways</a></td>
+                <td>~15–18h overnight</td>
+                <td><a href="https://north-vietnam.com/hanoi-to-da-nang-train-bus-schedule-timetable-tickets/" target="_blank" style="color:var(--medium-purple)">source</a> · checked 2026-11-02</td>
+            </tr>
+            <tr>
+                <td><strong>Hanoi → Da Nang</strong><br>seated premium</td>
+                <td>Soft seat (air-conditioned)</td>
+                <td>not verified — <a href="https://12go.asia/" target="_blank" style="color:var(--medium-purple)">check 12Go</a></td>
+                <td>~15–18h</td>
+                <td><a href="https://sapanomad.com/hanoi-hoi-an-train/" target="_blank" style="color:var(--medium-purple)">source</a> · checked 2026-11-02</td>
+            </tr>
+            <tr>
+                <td><strong>Da Nang → Ho Chi Minh City</strong><br>⚠️ long rail time (~16h); listed for completeness</td>
+                <td>Soft sleeper berth (4-berth A/C)</td>
+                <td>not verified — <a href="https://dsvn.vn/" target="_blank" style="color:var(--medium-purple)">check Vietnam Railways</a></td>
+                <td>~16–21h (fastest near 17h)</td>
+                <td><a href="https://vietnamtraintickets.info/da-nang-to-sai-gon-by-train/" target="_blank" style="color:var(--medium-purple)">source</a> · checked 2026-11-02</td>
+            </tr>
+            <tr>
+                <td><strong>Da Nang → Ho Chi Minh City</strong><br>⚠️ long rail time (~16h); seated premium</td>
+                <td>Soft seat (air-conditioned)</td>
+                <td>not verified — <a href="https://www.baolau.com/" target="_blank" style="color:var(--medium-purple)">check Baolau</a></td>
+                <td>~16–21h</td>
+                <td><a href="https://vietnamtraintickets.info/da-nang-to-sai-gon-by-train/" target="_blank" style="color:var(--medium-purple)">source</a> · checked 2026-11-02</td>
+            </tr>
+            <tr>
+                <td><strong>Hanoi → Lao Cai (Sapa)</strong><br>optional off-route add-on; replaces no flight</td>
+                <td>Sleeper cabin (shared 4-berth to private VIP)</td>
+                <td>not verified — <a href="https://dsvn.vn/" target="_blank" style="color:var(--medium-purple)">check Vietnam Railways</a></td>
+                <td>~9h door to door</td>
+                <td><a href="https://sapanomad.com/transport/train-hanoi-to-sapa/" target="_blank" style="color:var(--medium-purple)">source</a> · checked 2026-11-02</td>
+            </tr>
+        </tbody>
+    </table>
+    <p class="wear">
+        Train times, classes, and fares are set by Vietnam Railways (dsvn.vn) and private operators; November
+        2027 schedules and fares are not published yet, so the figures above are dated observations, not quotes
+        for your dates. Confirm everything on the operator or booking site before planning around it.
+        <button type="button" id="copyTextBtn" style="margin-left:8px;background:var(--deep-purple);color:var(--white);border:none;border-radius:20px;padding:6px 16px;font-size:0.82rem;font-weight:600;cursor:pointer;">Copy as text</button>
+        <span id="copyTextStatus" aria-live="polite" style="margin-left:8px;font-size:0.82rem;color:var(--bronze);"></span>
+    </p>
+</div>
+</section>
 <!-- DESTINATIONS -->
 <section id="destinations">
 <div class="container">
@@ -323,7 +534,12 @@
 <div class="container">
     <h2>Day-by-Day Itinerary</h2>
 
-    <div class="day-card">
+    <div class="day-scroller">
+    <button class="day-scroll-btn day-scroll-prev" type="button" aria-label="Scroll to previous day"><span class="day-scroll-icon" aria-hidden="true"></span></button>
+    <button class="day-scroll-btn day-scroll-next" type="button" aria-label="Scroll to next day"><span class="day-scroll-icon" aria-hidden="true"></span></button>
+    <div class="day-track" id="dayTrack">
+
+    <div class="day-card" id="day-2027-11-21" tabindex="0">
         <h3>Day 1 — Sunday, November 21: Welcome to Vietnam</h3>
         <div class="day-meta">
             <span><strong>Destination:</strong> Hanoi</span>
@@ -342,7 +558,7 @@
         <div class="wear">👗 Comfortable Chic: airport outfit, sneakers, light cardigan, crossbody bag.</div>
     </div>
 
-    <div class="day-card">
+    <div class="day-card" id="day-2027-11-22" tabindex="0">
         <h3>Day 2 — Monday, November 22: Board Genesis Regal Luxury Cruise</h3>
         <div class="day-meta">
             <span><strong>Destination:</strong> Hanoi → Lan Ha Bay</span>
@@ -359,7 +575,7 @@
         </ul>
         <div class="wear">👗 Resort Chic: maxi dress, linen set, romper, sandals, sunglasses, light sweater for evening.</div>
     </div>
-    <div class="day-card">
+    <div class="day-card" id="day-2027-11-23" tabindex="0">
         <h3>Day 3 — Tuesday, November 23: 🎂 Birthday at Sea</h3>
         <div class="day-meta">
             <span><strong>Destination:</strong> Genesis Regal Luxury Cruise</span>
@@ -379,7 +595,7 @@
         <div class="day-note">This is the official birthday date: November 23. Additional celebrations happen later in the week.</div>
     </div>
 
-    <div class="day-card">
+    <div class="day-card" id="day-2027-11-24" tabindex="0">
         <h3>Day 4 — Wednesday, November 24: Cruise Return & Travel to Da Nang</h3>
         <div class="day-meta">
             <span><strong>Destination:</strong> Lan Ha Bay → Da Nang</span>
@@ -397,7 +613,7 @@
         </ul>
         <div class="wear">👗 Travel + Beach Arrival: comfortable travel set, sandals or sneakers, easy dinner outfit.</div>
     </div>
-    <div class="day-card">
+    <div class="day-card" id="day-2027-11-25" tabindex="0">
         <h3>Day 5 — Thursday, November 25: Relax & Celebrate in Da Nang</h3>
         <div class="day-meta">
             <span><strong>Destination:</strong> Da Nang</span>
@@ -417,7 +633,7 @@
         <div class="day-note">Relaxed group celebration day, not a replacement for the November 23 birthday at sea.</div>
     </div>
 
-    <div class="day-card">
+    <div class="day-card" id="day-2027-11-26" tabindex="0">
         <h3>Day 6 — Friday, November 26: Hoi An Shopping Day</h3>
         <div class="day-meta">
             <span><strong>Destination:</strong> Da Nang / Hoi An</span>
@@ -434,7 +650,7 @@
         <div class="wear">👗 Cute and Comfortable: matching two-piece set, comfortable sandals, hat, sunglasses, crossbody bag.</div>
         <div class="day-note">Hoi An is one of the best places in Vietnam for custom clothing and leather goods. Leave space in your luggage!</div>
     </div>
-    <div class="day-card">
+    <div class="day-card" id="day-2027-11-27" tabindex="0">
         <h3>Day 7 — Saturday, November 27: Da Nang to Ho Chi Minh City</h3>
         <div class="day-meta">
             <span><strong>Destination:</strong> Da Nang → Ho Chi Minh City</span>
@@ -452,7 +668,7 @@
         <div class="wear">👗 City Chic: lightweight outfit, comfortable shoes, stylish dinner look.</div>
     </div>
 
-    <div class="day-card">
+    <div class="day-card" id="day-2027-11-28" tabindex="0">
         <h3>Day 8 — Sunday, November 28: 🖤 All Black Everything Finale</h3>
         <div class="day-meta">
             <span><strong>Destination:</strong> Ho Chi Minh City</span>
@@ -474,7 +690,7 @@
         <div class="day-note">Club options: Piu Piu, Mershe Saigon, Weeknd Saigon, Afro Chill Lounge.</div>
     </div>
 
-    <div class="day-card">
+    <div class="day-card" id="day-2027-11-29" tabindex="0">
         <h3>Day 9 — Monday, November 29: Departure Day</h3>
         <div class="day-meta">
             <span><strong>Destination:</strong> Ho Chi Minh City</span>
@@ -489,6 +705,8 @@
             <li>Fly home from Ho Chi Minh City (SGN)</li>
         </ul>
         <div class="wear">👗 Airport Comfortable: jogger set or matching sweatsuit, sneakers, light jacket for the flight.</div>
+    </div>
+    </div>
     </div>
 </div>
 </section>
@@ -780,5 +998,174 @@
     Final rates, flight times, and hotel selections will be updated when November 2027 inventory is available.</p>
 </footer>
 
+<script src="flight-monitor/data/latest.js"></script>
+<script src="flight-monitor/ui/flight-monitor.js"></script>
+<!-- Copy-as-text for the inline Travel Options summary. Builds a plain-text summary
+     from values ALREADY on the page; copies with navigator.clipboard and falls back to
+     a hidden textarea + document.execCommand('copy'). Vanilla ES5, no dependencies. -->
+<script>
+(function () {
+    var btn = document.getElementById('copyTextBtn');
+    if (!btn) { return; }
+    var status = document.getElementById('copyTextStatus');
+
+    function clean(s) { return s ? s.replace(/\s+/g, ' ').replace(/\u00a0/g, ' ').trim() : ''; }
+
+    function buildSummary() {
+        var lines = ['Vietnam (Itinerary A) - Travel Options summary'];
+        var sec = document.getElementById('travel-options');
+        if (sec) {
+            var callout = sec.getElementsByClassName('callout')[0];
+            if (callout) { lines.push(''); lines.push(clean(callout.textContent)); }
+            var paras = sec.getElementsByTagName('p');
+            for (var p = 0; p < paras.length; p++) {
+                var t = clean(paras[p].textContent).replace(/Copy as text.*$/, '').trim();
+                if (t.indexOf('Fly vs. train takeaway') === 0) { lines.push(''); lines.push(t); }
+            }
+            var rows = sec.getElementsByTagName('tr');
+            lines.push('');
+            lines.push('Train options (Itinerary A):');
+            for (var i = 1; i < rows.length; i++) {
+                var cells = rows[i].getElementsByTagName('td');
+                if (cells.length >= 5) {
+                    lines.push('- ' + clean(cells[0].textContent) + ' | ' + clean(cells[1].textContent) +
+                        ' | ' + clean(cells[2].textContent) + ' | ' + clean(cells[3].textContent) +
+                        ' | ' + clean(cells[4].textContent));
+                }
+            }
+        }
+        lines.push('');
+        lines.push('All fares and times are not verified until checked for your November 2027 dates. Nothing is booked.');
+        return lines.join('\n');
+    }
+
+    function fallbackCopy(text) {
+        var ta = document.createElement('textarea');
+        ta.value = text;
+        ta.setAttribute('readonly', '');
+        ta.style.position = 'absolute';
+        ta.style.left = '-9999px';
+        document.body.appendChild(ta);
+        ta.select();
+        var ok = false;
+        try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+        document.body.removeChild(ta);
+        return ok;
+    }
+
+    function flash(msg) {
+        if (status) {
+            status.textContent = msg;
+            setTimeout(function () { status.textContent = ''; }, 2000);
+        }
+    }
+
+    btn.addEventListener('click', function () {
+        var text = buildSummary();
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).then(function () { flash('Copied'); }, function () {
+                flash(fallbackCopy(text) ? 'Copied' : 'Copy failed');
+            });
+        } else {
+            flash(fallbackCopy(text) ? 'Copied' : 'Copy failed');
+        }
+    });
+})();
+</script>
+<!-- Horizontal day scroller + Original|Option 2 toggle carry-over (ES5). -->
+<script>
+(function () {
+    'use strict';
+    function reducedMotion() {
+        return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+    }
+    function behavior() { return reducedMotion() ? 'auto' : 'smooth'; }
+
+    /* ---- day-cell horizontal scroller ---- */
+    var track = document.getElementById('dayTrack');
+    if (track) {
+        var scroller = track.parentNode;
+        var prev = scroller.querySelector('.day-scroll-prev');
+        var next = scroller.querySelector('.day-scroll-next');
+        function cells() { return track.querySelectorAll('.day-card'); }
+        function step() {
+            var c = cells();
+            if (!c.length) return track.clientWidth;
+            var gap = 0;
+            if (c.length > 1) gap = c[1].offsetLeft - (c[0].offsetLeft + c[0].offsetWidth);
+            if (gap < 0) gap = 0;
+            return c[0].offsetWidth + gap;
+        }
+        function scrollByCells(n) { track.scrollBy({ left: n * step(), behavior: behavior() }); }
+        function updateButtons() {
+            var maxScroll = track.scrollWidth - track.clientWidth - 1;
+            if (prev) prev.disabled = track.scrollLeft <= 0;
+            if (next) next.disabled = track.scrollLeft >= maxScroll;
+        }
+        if (prev) prev.addEventListener('click', function () { scrollByCells(-1); });
+        if (next) next.addEventListener('click', function () { scrollByCells(1); });
+        track.addEventListener('scroll', updateButtons);
+        window.addEventListener('resize', updateButtons);
+        track.addEventListener('keydown', function (e) {
+            var key = e.key || e.keyIdentifier;
+            if (key !== 'ArrowRight' && key !== 'ArrowLeft' && key !== 'Right' && key !== 'Left') return;
+            var c = cells();
+            if (!c.length) return;
+            var current = document.activeElement, idx = -1, i;
+            for (i = 0; i < c.length; i++) { if (c[i] === current) { idx = i; break; } }
+            var dir = (key === 'ArrowRight' || key === 'Right') ? 1 : -1;
+            var target = idx === -1 ? (dir > 0 ? 0 : c.length - 1) : idx + dir;
+            if (target < 0 || target >= c.length) return;
+            e.preventDefault();
+            c[target].focus();
+            c[target].scrollIntoView({ behavior: behavior(), inline: 'start', block: 'nearest' });
+        });
+        updateButtons();
+        window.setTimeout(updateButtons, 300);
+    }
+
+    /* ---- Original | Option 2 toggle: carry current day across the jump ----
+       Nov 23-29 line up by date in both trips; Nov 21-22 do not, so fall back to top. */
+    function dayCarries(id) {
+        var m = /^day-2027-11-(\d{2})$/.exec(id || '');
+        if (!m) return false;
+        var dd = parseInt(m[1], 10);
+        return dd >= 23 && dd <= 29;
+    }
+    function currentDayId() {
+        if (!track) return null;
+        var c = track.querySelectorAll('.day-card');
+        if (!c.length) return null;
+        var best = null, bestDist = Infinity, i, r, dist;
+        for (i = 0; i < c.length; i++) {
+            r = c[i].getBoundingClientRect();
+            dist = Math.abs(r.left);
+            if (dist < bestDist) { bestDist = dist; best = c[i]; }
+        }
+        return best ? best.id : null;
+    }
+    var toOption2 = document.getElementById('switchOption2');
+    if (toOption2) {
+        var base = toOption2.getAttribute('href');
+        toOption2.addEventListener('click', function () {
+            var id = currentDayId();
+            toOption2.setAttribute('href', base + (dayCarries(id) ? '#' + id : ''));
+        });
+    }
+    function scrollToHashDay() {
+        var hash = (window.location.hash || '').replace('#', '');
+        if (!dayCarries(hash)) return;
+        var cell = document.getElementById(hash);
+        if (!cell || !track) return;
+        cell.scrollIntoView({ behavior: behavior(), inline: 'start', block: 'nearest' });
+        var section = document.getElementById('itinerary');
+        if (section) section.scrollIntoView({ behavior: behavior(), block: 'start' });
+    }
+    if (window.location.hash) {
+        if (window.requestAnimationFrame) window.requestAnimationFrame(scrollToHashDay);
+        else window.setTimeout(scrollToHashDay, 60);
+    }
+})();
+</script>
 </body>
 </html>

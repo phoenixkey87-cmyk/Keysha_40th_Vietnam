@@ -391,7 +391,7 @@ main:focus { outline: none; }
 .birthday-banner p { color: #f6efe0; margin-inline: auto; max-width: 56ch; }
 .birthday-banner .btn { margin-top: 0.4rem; }
 .featured-card { display: grid; gap: 0; margin-top: 1.2rem; text-align: left; border: 1px solid var(--gold); border-radius: var(--radius); overflow: hidden; background: var(--surface); color: var(--text); box-shadow: var(--shadow); position: relative; }
-.featured-card .img-wrap { aspect-ratio: 16 / 10; }
+.featured-card .img-wrap { aspect-ratio: 4 / 3; }
 .featured-card .card-body { padding: 1.2rem; }
 .featured-card .badge-row { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 0.6rem; }
 .featured-card dl { margin: 0.8rem 0; display: grid; gap: 0.5rem; }
@@ -515,17 +515,9 @@ main:focus { outline: none; }
 .compare-table th, .compare-table td { padding: 0.7rem 0.8rem; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; overflow-wrap: anywhere; }
 .compare-table thead th { background: var(--bg-alt); font-family: var(--font-serif); }
 .compare-table tbody th { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); width: 9rem; }
+/* Featured dinner card: a gold border marks it apart. Layout is handled by the
+   shared stacked card system below (#dining .card-stack .dir-card). */
 .dining-featured { border-color: var(--gold); }
-/* Featured dining card: image fills its column so there is no empty gap.
-   Vertical on small screens (image on top); two columns on wide screens. */
-.dining-featured .card-media { height: 100%; }
-.dining-featured .img-wrap { height: 100%; }
-@media (min-width: 800px) {
-  .dining-featured { display: grid; grid-template-columns: 1fr 1fr; align-items: stretch; }
-  .dining-featured .card-media { grid-column: 1; }
-  .dining-featured .img-wrap { aspect-ratio: auto; min-height: 100%; }
-  .dining-featured .card-body { grid-column: 2; }
-}
 .tabs { margin-top: 0.5rem; }
 .tablist { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 1rem; border-bottom: 2px solid var(--line); }
 .tab { min-height: 44px; padding: 0.5rem 1.2rem; border: 0; border-bottom: 3px solid transparent; background: transparent; color: var(--text); font: inherit; font-weight: 700; cursor: pointer; }

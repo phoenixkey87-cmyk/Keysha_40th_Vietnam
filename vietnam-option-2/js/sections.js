@@ -525,6 +525,11 @@
     body.appendChild(el('p', { cls: 'notice', text: 'Michelin recognition changes every year. Status shown was checked on the dates in each source; re-check the current Michelin Guide before booking. Nothing here is reserved.' }));
     body.appendChild(linkNotice());
 
+    /* Every dinner "More details" region is registered here so printing (and the
+       beforeprint handler below) can force them all open. */
+    var detailToggles = [];
+    var toggleSeq = 0;
+
     function michelinBadge(m) {
       if (!m) return null;
       var b = VO2.statusBadge(m.status || 'estimated');
@@ -532,59 +537,95 @@
       return b;
     }
 
+    /* Toggle a "More details" region open/closed and keep aria-expanded in sync. */
+    function setDetails(btn, region, open) {
+      btn.setAttribute('aria-expanded', String(open));
+      if (open) region.removeAttribute('hidden'); else region.setAttribute('hidden', '');
+    }
+
     function diningCard(r, featured) {
-      var card = cardShell(r, featured ? 'dining-featured' : '');
+      var card = cardShell(r, 'dining-card' + (featured ? ' dining-featured' : ''));
       var b = el('div', { cls: 'card-body' });
+
+      /* Header: badges, restaurant name, then one line "city · proposed date". */
       var badges = el('div', { cls: 'badge-row' });
       if (r.proposedDate) badges.appendChild(VO2.statusBadge('proposed'));
       else badges.appendChild(VO2.statusBadge(r.status || 'estimated'));
       var mb = michelinBadge(r.michelin); if (mb) badges.appendChild(mb);
       b.appendChild(badges);
-      b.appendChild(el('p', { cls: 'card-city', text: r.city + (r.proposedDate ? ' · Proposed dinner ' + VO2.formatDate(r.proposedDate) : '') }));
       b.appendChild(el('h3', { text: r.name }));
-      if (r.description) b.appendChild(el('p', { text: r.description }));
-      var dl = el('dl', { cls: 'facts' });
+      b.appendChild(el('p', { cls: 'card-city', text: r.city + (r.proposedDate ? ' · Proposed dinner ' + VO2.formatDate(r.proposedDate) : '') }));
+
+      /* Short description (1-2 lines). */
+      if (r.description) b.appendChild(el('p', { cls: 'card-desc', text: r.description }));
+
+      /* Key facts: 2-col desktop / 1-col mobile. */
+      var dl = el('dl', { cls: 'facts facts-grid' });
       addRow(dl, 'Cuisine', r.cuisine);
-      addRow(dl, 'Where', r.location);
-      if (r.michelin) addRow(dl, 'Michelin', factText(r.michelin));
+      addRow(dl, 'Location', r.location);
       addRow(dl, 'Hours', factText(r.hours));
       addRow(dl, 'Dress code', factText(r.dressCode));
-      addRow(dl, 'Menu', factText(r.menu));
-      if (r.menu && r.menu.notice) addRow(dl, 'Menu notice', r.menu.notice);
-      addRow(dl, 'Price estimate', factText(r.priceEstimate), r.priceEstimate ? r.priceEstimate.status : null);
-      if (r.deposit) addRow(dl, 'Reservation terms', factText(r.deposit));
-      if (r.accessibility) addRow(dl, 'Accessibility', r.accessibility);
-      addRow(dl, 'Instagram', igLink(r.instagram));
-      addRow(dl, 'Map', mapLinkNode(r.id, null));
       b.appendChild(dl);
-      if (r.note) b.appendChild(el('p', { cls: 'fine-print', text: r.note }));
-      var links = el('div', { cls: 'link-row' });
-      if (r.reservationEmail) links.appendChild(el('a', { cls: 'btn btn-outline btn-sm', text: 'Email ' + r.reservationEmail, attrs: { href: 'mailto:' + r.reservationEmail } }));
-      if (r.menuUrl) links.appendChild(extLink('Menu', r.menuUrl, 'btn btn-outline btn-sm'));
-      b.appendChild(bookBlock(r));
-      b.appendChild(links);
-      b.appendChild(el('p', { cls: 'fine-print' }, [
+
+      /* "More details" expandable: real button + hidden region with the longer text. */
+      toggleSeq += 1;
+      var regionId = 'dinner-details-' + toggleSeq;
+      var toggle = el('button', { cls: 'more-toggle', text: 'More details', attrs: { type: 'button', 'aria-expanded': 'false', 'aria-controls': regionId } });
+      var region = el('div', { cls: 'more-details', attrs: { id: regionId } });
+      region.setAttribute('hidden', '');
+      var ddl = el('dl', { cls: 'facts' });
+      if (r.michelin) addRow(ddl, 'Michelin', factText(r.michelin));
+      addRow(ddl, 'Menu', factText(r.menu));
+      if (r.menu && r.menu.notice) addRow(ddl, 'Menu notice', r.menu.notice);
+      addRow(ddl, 'Price estimate', factText(r.priceEstimate), r.priceEstimate ? r.priceEstimate.status : null);
+      if (r.deposit) addRow(ddl, 'Reservation terms', factText(r.deposit));
+      if (r.accessibility) addRow(ddl, 'Accessibility', r.accessibility);
+      addRow(ddl, 'Map', mapLinkNode(r.id, null));
+      if (ddl.children.length) region.appendChild(ddl);
+      if (r.note) region.appendChild(el('p', { cls: 'fine-print', text: r.note }));
+      region.appendChild(bookBlock(r));
+      region.appendChild(el('p', { cls: 'fine-print' }, [
         document.createTextNode('Booking status: not booked.' + (r.sourceUrl ? ' Source: ' : '')),
         r.sourceUrl ? extLink('details', r.sourceUrl) : null
       ]));
+      toggle.addEventListener('click', function () {
+        setDetails(toggle, region, toggle.getAttribute('aria-expanded') !== 'true');
+      });
+      detailToggles.push({ toggle: toggle, region: region });
+      b.appendChild(toggle);
+      b.appendChild(region);
+
+      /* Action row: at most one primary action, plus Instagram (only if present).
+         The wishlist heart is already on the card media via cardShell. */
+      var links = el('div', { cls: 'link-row action-row' });
+      var primaryUrl = r.reservationUrl || r.menuUrl;
+      if (primaryUrl) links.appendChild(extLink('Official website', primaryUrl, 'btn btn-gold btn-sm'));
+      if (r.reservationEmail) links.appendChild(el('a', { cls: 'btn btn-outline btn-sm', text: 'Email to reserve', attrs: { href: 'mailto:' + r.reservationEmail } }));
+      var ig = igLink(r.instagram);
+      if (ig) { ig.className = 'btn btn-outline btn-sm'; links.appendChild(ig); }
+      if (links.children.length) b.appendChild(links);
+
       card.appendChild(b);
       return card;
     }
 
     body.appendChild(el('h3', { text: 'Featured dinners' }));
-    var feat = el('div', { cls: 'grid grid-wide' });
+    var feat = el('div', { cls: 'grid card-stack' });
     all.filter(function (r) { return r.featured; }).forEach(function (r) { feat.appendChild(diningCard(r, true)); });
     body.appendChild(feat);
-    scrollerize(feat, '.dir-card');
 
     ['Da Nang', 'Ho Chi Minh City'].forEach(function (city) {
       var alts = all.filter(function (r) { return !r.featured && r.city === city; });
       if (!alts.length) return;
       body.appendChild(el('h3', { text: 'More upscale options in ' + city }));
-      var g = el('div', { cls: 'grid' });
+      var g = el('div', { cls: 'grid card-stack' });
       alts.forEach(function (r) { g.appendChild(diningCard(r, false)); });
       body.appendChild(g);
-      scrollerize(g, '.dir-card');
+    });
+
+    /* Print with every dinner's details expanded. */
+    window.addEventListener('beforeprint', function () {
+      for (var i = 0; i < detailToggles.length; i++) setDetails(detailToggles[i].toggle, detailToggles[i].region, true);
     });
   })();
 

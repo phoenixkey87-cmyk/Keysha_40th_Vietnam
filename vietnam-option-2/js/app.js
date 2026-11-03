@@ -140,7 +140,7 @@
   window.VO2 = {
     data: DATA, el: el, statusBadge: statusBadge, fmtUSD: fmtUSD, imageEl: imageEl, lookup: lookup,
     heartButton: heartButton, wishlist: wishlist, load: load, save: save, reducedMotion: reducedMotion,
-    formatDate: formatDate, confetti: function () { burstConfetti(); }
+    formatDate: formatDate, buildDayScroller: buildDayScroller, confetti: function () { burstConfetti(); }
   };
 
   document.documentElement.classList.add('js');
@@ -290,9 +290,9 @@
 
   /* Turn a vertical list of day cells into a horizontally scrollable, scroll-snap
      row with prev/next arrow buttons and keyboard support. ES5 only. */
-  function buildDayScroller(list, isReducedMotion) {
+  function buildDayScroller(list, isReducedMotion, cellSelector) {
     if (!list || !list.parentNode) return;
-    var cellSelector = '.day';
+    cellSelector = cellSelector || '.day';
     // Wrap the list in a positioned frame that also holds the arrow buttons.
     var frame = el('div', { cls: 'day-scroller' });
     list.parentNode.insertBefore(frame, list);

@@ -306,7 +306,8 @@ main:focus { outline: none; }
 .day-scroller-track::-webkit-scrollbar { height: 8px; }
 .day-scroller-track::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 8px; }
 .day-scroller-track::-webkit-scrollbar-track { background: rgba(201, 162, 75, 0.14); border-radius: 8px; }
-.day-scroller-track .day {
+.day-scroller-track .day,
+.day-scroller-track .dir-card {
   scroll-snap-align: start;
   flex: 0 0 auto;
   /* Mobile: ~85vw so the next cell peeks; large: a comfortable fixed basis. */
@@ -314,10 +315,13 @@ main:focus { outline: none; }
   align-self: flex-start;
 }
 @media (min-width: 760px) {
-  .day-scroller-track .day { width: 340px; }
+  .day-scroller-track .day,
+  .day-scroller-track .dir-card { width: 340px; }
 }
 .day-scroller-track .day:focus-visible,
-.day-scroller-track .day:focus { outline: 3px solid var(--focus); outline-offset: 2px; }
+.day-scroller-track .day:focus,
+.day-scroller-track .dir-card:focus-visible,
+.day-scroller-track .dir-card:focus { outline: 3px solid var(--focus); outline-offset: 2px; }
 /* Day cells grow vertically with their content; nothing is clipped. The
    accordion panels are allowed to expand inside the fixed-width cell. */
 .day-scroller-track .day-head { grid-template-columns: auto 1fr; }

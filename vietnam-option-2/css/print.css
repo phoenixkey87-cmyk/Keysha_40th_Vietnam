@@ -34,7 +34,8 @@
     mask-image: none !important;
     gap: 8pt !important;
   }
-  .day-scroller-track .day { width: 46% !important; flex: 0 0 46% !important; }
+  .day-scroller-track .day,
+  .day-scroller-track .dir-card { width: 46% !important; flex: 0 0 46% !important; }
   .day-scroll-btn { display: none !important; }
 }
 

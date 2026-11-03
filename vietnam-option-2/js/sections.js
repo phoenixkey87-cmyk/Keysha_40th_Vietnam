@@ -14,6 +14,19 @@
   function clear(node) { while (node.firstChild) node.removeChild(node.firstChild); }
   function list(x) { return Array.isArray(x) ? x : []; }
 
+  /* Turn a populated card grid into the SAME horizontal day-cell scroller used for
+     the itinerary (reuses VO2.buildDayScroller + the .day-scroller CSS). The grid
+     element itself becomes the .day-scroller-track row; each card becomes a cell.
+     cardSelector tells the scroller which children are cells (default '.card'). */
+  function scrollerize(grid, cardSelector) {
+    if (!grid || !VO2.buildDayScroller) return;
+    var cards = grid.querySelectorAll(cardSelector || '.card');
+    for (var i = 0; i < cards.length; i++) {
+      if (!cards[i].hasAttribute('tabindex')) cards[i].setAttribute('tabindex', '0');
+    }
+    VO2.buildDayScroller(grid, VO2.reducedMotion, cardSelector || '.card');
+  }
+
   /* Fact values may be a string, an object with .text, or null. */
   function factText(x) {
     if (x === null || x === undefined) return null;
@@ -111,7 +124,7 @@
   }
 
   function cardShell(rec, extraCls) {
-    var card = el('article', { cls: 'card dir-card' + (extraCls ? ' ' + extraCls : ''), attrs: { 'data-id': rec.id } });
+    var card = el('article', { cls: 'card dir-card' + (extraCls ? ' ' + extraCls : ''), attrs: { 'data-id': rec.id, tabindex: '0' } });
     var media = el('div', { cls: 'card-media' }, [VO2.imageEl(rec.image, rec.imageAlt || '')]);
     if (rec.imageNote) media.appendChild(el('p', { cls: 'img-caption', text: rec.imageNote }));
     card.appendChild(media);
@@ -479,6 +492,7 @@
     }
     render();
     renderCompare();
+    scrollerize(grid, '.dir-card');
   })();
 
   /* ================= DINING ================= */
@@ -540,6 +554,7 @@
     var feat = el('div', { cls: 'grid grid-wide' });
     all.filter(function (r) { return r.featured; }).forEach(function (r) { feat.appendChild(diningCard(r, true)); });
     body.appendChild(feat);
+    scrollerize(feat, '.dir-card');
 
     ['Da Nang', 'Ho Chi Minh City'].forEach(function (city) {
       var alts = all.filter(function (r) { return !r.featured && r.city === city; });
@@ -548,6 +563,7 @@
       var g = el('div', { cls: 'grid' });
       alts.forEach(function (r) { g.appendChild(diningCard(r, false)); });
       body.appendChild(g);
+      scrollerize(g, '.dir-card');
     });
   })();
 
@@ -638,6 +654,7 @@
       count.textContent = 'Showing ' + shown.length + ' of ' + all.length + ' venues';
     }
     render();
+    scrollerize(grid, '.dir-card');
   })();
 
   /* ================= CAFES ================= */
@@ -685,6 +702,7 @@
         g.appendChild(card);
       });
       panel.appendChild(g);
+      scrollerize(g, '.dir-card');
     });
   })();
 
@@ -723,6 +741,7 @@
         g.appendChild(card);
       });
       tabs.panels[i].appendChild(g);
+      scrollerize(g, '.dir-card');
     });
     var tipsBox = el('div', { cls: 'route-box' }, [el('h3', { text: 'Shopping and payment tips (general guidance)' })]);
     var ul = el('ul', { cls: 'plain-list' });
@@ -790,6 +809,7 @@
       var g = el('div', { cls: 'grid' });
       items.forEach(function (p) { g.appendChild(providerCard(p)); });
       body.appendChild(g);
+      scrollerize(g, '.dir-card');
     });
   })();
 

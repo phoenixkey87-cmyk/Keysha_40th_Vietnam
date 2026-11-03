@@ -1,0 +1,91 @@
+# Weekly Flight Monitor fare refresh.
+#
+# Schedule: 09:00 UTC every Monday. GitHub cron is always UTC. 09:00 UTC is
+# 03:00 America/Chicago (CST, UTC-6) or 04:00 (CDT, UTC-5) — firmly OUTSIDE the
+# user's 8-11 AM Central window year-round.
+#
+# The SerpApi key is read ONLY from the repository secret SERPAPI_API_KEY into the
+# step env of the same name. It is never echoed and never written to a file; GitHub
+# Actions masks registered secrets in logs automatically.
+#
+# This workflow has NO `push:` trigger, so the data commit it makes cannot retrigger
+# it (no commit loop). The commit message also carries [skip ci] as a belt-and-braces
+# guard. Only flight-monitor/data/ files are committed, and only when they changed.
+name: Flight Monitor weekly refresh
+
+on:
+  schedule:
+    - cron: "0 9 * * 1"   # 09:00 UTC Monday = 03:00 CST / 04:00 CDT (outside 8-11 AM Central)
+  workflow_dispatch:        # allow manual runs from the Actions tab
+
+# Least privilege at the top level; the refresh job widens to write for its commit.
+permissions:
+  contents: read
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write   # scoped to this job: needed to commit refreshed data back to main
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # Fail SAFE when the secret is missing/empty: print a notice and exit 0 without
+      # running the monitor, so the last good committed data is left untouched. (The
+      # no-key path in run_monitor.py would write a no_api_key snapshot and clobber
+      # good data, so we guard here instead of running it.)
+      - name: Check for API key
+        id: key
+        env:
+          SERPAPI_API_KEY: ${{ secrets.SERPAPI_API_KEY }}
+        run: |
+          if [ -z "${SERPAPI_API_KEY}" ]; then
+            echo "::notice::SERPAPI_API_KEY secret is not set; skipping the live refresh and keeping the last good data."
+            echo "has_key=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_key=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      # Quota guard: print the projected search count for this run before any live
+      # call. (The live run below also enforces the monthly cap and exits non-zero
+      # if it would be exceeded; this step surfaces the projection in the log.)
+      - name: Quota dry run
+        if: steps.key.outputs.has_key == 'true'
+        run: python flight-monitor/run_monitor.py --dry-run
+
+      # One live refresh. run_monitor.py enforces the 100/month quota cap itself and
+      # exits 3 if this run would exceed it; we treat that as a SKIP (print the
+      # reason, no key details, leave data in place) rather than a red failure.
+      - name: Refresh fares
+        if: steps.key.outputs.has_key == 'true'
+        env:
+          SERPAPI_API_KEY: ${{ secrets.SERPAPI_API_KEY }}
+        run: |
+          set +e
+          python flight-monitor/run_monitor.py
+          code=$?
+          set -e
+          if [ "$code" -eq 3 ]; then
+            echo "::notice::Monthly search quota would be exceeded; skipping this live run and keeping the last good data."
+            exit 0
+          fi
+          exit "$code"
+
+      # Commit ONLY the two data files, and ONLY when they actually changed. [skip ci]
+      # keeps the commit from triggering other CI; there is no push trigger here anyway.
+      - name: Commit refreshed snapshot
+        if: steps.key.outputs.has_key == 'true'
+        run: |
+          git config user.name "flight-monitor-bot"
+          git config user.email "flight-monitor-bot@users.noreply.github.com"
+          git add flight-monitor/data/latest.json flight-monitor/data/latest.js
+          if git diff --cached --quiet; then
+            echo "No fare data changes to commit."
+          else
+            git commit -m "chore(flight-monitor): weekly fare refresh [skip ci]"
+            git push
+          fi

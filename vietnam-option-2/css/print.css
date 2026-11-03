@@ -1,0 +1,58 @@
+/* Print stylesheet: plain black on white, all itinerary days expanded. */
+@media print {
+  :root, [data-theme="dark"] { color-scheme: light; }
+  html, body { background: #fff !important; color: #000 !important; }
+  .site-header, .nav, .skip-link, .accordion-tools, .hero-dots, .hero-cta, .confetti,
+  .drawer, .drawer-backdrop, .heart-btn, .menu-toggle, .tool-btn, .filter-bar, .btn,
+  .hero-slides, .hero-scrim, button { display: none !important; }
+  .hero { min-height: 0 !important; background: none !important; color: #000 !important; padding: 12pt 0 !important; }
+  .hero-inner, .hero-title, .hero-sub, .eyebrow, .hero-intro, .countdown { color: #000 !important; text-shadow: none !important; }
+  .section, .section-alt, .theme-night { background: #fff !important; color: #000 !important; padding: 12pt 0 !important; }
+  .reveal { opacity: 1 !important; transform: none !important; }
+  * { box-shadow: none !important; text-shadow: none !important; backdrop-filter: none !important; animation: none !important; transition: none !important; }
+  .card, .day, .birthday-feature, .featured-card { background: #fff !important; color: #000 !important; border: 1px solid #000 !important; }
+  .day-panel, .day-panel[hidden] { display: block !important; }
+  .day, .card, .featured-card { break-inside: avoid; }
+  .day-head { color: #000 !important; background: #fff !important; }
+  .day-chevron { display: none !important; }
+  a { color: #000 !important; text-decoration: underline; }
+  img { max-width: 100% !important; max-height: 180pt; object-fit: cover; }
+  .badge { border: 1px solid #000 !important; background: #fff !important; color: #000 !important; }
+}
+
+@media print { .map-canvas, .budget-calc .btn { display: none !important; } .budget-input { border: 0 !important; } }
+
+/* Day-cell scroller prints as wrapped rows so every day is on paper and nothing
+   is lost. Scoped to the day scroller only. */
+@media print {
+  .day-scroller-track {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    overflow: visible !important;
+    scroll-snap-type: none !important;
+    -webkit-mask-image: none !important;
+    mask-image: none !important;
+    gap: 8pt !important;
+  }
+  .day-scroller-track .day { width: 46% !important; flex: 0 0 46% !important; }
+  .day-scroll-btn { display: none !important; }
+}
+
+/* Flight Monitor prints as a plain table. */
+@media print {
+  #flights { break-inside: avoid; }
+  #flights .fm-link { color: #000 !important; }
+}
+
+/* FEAT-003: Travel Options + Trains print block (mirrors #flights: plain black on
+   white, tables un-scrolled and shown in full, links in black). */
+@media print {
+  #travelOptions, #trains { break-inside: avoid; background: #fff !important; color: #000 !important; }
+  #travelOptions a, #trains a { color: #000 !important; text-decoration: underline; }
+  #trains .train-card, #trains .route-box, #trains .train-class { background: #fff !important; color: #000 !important; border: 1px solid #000 !important; break-inside: avoid; }
+  #trains .table-scroll { overflow: visible !important; border: 0 !important; }
+  #trains .compare-table { min-width: 0 !important; width: 100% !important; }
+  #trains .compare-table th, #trains .compare-table td { border-bottom: 1px solid #000 !important; }
+  #travelOptions .badge, #trains .badge { border: 1px solid #000 !important; background: #fff !important; color: #000 !important; }
+  .travel-options-mixed { color: #000 !important; }
+}

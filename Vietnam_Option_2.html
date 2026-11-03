@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VIETNAM OPTION 2 — KEY'S 40TH BIRTHDAY EXPERIENCE</title>
+<meta name="description" content="A proposed luxury itinerary for Key's 40th birthday: Da Nang and Ho Chi Minh City, November 21–29, 2027. All plans are proposals.">
+<meta name="color-scheme" content="light dark">
+<script>
+(function () {
+  document.documentElement.classList.add('js');
+  try {
+    var t = localStorage.getItem('vo2_theme');
+    if (t !== 'light' && t !== 'dark') {
+      t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    document.documentElement.setAttribute('data-theme', t);
+  } catch (e) { /* storage unavailable: keep default theme */ }
+})();
+</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230b3d2e'/%3E%3Ctext x='16' y='21' font-size='13' text-anchor='middle' fill='%23d4b46a' font-family='Georgia,serif'%3EVO2%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="vietnam-option-2/css/styles.css">
+<link rel="stylesheet" href="flight-monitor/ui/flight-monitor.css">
+<link rel="stylesheet" href="vietnam-option-2/css/print.css" media="print">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to main content</a>
+
+<header class="site-header" id="top">
+  <nav class="nav glass" aria-label="Main navigation">
+    <a class="brand" href="#hero" aria-label="Vietnam Option 2, back to top">
+      <span class="brand-mark" aria-hidden="true">VO2</span>
+      <span class="brand-text">Vietnam Option 2</span>
+    </a>
+    <button class="menu-toggle" id="menuToggle" type="button" aria-expanded="false" aria-controls="navMenu">
+      <span class="menu-bars" aria-hidden="true"></span>
+      <span class="sr-only">Menu</span>
+    </button>
+    <ul class="nav-links" id="navMenu">
+      <li><a href="#travelOptions">Travel Options</a></li>
+      <li><a href="#flights">Flights</a></li>
+      <li><a href="#trains">Trains</a></li>
+<li><a href="#itinerary">Itinerary</a></li>
+      <li><a href="#hotels">Hotels</a></li>
+      <li><a href="#dining">Dining</a></li>
+      <li><a href="#nightlife">Nightlife</a></li>
+      <li><a href="#cafes">Cafés</a></li>
+      <li><a href="#shopping">Shopping</a></li>
+      <li><a href="#wellness">Wellness</a></li>
+      <li><a href="#budget">Budget</a></li>
+      <li><a href="#map">Map</a></li>
+      <li><a href="#verification">Verification</a></li>
+      <li><a href="#credits">Credits</a></li>
+      <li><a class="original-link" href="vietnam_itinerary_site.html">Original option</a></li>
+    </ul>
+    <div class="nav-tools">
+      <button class="tool-btn" id="wishlistBtn" type="button" aria-haspopup="dialog" aria-controls="wishlistDrawer" aria-expanded="false">
+        <span aria-hidden="true">&#9825;</span><span class="tool-label">Wishlist</span>
+        <span class="count-pill" id="wishlistCount" aria-hidden="true">0</span>
+        <span class="sr-only" id="wishlistCountSr">0 saved items</span>
+      </button>
+      <button class="tool-btn" id="themeToggle" type="button" aria-pressed="false">
+        <span aria-hidden="true" id="themeIcon">&#9790;</span><span class="tool-label" id="themeLabel">Dark</span>
+      </button>
+      <button class="tool-btn" id="printBtn" type="button">
+        <span aria-hidden="true">&#9113;</span><span class="tool-label">Print</span>
+      </button>
+      <button class="tool-btn" id="copyTextBtn" type="button" aria-label="Copy the Travel Options summary as plain text">
+        <span aria-hidden="true">&#128203;</span><span class="tool-label">Copy as text</span>
+      </button>
+    </div>
+  </nav>
+</header>
+
+<main id="main" tabindex="-1">
+
+  <div class="itinerary-switch" role="navigation" aria-label="Switch itinerary">
+    <div class="itinerary-switch-inner" role="group" aria-label="Choose itinerary">
+      <a class="switch-seg" id="switchOriginal" href="vietnam_itinerary_site.html" aria-label="View the original itinerary">Original</a>
+      <a class="switch-seg is-active" id="switchOption2" href="Vietnam_Option_2.html" aria-current="page" aria-label="Viewing Option 2 itinerary">Option 2</a>
+    </div>
+  </div>
+
+  <section id="hero" class="hero" aria-labelledby="heroTitle">
+    <div class="hero-slides" id="heroSlides" aria-hidden="true"></div>
+    <div class="hero-scrim" aria-hidden="true"></div>
+    <div class="hero-inner">
+      <p class="eyebrow">Proposed itinerary &middot; November 21–29, 2027</p>
+      <h1 id="heroTitle" class="hero-title">KEY'S FABULOUS 40TH: <span>VIETNAM OPTION 2</span></h1>
+      <p class="hero-sub">Two Cities. Nine Days. One Unforgettable Birthday.</p>
+      <p class="hero-intro" id="heroIntro" aria-live="off">Da Nang's luxury coastline</p>
+      <div class="hero-dots" id="heroDots" role="group" aria-label="Hero scene"></div>
+      <div class="countdown" id="countdown" role="timer" aria-label="Countdown to November 23, 2027">
+        <p class="countdown-label">Countdown to the birthday, November 23, 2027</p>
+        <div class="countdown-grid" id="countdownGrid">
+          <div><span id="cdDays">--</span><small>days</small></div>
+          <div><span id="cdHours">--</span><small>hours</small></div>
+          <div><span id="cdMins">--</span><small>minutes</small></div>
+          <div><span id="cdSecs">--</span><small>seconds</small></div>
+        </div>
+        <p class="countdown-msg" id="countdownMsg" hidden></p>
+      </div>
+      <div class="hero-cta">
+        <a class="btn btn-gold" href="#itinerary">Explore the itinerary</a>
+        <a class="btn btn-ghost" href="vietnam_itinerary_site.html">View the original option</a>
+      </div>
+      <p class="hero-note">Everything here is a proposal. International flight schedules may require adjusting the first or final day.</p>
+    </div>
+  </section>
+
+  <section id="travelOptions" class="section reveal" aria-labelledby="travelOptionsTitle">
+    <div class="container">
+      <p class="eyebrow">Getting there and getting around</p>
+      <h2 id="travelOptionsTitle">Travel Options</h2>
+      <div class="section-body" id="travelOptionsBody"></div>
+    </div>
+  </section>
+
+  <section id="flights" class="section reveal" aria-labelledby="flightsTitle">
+    <div class="container">
+      <p class="eyebrow">St. Louis to Da Nang, home from Ho Chi Minh City</p>
+      <h2 id="flightsTitle">Flight Monitor</h2>
+      <p class="lead">Lowest round-trip fares per person, checked daily. Fares the data source did not return are marked not verified, never estimated.</p>
+      <div data-flight-monitor data-itinerary="option2" data-origin="STL" data-arrive="DAD" data-depart="SGN" data-travelers-global="VO2_DATA.budgetDefaults.travellers"></div>
+    </div>
+  </section>
+
+  <section id="trains" class="section section-alt reveal" aria-labelledby="trainsTitle">
+    <div class="container">
+      <p class="eyebrow">Part 3: rail versus the domestic flight it could replace</p>
+      <h2 id="trainsTitle">Trains</h2>
+      <div class="section-body" id="trainsBody"></div>
+    </div>
+  </section>
+
+  <section id="itinerary" class="section reveal" aria-labelledby="itineraryTitle">
+    <div class="container">
+      <p class="eyebrow">Nine days, eight nights</p>
+      <h2 id="itineraryTitle">Interactive Itinerary</h2>
+      <p class="lead">Da Nang, November 21–24, then Ho Chi Minh City, November 24–29. Open any day for the full plan. November 21–29 covers nine calendar days and eight nights, and the first or last day may shift once international flights are set.</p>
+
+      <ul class="legend" aria-label="Status legend">
+        <li><span class="badge badge-proposed">Proposed</span> A plan for you to review; nothing is booked yet</li>
+        <li><span class="badge badge-confirmed">Confirmed</span> Booked and verified (none yet)</li>
+      </ul>
+
+      <div id="birthdayFeature" class="birthday-feature" aria-live="polite"></div>
+
+      <div class="accordion-tools">
+        <button class="btn btn-outline" type="button" id="expandAll">Expand all days</button>
+        <button class="btn btn-outline" type="button" id="collapseAll">Collapse all days</button>
+      </div>
+      <div id="itineraryList" class="accordion"></div>
+    </div>
+  </section>
+
+  <section id="hotels" class="section reveal" aria-labelledby="hotelsTitle">
+    <div class="container">
+      <p class="eyebrow">Target $170 USD per room per night (Da Nang beachfront may be shared)</p>
+      <h2 id="hotelsTitle">Luxury Hotel Comparison</h2>
+      <div class="section-body" id="hotelsBody"></div>
+    </div>
+  </section>
+
+  <section id="dining" class="section section-alt reveal" aria-labelledby="diningTitle">
+    <div class="container">
+      <p class="eyebrow">Birthday and Michelin dining</p>
+      <h2 id="diningTitle">Michelin-Starred Dining and Birthday Restaurants</h2>
+      <div class="section-body" id="diningBody"></div>
+    </div>
+  </section>
+
+  <section id="nightlife" class="section theme-night reveal" aria-labelledby="nightlifeTitle">
+    <div class="container">
+      <p class="eyebrow">R&amp;B, hip-hop and Afrobeats</p>
+      <h2 id="nightlifeTitle">Nightlife</h2>
+      <div class="section-body" id="nightlifeBody"></div>
+    </div>
+  </section>
+
+  <section id="cafes" class="section reveal" aria-labelledby="cafesTitle">
+    <div class="container">
+      <p class="eyebrow">Coffee in both cities</p>
+      <h2 id="cafesTitle">Beautiful Coffee Shops</h2>
+      <div class="section-body" id="cafesBody"></div>
+    </div>
+  </section>
+
+  <section id="shopping" class="section section-alt reveal" aria-labelledby="shoppingTitle">
+    <div class="container">
+      <p class="eyebrow">Malls, markets and boutiques</p>
+      <h2 id="shoppingTitle">Shopping</h2>
+      <div class="section-body" id="shoppingBody"></div>
+    </div>
+  </section>
+
+  <section id="wellness" class="section reveal" aria-labelledby="wellnessTitle">
+    <div class="container">
+      <p class="eyebrow">Medical and beauty days</p>
+      <h2 id="wellnessTitle">Wellness, Medical and Beauty</h2>
+      <div class="section-body" id="wellnessBody"></div>
+    </div>
+  </section>
+
+  <section id="budget" class="section section-alt reveal" aria-labelledby="budgetTitle">
+    <div class="container">
+      <p class="eyebrow">Planning estimates only</p>
+      <h2 id="budgetTitle">Budget Planner</h2>
+      <div class="section-body" id="budgetBody"></div>
+    </div>
+  </section>
+
+  <section id="map" class="section reveal" aria-labelledby="mapTitle">
+    <div class="container">
+      <p class="eyebrow">Hotels, dining, nightlife and cafés</p>
+      <h2 id="mapTitle">Map</h2>
+      <div class="section-body" id="mapBody"></div>
+    </div>
+  </section>
+
+  <section id="verification" class="section section-alt reveal" aria-labelledby="verificationTitle">
+    <div class="container">
+      <p class="eyebrow">How to read this site</p>
+      <h2 id="verificationTitle">Verification and Status Labels</h2>
+      <div class="section-body" id="verificationBody">
+        <p class="lead">Facts on this site carry a status label. Figures from a dated guide or listing are shown as <strong>Estimated</strong>, and plans are shown as <strong>Proposed</strong>. Information is as of 2 November 2026; rates and availability for November 2027 are confirmed at booking. No prices, availability, ratings or events should be treated as booked or guaranteed.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="credits" class="section reveal" aria-labelledby="creditsTitle">
+    <div class="container">
+      <p class="eyebrow">Image attribution</p>
+      <h2 id="creditsTitle">Photo Credits</h2>
+      <div class="section-body" id="creditsBody"></div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-grid">
+    <div>
+      <p class="footer-title">VIETNAM OPTION 2 — KEY'S 40TH BIRTHDAY EXPERIENCE</p>
+      <p>Da Nang and Ho Chi Minh City &middot; November 21–29, 2027. A proposed plan, not a booking.</p>
+    </div>
+    <div>
+      <p><a class="footer-link" href="vietnam_itinerary_site.html">Original Vietnam itinerary (Option 1)</a></p>
+      <p><a class="footer-link" href="#top">Back to top</a></p>
+    </div>
+  </div>
+</footer>
+
+<canvas id="confetti" class="confetti" aria-hidden="true"></canvas>
+
+<div class="drawer-backdrop" id="drawerBackdrop" hidden></div>
+<aside class="drawer" id="wishlistDrawer" role="dialog" aria-modal="true" aria-labelledby="wishlistTitle" hidden>
+  <div class="drawer-head">
+    <h2 id="wishlistTitle">Your wishlist</h2>
+    <button class="icon-btn" id="wishlistClose" type="button" aria-label="Close wishlist">&times;</button>
+  </div>
+  <p class="drawer-note">Saved on this device only.</p>
+  <ul class="wish-list" id="wishlistList"></ul>
+  <p class="wish-empty" id="wishlistEmpty">Nothing saved yet. Use the heart on any card to add it.</p>
+  <div class="drawer-foot">
+    <button class="btn btn-outline" id="wishlistClear" type="button">Clear all</button>
+  </div>
+</aside>
+
+<noscript><p class="noscript">This site needs JavaScript for the itinerary and interactive features.</p></noscript>
+
+<script src="flight-monitor/data/latest.js"></script>
+<script src="vietnam-option-2/js/data/itinerary.js"></script>
+<script src="vietnam-option-2/js/data/hotels.js"></script>
+<script src="vietnam-option-2/js/data/dining.js"></script>
+<script src="vietnam-option-2/js/data/nightlife.js"></script>
+<script src="vietnam-option-2/js/data/cafes.js"></script>
+<script src="vietnam-option-2/js/data/shopping.js"></script>
+<script src="vietnam-option-2/js/data/medical.js"></script>
+<script src="vietnam-option-2/js/data/mappoints.js"></script>
+<script src="vietnam-option-2/js/data/budget.js"></script>
+<script src="vietnam-option-2/js/data/credits.js"></script>
+<script src="vietnam-option-2/js/data/trains.js"></script>
+<script src="vietnam-option-2/js/app.js"></script>
+<script src="vietnam-option-2/js/sections.js"></script>
+<script src="vietnam-option-2/js/budget.js"></script>
+<script src="vietnam-option-2/js/map.js"></script>
+<script src="vietnam-option-2/js/verify.js"></script>
+<script src="flight-monitor/ui/flight-monitor.js"></script>
+</body>
+</html>

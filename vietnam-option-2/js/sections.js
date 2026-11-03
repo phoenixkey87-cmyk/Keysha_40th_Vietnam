@@ -795,13 +795,13 @@
 
   /* ================= FLIGHTS HELPER ================= */
   (function flights() {
-    var host = document.querySelector('#itinerary .container');
+    var host = document.querySelector('#flights .container');
     if (!host) return;
     var base = 'https://www.google.com/travel/flights?q=';
     var legs = list(D.flightSearches);
     if (!legs.length) return;
-    var box = el('div', { cls: 'route-box flights-box', attrs: { role: 'group', 'aria-labelledby': 'flightsTitle' } }, [
-      el('h3', { text: 'Flight search helper', attrs: { id: 'flightsTitle' } }),
+    var box = el('div', { cls: 'route-box flights-box', attrs: { role: 'group', 'aria-labelledby': 'flightsHelperTitle' } }, [
+      el('h3', { text: 'Flight search helper', attrs: { id: 'flightsHelperTitle' } }),
       el('p', { cls: 'fine-print', text: 'These are Google Flights search links, not bookings. Schedules, fares and availability for November 2027 must be checked on Google Flights and with the airline. Flights are not booked.' })
     ]);
     var row = el('div', { cls: 'link-row' });

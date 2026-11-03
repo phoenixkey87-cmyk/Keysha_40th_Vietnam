@@ -138,7 +138,6 @@ window.VO2_DATA.hotels = [
     review: { score: null, scale: null, basis: "Named in Tripadvisor Travellers' Choice Best of the Best 2026 (top 9 hotels in Vietnam), as announced by the hotel group", source: "Tripadvisor (via the hotel group's announcement)", sourceUrl: "https://lasiestahotels.com/saigon/tripadvisor-travelers-choice-awards-best-of-the-best-2026.html", date: "2026-11-02", status: "verified" },
     officialUrl: "https://lasiestapremiumsaigon.com/", bookingUrl: null,
     bookingLinks: [
-      { kind: "book", via: "ota", otaName: "Booking.com", url: "https://www.booking.com/hotel/vn/la-siesta-premium-sai-gon.html", check: "unverified-by-bot", checkedDate: "2026-11-02", note: "Booking.com blocks automated checks. Search results show this page is La Siesta Premium Sai Gon, Ho Chi Minh City." },
       { kind: "inquire", via: "official", url: "https://lasiestapremiumsaigon.com/contact-us/", check: "fetched", checkedDate: "2026-11-02" }
     ]
   },
@@ -162,7 +161,6 @@ window.VO2_DATA.hotels = [
     review: null,
     officialUrl: "https://silverlandhotels.com/", bookingUrl: null,
     bookingLinks: [
-      { kind: "book", via: "ota", otaName: "Booking.com", url: "https://www.booking.com/hotel/vn/silverland-benthanh.html", check: "unverified-by-bot", checkedDate: "2026-11-02", note: "Booking.com blocks automated checks. Search results show this page is Silverland Ben Thanh, 1 minute from Ben Thanh Market. The group's own booking engine searches several Silverland hotels, so it is not linked." },
       { kind: "inquire", via: "official", url: "https://silverlandhotels.com/contact-us", check: "fetched", checkedDate: "2026-11-02", note: "Silverland group contact page; name the Ben Thanh hotel in the message." }
     ],
     roomNote: "Official room list shows some categories (for example Spring Field) have no window. Choose a room with daylight."
@@ -188,7 +186,6 @@ window.VO2_DATA.hotels = [
     officialUrl: "https://www.libertycentralsaigoncitypoint.com", bookingUrl: null,
     bookingLinks: [
       { kind: "book", via: "official", url: "https://secure.odysseahotels.com/Booking-Engine/c98fb2a8-f837-4957-acca-4d61da20e3f3/", check: "fetched", checkedDate: "2026-11-02", note: "Booking engine linked from the hotel's official site. It is a script-driven page, so the property name was not read by the checker. No date parameters are known to work, so none are added." },
-      { kind: "book", via: "ota", otaName: "Booking.com", url: "https://www.booking.com/hotel/vn/liberty-central-saigon-city-point.html", check: "unverified-by-bot", checkedDate: "2026-11-02", note: "Booking.com blocks automated checks. Search results show this page is Liberty Central Saigon Citypoint." },
       { kind: "inquire", via: "official", url: "https://www.libertycentralsaigoncitypoint.com/en/contact-us/", check: "fetched", checkedDate: "2026-11-02" }
     ]
   }

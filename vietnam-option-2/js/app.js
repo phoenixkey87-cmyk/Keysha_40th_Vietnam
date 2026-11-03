@@ -324,8 +324,10 @@
       list.scrollBy({ left: n * step(), behavior: behavior() });
     }
     function updateButtons() {
-      var maxScroll = list.scrollWidth - list.clientWidth - 1;
-      prev.disabled = list.scrollLeft <= 0;
+      // A small tolerance: the scroll mask can leave scrollLeft a pixel or two off
+      // zero at rest, so treat near-zero as the left end.
+      var maxScroll = list.scrollWidth - list.clientWidth - 2;
+      prev.disabled = list.scrollLeft <= 2;
       next.disabled = list.scrollLeft >= maxScroll;
     }
     prev.addEventListener('click', function () { scrollByCells(-1); });

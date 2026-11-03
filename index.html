@@ -17,11 +17,13 @@
             --light-gray: #FAFAFA;
             --border: #E8E0F0;
         }
+        html, body { overflow-x: clip; }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             color: var(--dark);
             line-height: 1.65;
             background: var(--white);
+            max-width: 100%;
         }
         body::after {
             content: '';
@@ -131,6 +133,10 @@
             margin: 16px 0;
             font-size: 0.88rem;
         }
+        /* Wide multi-column tables (compare/train/snapshot) scroll inside their own
+           box on narrow screens instead of forcing horizontal PAGE overflow. Markup
+           is unchanged; the table simply becomes a horizontally scrollable block. */
+        .container > table { display: block; overflow-x: auto; max-width: 100%; }
         thead th {
             background: var(--deep-purple);
             color: var(--white);
@@ -1105,8 +1111,10 @@
         }
         function scrollByCells(n) { track.scrollBy({ left: n * step(), behavior: behavior() }); }
         function updateButtons() {
-            var maxScroll = track.scrollWidth - track.clientWidth - 1;
-            if (prev) prev.disabled = track.scrollLeft <= 0;
+            /* A small tolerance: the scroll mask can leave scrollLeft a pixel or two
+               off zero at rest, so treat near-zero as the left end. */
+            var maxScroll = track.scrollWidth - track.clientWidth - 2;
+            if (prev) prev.disabled = track.scrollLeft <= 2;
             if (next) next.disabled = track.scrollLeft >= maxScroll;
         }
         if (prev) prev.addEventListener('click', function () { scrollByCells(-1); });

@@ -71,6 +71,26 @@
     return !!(s && typeof s === 'object' && s.schema_version === 1 && s.itineraries && typeof s.itineraries === 'object');
   }
 
+  /* True when at least one row in THIS itinerary carries a real, verified fare.
+   * Drives the banner split between "fares are live" and "checked but nothing
+   * published yet". Never reads a price off a non-"ok" row. */
+  function hasOkRow(rows) {
+    if (!Array.isArray(rows)) return false;
+    for (var i = 0; i < rows.length; i++) {
+      if (rows[i] && rows[i].status === 'ok' && typeof rows[i].price_usd === 'number') return true;
+    }
+    return false;
+  }
+
+  /* Error type for the failed-check banner, using only backend-sanitised fields.
+   * Never surfaces key, URL, or raw message details. */
+  function errorType(snap) {
+    var e = snap && snap.last_error;
+    if (e && typeof e === 'object' && typeof e.type === 'string' && e.type) return e.type;
+    if (typeof e === 'string' && e) return e;
+    return 'unknown error';
+  }
+
   /* Rows used when no usable snapshot exists: always "not verified". */
   function fallbackRows(mount) {
     var origin = mount.getAttribute('data-origin') || 'STL';
@@ -455,11 +475,14 @@
     mount.textContent = '';
     mount.classList.add('fm');
 
-    // Meta: last checked + data source
+    // Meta: last checked + data source. Show the timestamp whenever the snapshot
+    // carries one (live OR error "last good data"); only truly-unchecked snapshots
+    // (e.g. no_api_key with last_checked null) say "Not checked yet".
     var meta = el('p', 'fm-meta');
-    var last = live && snap.last_checked ? fmtTime(snap.last_checked) : 'Not checked yet';
+    var hasChecked = !!(snap && snap.last_checked);
+    var last = hasChecked ? fmtTime(snap.last_checked) : 'Not checked yet';
     meta.appendChild(el('span', null, 'Last checked: '));
-    if (live && snap.last_checked) {
+    if (hasChecked) {
       var tm = el('time', null, last);
       tm.setAttribute('datetime', snap.last_checked);
       meta.appendChild(tm);
@@ -485,12 +508,23 @@
 
     var status = el('p', 'fm-status');
     status.setAttribute('aria-live', 'polite');
-    if (mode === 'live') {
-      status.textContent = 'Fares below were returned by the data source on the date shown. Anything the source did not return is marked not verified.';
+    // When the snapshot carries a timestamp, weave it into the sentence; otherwise
+    // say so plainly. The meta line above always also shows it and the source link.
+    var when = snap && snap.last_checked ? fmtTime(snap.last_checked) : null;
+    var checkedPhrase = when ? ('Last checked ' + when + '.') : 'Not checked yet.';
+    if (mode === 'error' || (snap && snap.last_error)) {
+      // API error: show when the check failed and a sanitised error type only.
+      var failWhen = when ? ('Last check failed on ' + when) : 'The last check failed';
+      status.textContent = failWhen + ' (' + errorType(snap) + '). Showing the last good data.';
+    } else if (mode === 'live' && hasOkRow(rows)) {
+      status.textContent = checkedPhrase + ' Fares shown are live from SerpApi Google Flights.';
+    } else if (mode === 'live') {
+      // Checked successfully but no fares published yet (all rows not verified).
+      status.textContent = checkedPhrase + ' Airlines haven\u2019t published fares for Nov 2027 yet, so these routes show \u201cnot verified.\u201d';
     } else if (mode === 'sample') {
       status.textContent = 'This file contains sample data, so no prices are shown. All fares are not verified.';
     } else if (mode === 'no_api_key') {
-      status.textContent = 'Live fare checks are not switched on yet (no API key has been set up), so every fare is not verified. No prices are estimated or invented.';
+      status.textContent = 'Live fare checks aren\u2019t switched on yet. No prices are estimated or invented.';
     } else {
       status.textContent = 'Flight data could not be loaded (the snapshot file is missing, empty, or blocked by the browser), so every fare is not verified. No prices are estimated or invented.';
     }

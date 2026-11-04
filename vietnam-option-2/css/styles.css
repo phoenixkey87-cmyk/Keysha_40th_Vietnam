@@ -683,26 +683,9 @@ main:focus { outline: none; }
   --fm-badge-bg: rgba(201, 162, 75, 0.2);
 }
 
-/* ===== FEAT-003: Travel Options + Trains (Part 3, OD4) ===== */
-.badge-warn { background: #fde3c4; color: #7a3d00; border-color: #e3a062; }
-.badge-note { background: #e2eef7; color: #1f4e6b; border-color: #9ec4de; }
-[data-theme="dark"] .badge-warn { background: rgba(227, 160, 98, 0.22); color: #ffcf9a; border-color: #e3a062; }
-[data-theme="dark"] .badge-note { background: rgba(158, 196, 222, 0.18); color: #bfe0f5; border-color: #9ec4de; }
-
+/* ===== FEAT-003: Travel Options (Part 1 summary) ===== */
 .travel-options-summary { max-width: 80ch; }
 .travel-options-mixed { color: var(--gold-deep); }
 [data-theme="dark"] .travel-options-mixed { color: var(--gold); }
 .travel-options-links { margin: 0.4rem 0; }
 .travel-options-links .act-link { margin-right: 0.3rem; }
-
-.train-grid { display: grid; gap: 1.2rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); }
-.train-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); }
-.train-card-offroute { border-style: dashed; }
-.train-card .card-body { padding: 1.1rem 1.2rem; }
-.train-class { margin: 0.6rem 0; padding: 0.6rem 0.8rem; border-left: 3px solid var(--gold); background: var(--bg-alt); border-radius: 0 var(--radius) var(--radius) 0; }
-.train-class-label { margin: 0 0 0.2rem; }
-.train-class-price { margin: 0 0 0.2rem; }
-.train-compare .train-compare-fly th, .train-compare .train-compare-fly td { color: var(--muted); border-bottom: 2px solid var(--line); }
-.train-compare .train-compare-train td, .train-compare .train-compare-train th { border-bottom: 1px dotted var(--line); }
-.train-trip { margin-top: 1rem; }
-.train-trip h4 { margin: 0 0 0.4rem; }

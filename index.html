@@ -133,7 +133,7 @@
             margin: 16px 0;
             font-size: 0.88rem;
         }
-        /* Wide multi-column tables (compare/train/snapshot) scroll inside their own
+        /* Wide multi-column tables (compare/snapshot) scroll inside their own
            box on narrow screens instead of forcing horizontal PAGE overflow. Markup
            is unchanged; the table simply becomes a horizontally scrollable block. */
         .container > table { display: block; overflow-x: auto; max-width: 100%; }
@@ -442,7 +442,7 @@
     <h2>Travel Options</h2>
     <p>
         A quick summary for Itinerary A (arrive Hanoi, depart Ho Chi Minh City). The full interactive
-        version — live flight monitor, departure-timing view, and side-by-side train comparison — lives on
+        version — live flight monitor and departure-timing view — lives on
         <a href="Vietnam_Option_2.html#travelOptions" style="color:var(--medium-purple)">Option 2</a>.
     </p>
     <div class="callout">
@@ -453,61 +453,8 @@
         <strong>not verified</strong> — a per-person headline shows only when live fares return for both
         searches, and group totals wait on a confirmed traveler count.
     </div>
-    <p>
-        <strong style="color:var(--medium-purple)">Fly vs. train takeaway:</strong> fly the short domestic
-        hops to save a travel day; take the train only for the scenery. A train is only ever compared with
-        the domestic flight it could replace — it never replaces the transpacific flight. The Hanoi → Da Nang
-        run is the one worth doing by rail for the Hue–Da Nang Hai Van Pass stretch; the Da Nang → Ho Chi Minh
-        City rail run is long (about 16 hours), so most groups fly it. No November 2027 rail fare is published
-        yet, so every price below is <strong>not verified</strong> with a link to check.
-    </p>
-    <h3>Itinerary A — train options (compared only against domestic flights)</h3>
-    <table>
-        <thead>
-            <tr><th>Route / segment</th><th>Class</th><th>Price per person</th><th>Journey time</th><th>Source / checked</th></tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td><strong>Hanoi → Da Nang</strong><br>primary; includes the scenic Hue–Da Nang (Hai Van Pass) stretch</td>
-                <td>Soft sleeper berth (4-/6-berth; tourist cabins)</td>
-                <td>not verified — <a href="https://dsvn.vn/" target="_blank" style="color:var(--medium-purple)">check Vietnam Railways</a></td>
-                <td>~15–18h overnight</td>
-                <td><a href="https://north-vietnam.com/hanoi-to-da-nang-train-bus-schedule-timetable-tickets/" target="_blank" style="color:var(--medium-purple)">source</a> · checked 2026-11-02</td>
-            </tr>
-            <tr>
-                <td><strong>Hanoi → Da Nang</strong><br>seated premium</td>
-                <td>Soft seat (air-conditioned)</td>
-                <td>not verified — <a href="https://12go.asia/" target="_blank" style="color:var(--medium-purple)">check 12Go</a></td>
-                <td>~15–18h</td>
-                <td><a href="https://sapanomad.com/hanoi-hoi-an-train/" target="_blank" style="color:var(--medium-purple)">source</a> · checked 2026-11-02</td>
-            </tr>
-            <tr>
-                <td><strong>Da Nang → Ho Chi Minh City</strong><br>⚠️ long rail time (~16h); listed for completeness</td>
-                <td>Soft sleeper berth (4-berth A/C)</td>
-                <td>not verified — <a href="https://dsvn.vn/" target="_blank" style="color:var(--medium-purple)">check Vietnam Railways</a></td>
-                <td>~16–21h (fastest near 17h)</td>
-                <td><a href="https://vietnamtraintickets.info/da-nang-to-sai-gon-by-train/" target="_blank" style="color:var(--medium-purple)">source</a> · checked 2026-11-02</td>
-            </tr>
-            <tr>
-                <td><strong>Da Nang → Ho Chi Minh City</strong><br>⚠️ long rail time (~16h); seated premium</td>
-                <td>Soft seat (air-conditioned)</td>
-                <td>not verified — <a href="https://www.baolau.com/" target="_blank" style="color:var(--medium-purple)">check Baolau</a></td>
-                <td>~16–21h</td>
-                <td><a href="https://vietnamtraintickets.info/da-nang-to-sai-gon-by-train/" target="_blank" style="color:var(--medium-purple)">source</a> · checked 2026-11-02</td>
-            </tr>
-            <tr>
-                <td><strong>Hanoi → Lao Cai (Sapa)</strong><br>optional off-route add-on; replaces no flight</td>
-                <td>Sleeper cabin (shared 4-berth to private VIP)</td>
-                <td>not verified — <a href="https://dsvn.vn/" target="_blank" style="color:var(--medium-purple)">check Vietnam Railways</a></td>
-                <td>~9h door to door</td>
-                <td><a href="https://sapanomad.com/transport/train-hanoi-to-sapa/" target="_blank" style="color:var(--medium-purple)">source</a> · checked 2026-11-02</td>
-            </tr>
-        </tbody>
-    </table>
     <p class="wear">
-        Train times, classes, and fares are set by Vietnam Railways (dsvn.vn) and private operators; November
-        2027 schedules and fares are not published yet, so the figures above are dated observations, not quotes
-        for your dates. Confirm everything on the operator or booking site before planning around it.
+        All fares and times are not verified until checked for your November 2027 dates. Nothing is booked.
         <button type="button" id="copyTextBtn" style="margin-left:8px;background:var(--deep-purple);color:var(--white);border:none;border-radius:20px;padding:6px 16px;font-size:0.82rem;font-weight:600;cursor:pointer;">Copy as text</button>
         <span id="copyTextStatus" aria-live="polite" style="margin-left:8px;font-size:0.82rem;color:var(--bronze);"></span>
     </p>
@@ -1023,22 +970,6 @@
         if (sec) {
             var callout = sec.getElementsByClassName('callout')[0];
             if (callout) { lines.push(''); lines.push(clean(callout.textContent)); }
-            var paras = sec.getElementsByTagName('p');
-            for (var p = 0; p < paras.length; p++) {
-                var t = clean(paras[p].textContent).replace(/Copy as text.*$/, '').trim();
-                if (t.indexOf('Fly vs. train takeaway') === 0) { lines.push(''); lines.push(t); }
-            }
-            var rows = sec.getElementsByTagName('tr');
-            lines.push('');
-            lines.push('Train options (Itinerary A):');
-            for (var i = 1; i < rows.length; i++) {
-                var cells = rows[i].getElementsByTagName('td');
-                if (cells.length >= 5) {
-                    lines.push('- ' + clean(cells[0].textContent) + ' | ' + clean(cells[1].textContent) +
-                        ' | ' + clean(cells[2].textContent) + ' | ' + clean(cells[3].textContent) +
-                        ' | ' + clean(cells[4].textContent));
-                }
-            }
         }
         lines.push('');
         lines.push('All fares and times are not verified until checked for your November 2027 dates. Nothing is booked.');

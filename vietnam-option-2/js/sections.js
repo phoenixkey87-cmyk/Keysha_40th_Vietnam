@@ -915,210 +915,13 @@
     host.appendChild(box);
   })();
 
-  /* ================= TRAINS (Part 3, OD4) ================= */
-  /* Train comparisons are ONLY against the domestic flight a train could replace; a
-     train never replaces the transpacific leg. Both class rows (sleeper + seated
-     premium) are rendered where they exist. No price is invented: a missing fact shows
-     "not verified" with a link to check. All strings via textContent. */
-  function trainBadges(t) {
-    var row = el('div', { cls: 'badge-row' });
-    row.appendChild(VO2.statusBadge(t.status || 'estimated'));
-    if (t.longRailFlag) row.appendChild(el('span', { cls: 'badge badge-warn train-warn', text: '~16h rail time' }));
-    if (t.offRoute) row.appendChild(el('span', { cls: 'badge badge-note train-offroute', text: 'Off-itinerary \u2013 optional add-on' }));
-    if (t.scenic) row.appendChild(el('span', { cls: 'badge badge-note train-scenic', text: 'Scenic route' }));
-    return row;
-  }
-
-  /* A class row: label + price (a number only when a confirmed fare exists, else
-     "not verified" with a check link) + any note. */
-  function trainClassNode(c) {
-    var wrap = el('div', { cls: 'train-class' });
-    wrap.appendChild(el('p', { cls: 'train-class-label' }, [
-      el('strong', { text: (c.kind === 'sleeper' ? 'Sleeper berth: ' : 'Seated (premium): ') }),
-      document.createTextNode(c.label || '')
-    ]));
-    var priceLine = el('p', { cls: 'train-class-price' });
-    if (typeof c.priceUsd === 'number' && c.priceStatus !== 'not_verified') {
-      priceLine.appendChild(el('strong', { text: 'Fare: ' }));
-      priceLine.appendChild(document.createTextNode(VO2.fmtUSD(c.priceUsd) + ' '));
-      priceLine.appendChild(VO2.statusBadge(c.priceStatus || 'estimated'));
-    } else {
-      priceLine.appendChild(el('strong', { text: 'Fare: ' }));
-      priceLine.appendChild(document.createTextNode('not verified '));
-      if (c.checkLink) priceLine.appendChild(extLink(c.checkLinkLabel || 'Check fares', c.checkLink));
-    }
-    wrap.appendChild(priceLine);
-    if (c.priceNote) wrap.appendChild(el('p', { cls: 'fine-print', text: c.priceNote }));
-    return wrap;
-  }
-
-  function trainCard(t) {
-    var card = el('article', { cls: 'card train-card' + (t.offRoute ? ' train-card-offroute' : ''), attrs: { 'data-id': t.id } });
-    var b = el('div', { cls: 'card-body' });
-    b.appendChild(trainBadges(t));
-    b.appendChild(el('p', { cls: 'card-city', text: (t.fromName || t.from) + ' \u2192 ' + (t.toName || t.to) }));
-    b.appendChild(el('h3', { text: t.operator || 'Train' }));
-    var dl = el('dl', { cls: 'facts' });
-    addRow(dl, 'Journey time', t.durationText, t.durationStatus);
-    addRow(dl, 'Distance', t.distanceText);
-    if (t.scenicStretch) addRow(dl, 'Scenic stretch', t.scenicStretch, 'reported');
-    addRow(dl, 'Comfort', t.comfort);
-    b.appendChild(dl);
-    // Both class rows (sleeper + seated premium) where they exist.
-    list(t.classes).forEach(function (c) { b.appendChild(trainClassNode(c)); });
-    if (t.note) b.appendChild(el('p', { cls: 'fine-print', text: t.note }));
-    var srcRow = el('p', { cls: 'fine-print' });
-    if (t.sourceUrl) {
-      srcRow.appendChild(document.createTextNode('Source (checked ' + (t.checkedDate || '') + '): '));
-      srcRow.appendChild(extLink('rail guide', t.sourceUrl));
-    }
-    if (t.scenicSourceUrl) {
-      srcRow.appendChild(document.createTextNode(' \u00b7 Scenic stretch: '));
-      srcRow.appendChild(extLink('source', t.scenicSourceUrl));
-    }
-    if (srcRow.childNodes.length) b.appendChild(srcRow);
-    card.appendChild(b);
-    return card;
-  }
-
-  /* Look up the Flight Monitor domestic row for a given FROM-TO (e.g. DAD-SGN), or
-     the flightSearches helper link, so the fly side of the comparison pulls from real
-     on-page data where it exists and shows "not verified" otherwise. */
-  function flightSearchFor(fromTo) {
-    var legs = list(D.flightSearches);
-    for (var i = 0; i < legs.length; i++) {
-      if (legs[i].from + '-' + legs[i].to === fromTo) return legs[i];
-    }
-    return null;
-  }
-
-  /* Trains section renderer (Task 5.3) + per-segment comparison (Task 5.4). */
-  function renderTrains(body) {
-    var meta = D.trainsMeta || {};
-    var all = list(D.trains);
-    if (!all.length) { body.appendChild(emptyState('Train details are being updated.')); return; }
-
-    body.appendChild(el('p', { cls: 'lead', text: 'Trains are compared only against the domestic flight a train could replace. A train never replaces the long transpacific flight. Both a sleeper and a seated (premium) option are shown where they exist.' }));
-    if (meta.note) {
-      var notice = el('p', { cls: 'notice', text: meta.note + ' ' });
-      if (meta.noteSourceUrl) notice.appendChild(extLink('Vietnam Railways', meta.noteSourceUrl));
-      body.appendChild(notice);
-    }
-
-    // Cards.
-    var grid = el('div', { cls: 'grid train-grid' });
-    all.forEach(function (t) { grid.appendChild(trainCard(t)); });
-    body.appendChild(grid);
-
-    // Per-segment comparison table: EXCLUDE off-route Sapa add-on (replaces no flight).
-    var replaceable = all.filter(function (t) { return !t.offRoute && t.replacesFlight; });
-    if (replaceable.length) {
-      body.appendChild(el('h3', { text: 'Fly vs train, per segment' }));
-      body.appendChild(el('p', { cls: 'lead', text: 'Only domestic segments a train could replace are shown. The off-itinerary Sapa add-on is excluded because it replaces no flight.' }));
-      var scroll = el('div', { cls: 'table-scroll', attrs: { tabindex: '0', role: 'region', 'aria-label': 'Fly versus train comparison table, scrolls sideways on small screens' } });
-      var table = el('table', { cls: 'compare-table train-compare' });
-      table.appendChild(el('caption', { cls: 'sr-only', text: 'Per-segment comparison of taking the train versus the domestic flight it could replace' }));
-      var thead = el('thead'), hr = el('tr');
-      ['Segment', 'Option', 'Cost', 'Door-to-door time', 'Comfort'].forEach(function (h) {
-        hr.appendChild(el('th', { text: h, attrs: { scope: 'col' } }));
-      });
-      thead.appendChild(hr); table.appendChild(thead);
-      var tb = el('tbody');
-
-      function td(value) {
-        var cell = el('td');
-        if (value === null || value === undefined || value === '') cell.appendChild(dashEl());
-        else if (typeof value === 'string') cell.textContent = value;
-        else cell.appendChild(value);
-        return cell;
-      }
-      function notVerifiedNode(checkLink, label) {
-        var span = el('span', {}, [document.createTextNode('not verified ')]);
-        if (checkLink) span.appendChild(extLink(label || 'check', checkLink));
-        return span;
-      }
-
-      replaceable.forEach(function (t) {
-        var segLabel = (t.from || '') + ' \u2192 ' + (t.to || '');
-        // Train row.
-        var trTrain = el('tr', { cls: 'train-compare-train' });
-        trTrain.appendChild(el('th', { attrs: { scope: 'row' } }, [
-          el('span', { text: segLabel }),
-          t.longRailFlag ? el('span', { cls: 'fine-print', text: '~16h rail time' }) : null
-        ]));
-        trTrain.appendChild(td('Train (' + (t.operator || 'rail') + ')'));
-        // Train cost: cheapest class with a confirmed number, else "not verified" + link.
-        var priced = list(t.classes).filter(function (c) { return typeof c.priceUsd === 'number' && c.priceStatus !== 'not_verified'; });
-        var costNode;
-        if (priced.length) {
-          var lowest = priced.reduce(function (a, c) { return c.priceUsd < a.priceUsd ? c : a; });
-          costNode = el('span', {}, [document.createTextNode('from ' + VO2.fmtUSD(lowest.priceUsd) + ' '), VO2.statusBadge(lowest.priceStatus || 'estimated')]);
-        } else {
-          var firstClass = list(t.classes)[0] || {};
-          costNode = notVerifiedNode(firstClass.checkLink, firstClass.checkLinkLabel || 'check fares');
-        }
-        trTrain.appendChild(td(costNode));
-        trTrain.appendChild(td(t.durationText || notVerifiedNode(t.durationSourceUrl, 'check')));
-        trTrain.appendChild(td(t.comfort || null));
-        tb.appendChild(trTrain);
-
-        // Flight row (the flight the train could replace).
-        var trFly = el('tr', { cls: 'train-compare-fly' });
-        trFly.appendChild(el('th', { attrs: { scope: 'row' } }, [el('span', { cls: 'fine-print', text: 'Flight it replaces' })]));
-        trFly.appendChild(td('Domestic flight (' + t.replacesFlight.replace('-', ' \u2192 ') + ')'));
-        var fs = flightSearchFor(t.replacesFlight);
-        // Fare is not verified (monitor shows domestic fares only when live+ok; no live data here).
-        var flyCost = el('span', {}, [document.createTextNode('not verified ')]);
-        if (fs) flyCost.appendChild(extLink('search Google Flights', 'https://www.google.com/travel/flights?q=' + encodeURIComponent('Flights from ' + fs.from + ' to ' + fs.to + ' on ' + fs.date + ' oneway')));
-        trFly.appendChild(td(flyCost));
-        trFly.appendChild(td('About 1\u20131.5 hours in the air, plus airport time.'));
-        trFly.appendChild(td('Fastest option; less scenic than the train.'));
-        tb.appendChild(trFly);
-      });
-      table.appendChild(tb); scroll.appendChild(table); body.appendChild(scroll);
-    }
-
-    // Trip-level "Fly vs Train-for-these-segments" summary for A and B.
-    body.appendChild(el('h3', { text: 'Trip-level: fly vs train for these segments' }));
-    var legsMeta = meta.replaceableLegs || {};
-    [
-      { key: 'A', label: 'Itinerary A (arrives Hanoi)' },
-      { key: 'B', label: 'Itinerary B / Option 2 (arrives Da Nang)' }
-    ].forEach(function (itin) {
-      var legs = list(legsMeta[itin.key]);
-      if (!legs.length) return;
-      var box = el('div', { cls: 'route-box train-trip' });
-      box.appendChild(el('h4', { text: itin.label }));
-      var ul = el('ul', { cls: 'plain-list' });
-      legs.forEach(function (leg) {
-        var text;
-        if (leg.offRoute) {
-          text = leg.from + ' \u2192 ' + leg.to + ': off-itinerary optional add-on (replaces no flight).';
-        } else {
-          text = leg.from + ' \u2192 ' + leg.to + ': train could replace the domestic ' + (leg.replacesFlight ? leg.replacesFlight.replace('-', ' \u2192 ') : 'flight') + '.'
-            + (leg.scenic ? ' Scenic by rail.' : '')
-            + (leg.longRailFlag ? ' Long rail time (~16h) \u2014 the flight is far faster.' : '');
-        }
-        ul.appendChild(el('li', { text: text }));
-      });
-      box.appendChild(ul);
-      box.appendChild(el('p', { cls: 'fine-print', text: 'Takeaway: fly the domestic hop to save a day; take the train only for the scenery. Every fare above is not verified until you check it for your dates. The transpacific flight is never a train option.' }));
-      body.appendChild(box);
-    });
-  }
-
-  (function trains() {
-    var body = document.getElementById('trainsBody');
-    if (!body) return;
-    renderTrains(body);
-  })();
 
   /* ================= TRAVEL OPTIONS (Task 7.1, Option 2 half) ================= */
   /* A compact summary near the top of Option 2 that pulls together: the recommended
-     provisional departure date + mixed-cabin per-person headline (or "not verified")
-     + the train takeaway. The full Part 1 timing view and the Flight Monitor table live
-     in the #flights section (rendered by flight-monitor.js); the Part 3 train comparison
-     lives in #trains. This section links to both and never invents a number. */
+     provisional departure date + mixed-cabin per-person headline (or "not verified").
+     The full Part 1 timing view and the Flight Monitor table live in the #flights
+     section (rendered by flight-monitor.js). This section links to it and never
+     invents a number. */
   (function travelOptions() {
     var body = document.getElementById('travelOptionsBody');
     if (!body) return;
@@ -1136,14 +939,11 @@
       document.createTextNode(' (landing in Vietnam on Nov 21, 2027 is fixed; the departure stays provisional until Part 1 schedule data exists). '),
       document.createTextNode('Mixed cabin (business long-haul + economy elsewhere): '),
       el('strong', { cls: 'travel-options-mixed', text: 'not verified' }),
-      document.createTextNode(' \u2014 a per-person headline shows only when live fares return for both searches; it is never a single-ticket quote. '),
-      document.createTextNode('Train takeaway: fly the short domestic hop to save a day; take the train only for the scenery \u2014 a train never replaces the transpacific flight.')
+      document.createTextNode(' \u2014 a per-person headline shows only when live fares return for both searches; it is never a single-ticket quote.')
     ]));
     var links = el('p', { cls: 'travel-options-links' }, [
       document.createTextNode('See the full detail below: '),
-      el('a', { cls: 'act-link', text: 'Flight Monitor and departure timing', attrs: { href: '#flights' } }),
-      document.createTextNode(' \u00b7 '),
-      el('a', { cls: 'act-link', text: 'Train comparison', attrs: { href: '#trains' } })
+      el('a', { cls: 'act-link', text: 'Flight Monitor and departure timing', attrs: { href: '#flights' } })
     ]);
     body.appendChild(links);
     body.appendChild(el('p', { cls: 'fine-print', text: 'Nothing here is booked. All fares and times are not verified until checked for your November 2027 dates.' }));
@@ -1151,8 +951,8 @@
 
   /* ================= COPY AS TEXT (Task 7.3) ================= */
   /* Builds a plain-text summary from values ALREADY on the page (recommended date,
-     mixed-cabin headline or "not verified", train-vs-fly lines) and copies it with
-     navigator.clipboard, falling back to a hidden textarea + execCommand('copy'). */
+     mixed-cabin headline or "not verified") and copies it with navigator.clipboard,
+     falling back to a hidden textarea + execCommand('copy'). */
   (function copyAsText() {
     var btn = document.getElementById('copyTextBtn');
     if (!btn) return;
@@ -1166,15 +966,6 @@
       var lines = ['Vietnam Option 2 \u2013 Travel Options summary'];
       var summary = textOf('#travelOptionsBody .travel-options-summary');
       if (summary) lines.push(summary);
-      // Train trip-level takeaways already rendered on the page.
-      var trips = document.querySelectorAll('#trainsBody .train-trip');
-      for (var i = 0; i < trips.length; i++) {
-        var h = trips[i].querySelector('h4');
-        if (h) lines.push('');
-        if (h) lines.push(h.textContent.trim());
-        var items = trips[i].querySelectorAll('li');
-        for (var j = 0; j < items.length; j++) lines.push('- ' + items[j].textContent.replace(/\s+/g, ' ').trim());
-      }
       lines.push('');
       lines.push('All fares and times are not verified until checked for your November 2027 dates. Nothing is booked.');
       return lines.join('\n');

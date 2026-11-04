@@ -57,15 +57,11 @@
   #flights .fm-link { color: #000 !important; }
 }
 
-/* FEAT-003: Travel Options + Trains print block (mirrors #flights: plain black on
-   white, tables un-scrolled and shown in full, links in black). */
+/* FEAT-003: Travel Options print block (mirrors #flights: plain black on
+   white, links in black). */
 @media print {
-  #travelOptions, #trains { break-inside: avoid; background: #fff !important; color: #000 !important; }
-  #travelOptions a, #trains a { color: #000 !important; text-decoration: underline; }
-  #trains .train-card, #trains .route-box, #trains .train-class { background: #fff !important; color: #000 !important; border: 1px solid #000 !important; break-inside: avoid; }
-  #trains .table-scroll { overflow: visible !important; border: 0 !important; }
-  #trains .compare-table { min-width: 0 !important; width: 100% !important; }
-  #trains .compare-table th, #trains .compare-table td { border-bottom: 1px solid #000 !important; }
-  #travelOptions .badge, #trains .badge { border: 1px solid #000 !important; background: #fff !important; color: #000 !important; }
+  #travelOptions { break-inside: avoid; background: #fff !important; color: #000 !important; }
+  #travelOptions a { color: #000 !important; text-decoration: underline; }
+  #travelOptions .badge { border: 1px solid #000 !important; background: #fff !important; color: #000 !important; }
   .travel-options-mixed { color: #000 !important; }
 }

@@ -368,16 +368,33 @@
     }
     function areaText(h) { return h.beachfront ? 'Beachfront' : (h.district1 ? 'District 1' : null); }
 
-    /* No hotel in the data has an own/verified photo of itself (every image is a
-       context/area photo, and the four Da Nang hotels all share one beach asset).
-       To avoid reusing another hotel's photo, each hotel card gets a neutral,
-       palette-matched CSS placeholder labelled with the hotel name. */
+    /* A hotel with a verified, openly licensed photo of the property shows it (4:3, cover,
+       alt text). Any other hotel, or a photo that fails to load, gets a neutral,
+       palette-matched CSS placeholder labelled with the hotel name. Photos are never
+       reused across hotels. */
+    function hotelPlaceholder(h) {
+      var ph = el('div', { cls: 'media-placeholder', attrs: { role: 'img', 'aria-label': h.name } });
+      ph.appendChild(el('span', { cls: 'media-placeholder-text', text: h.name, attrs: { 'aria-hidden': 'true' } }));
+      return ph;
+    }
     function hotelCard(h) {
       var card = el('article', { cls: 'card dir-card', attrs: { 'data-id': h.id, tabindex: '0' } });
       var media = el('div', { cls: 'card-media' });
-      var ph = el('div', { cls: 'media-placeholder', attrs: { role: 'img', 'aria-label': h.name } });
-      ph.appendChild(el('span', { cls: 'media-placeholder-text', text: h.name, attrs: { 'aria-hidden': 'true' } }));
-      media.appendChild(ph);
+      if (h.image) {
+        var wrap = VO2.imageEl(h.image, h.imageAlt || h.name);
+        var img = wrap.getElementsByTagName('img')[0];
+        // Pre-set data-fallback so the global handler leaves it to us; swap in the placeholder on error.
+        img.setAttribute('data-fallback', '1');
+        img.addEventListener('error', function () {
+          if (wrap.parentNode) wrap.parentNode.replaceChild(hotelPlaceholder(h), wrap);
+          var cap = media.querySelector('.img-caption');
+          if (cap && cap.parentNode) cap.parentNode.removeChild(cap);
+        });
+        media.appendChild(wrap);
+        if (h.imageNote) media.appendChild(el('p', { cls: 'img-caption', text: h.imageNote }));
+      } else {
+        media.appendChild(hotelPlaceholder(h));
+      }
       card.appendChild(media);
       card.appendChild(VO2.heartButton(h.id, h.name));
       var body = el('div', { cls: 'card-body' });

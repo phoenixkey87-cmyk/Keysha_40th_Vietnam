@@ -494,5 +494,47 @@ window.VO2_DATA.credits = [
     "width": 800,
     "height": 600,
     "modification": "Resized and recompressed to JPEG for web use."
+  },
+  {
+    "id": "hotel-hyatt-regency-danang",
+    "localPath": "vietnam-option-2/images/hotels/hyatt-regency-danang.jpg",
+    "title": "Hyatt Regency Danang, Beach View, March 2014",
+    "commonsFile": "Hyatt Regency Danang, Beach View, March 2014.jpg",
+    "author": "Tungnguyen47",
+    "license": "CC BY-SA 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Hyatt_Regency_Danang,_Beach_View,_March_2014.jpg",
+    "width": 1200,
+    "height": 960,
+    "checkedDate": "2026-11-04",
+    "modification": "Resized and recompressed to JPEG for web use."
+  },
+  {
+    "id": "hotel-pullman-danang-beach",
+    "localPath": "vietnam-option-2/images/hotels/pullman-danang-beach.jpg",
+    "title": "Pullman Danang Beach Resort - Da Nang, Vietnam - DSC02276",
+    "commonsFile": "Pullman Danang Beach Resort - Da Nang, Vietnam - DSC02276.JPG",
+    "author": "Daderot",
+    "license": "CC0",
+    "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Pullman_Danang_Beach_Resort_-_Da_Nang,_Vietnam_-_DSC02276.JPG",
+    "width": 1200,
+    "height": 800,
+    "checkedDate": "2026-11-04",
+    "modification": "Resized and recompressed to JPEG for web use."
+  },
+  {
+    "id": "hotel-liberty-central-citypoint",
+    "localPath": "vietnam-option-2/images/hotels/liberty-central-saigon-citypoint.jpg",
+    "title": "Liberty Central Saigon Citypoint",
+    "commonsFile": "Liberty Central Saigon Citypoint.jpg",
+    "author": "Vano111ru",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Liberty_Central_Saigon_Citypoint.jpg",
+    "width": 901,
+    "height": 1200,
+    "checkedDate": "2026-11-04",
+    "modification": "Resized and recompressed to JPEG for web use."
   }
 ];

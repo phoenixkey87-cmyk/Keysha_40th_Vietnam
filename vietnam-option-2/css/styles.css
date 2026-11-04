@@ -648,11 +648,11 @@ main:focus { outline: none; }
 @media (min-width: 641px) {
   #hotels .hotel-grid .dir-card,
   #dining .card-stack .dir-card { grid-template-columns: minmax(0, 40%) 1fr; }
-  #hotels .hotel-grid .dir-card .card-media,
   #dining .card-stack .dir-card .card-media { height: 100%; }
-  #hotels .hotel-grid .dir-card .img-wrap,
-  #dining .card-stack .dir-card .img-wrap,
-  #hotels .hotel-grid .dir-card .media-placeholder { aspect-ratio: auto; height: 100%; min-height: 100%; }
+  #dining .card-stack .dir-card .img-wrap { aspect-ratio: auto; height: 100%; min-height: 100%; }
+  /* Hotels keep a consistent 4:3 image box at the top of the left column. */
+  #hotels .hotel-grid .dir-card .card-media { align-self: start; height: auto; }
+  #hotels .hotel-grid .dir-card .media-placeholder { aspect-ratio: 4 / 3; height: auto; min-height: 0; }
   #dining .facts-grid { grid-template-columns: 1fr 1fr; }
 }
 

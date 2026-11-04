@@ -5,7 +5,7 @@ window.VO2_DATA = window.VO2_DATA || {};
 // rate.planningUsd for Da Nang is a researched, dated observation (see rate.note), NOT a quote or availability check.
 // Ho Chi Minh City rates are unchanged proposed planning figures.
 // Nights: Da Nang 3 (Nov 21-24), Ho Chi Minh City 5 (Nov 24-29).
-// Photos show the area/neighbourhood (licensed Commons photos), not the hotel itself, unless stated.
+// Only hotels with a verified openly licensed photo of the property have an image; the rest are null and show a neutral placeholder.
 window.VO2_DATA.hotelsMeta = {
   capUsdPerNight: 170,
   softCapCities: ["Da Nang"],
@@ -18,9 +18,9 @@ window.VO2_DATA.hotels = [
   {
     id: "hotel-hyatt-regency-danang", city: "Da Nang", name: "Hyatt Regency Danang Resort and Spa",
     status: "estimated", sourceUrl: "https://www.hyatt.com/hyatt-regency/en-US/danhr-hyatt-regency-danang-resort-and-spa", checkedDate: "2026-11-02",
-    image: "vietnam-option-2/images/hotels/my-khe-coastline.jpg",
-    imageAlt: "The Da Nang coastline with sand and sea",
-    imageNote: "Coastline photo for context; not this resort.",
+    image: "vietnam-option-2/images/hotels/hyatt-regency-danang.jpg",
+    imageAlt: "Beach and grounds of the Hyatt Regency Danang Resort and Spa, Da Nang",
+    imageNote: "Photo by Tungnguyen47 (CC BY-SA 3.0), taken at the resort.",
     stars: 5, starsStatus: "reported", starsSource: "https://www.kayak.com/Da-Nang-Hotels-Hyatt-Regency-Danang-Resort-and-Spa.419224.ksp",
     starsNote: "5-star per KAYAK's listing; the Hyatt page does not state a star count.",
     address: "5 Truong Sa Street, Hoa Hai Ward, Ngu Hanh Son, Da Nang", neighborhood: "Non Nuoc Beach (south of the city)", beachfront: true, district1: false,
@@ -43,9 +43,9 @@ window.VO2_DATA.hotels = [
   {
     id: "hotel-pullman-danang-beach", city: "Da Nang", name: "Pullman Danang Beach Resort",
     status: "estimated", sourceUrl: "https://www.pullman-danang.com/", checkedDate: "2026-11-02",
-    image: "vietnam-option-2/images/hotels/my-khe-coastline.jpg",
-    imageAlt: "The Da Nang coastline with sand and sea",
-    imageNote: "Coastline photo for context; not this resort.",
+    image: "vietnam-option-2/images/hotels/pullman-danang-beach.jpg",
+    imageAlt: "The beach at Pullman Danang Beach Resort, Da Nang",
+    imageNote: "Photo by Daderot (CC0), the beach at the resort.",
     stars: 5, starsStatus: "verified", starsSource: "https://meetings.accor.com/hotel/8838/index.en.shtml",
     starsNote: "Accor's own page describes 5-star services and facilities.",
     address: "101 Vo Nguyen Giap Street, Ngu Hanh Son Ward, Da Nang", neighborhood: "Bac My An Beach", beachfront: true, district1: false,
@@ -69,9 +69,9 @@ window.VO2_DATA.hotels = [
   {
     id: "hotel-sheraton-grand-danang", city: "Da Nang", name: "Sheraton Grand Danang Beach Resort & Spa",
     status: "estimated", sourceUrl: "https://www.marriott.com/en-us/hotels/dadsi-sheraton-grand-danang-beach-resort-and-spa/overview/", checkedDate: "2026-11-02",
-    image: "vietnam-option-2/images/hotels/my-khe-coastline.jpg",
-    imageAlt: "The Da Nang coastline with sand and sea",
-    imageNote: "Coastline photo for context; not this resort.",
+    image: null,
+    imageAlt: null,
+    imageNote: null,
     stars: 5, starsStatus: "reported", starsSource: "https://sheratongranddanang.5starhotels.in/",
     starsNote: "5-star per a booking aggregator and the Da Nang tourism portal; Marriott calls it a luxury beachfront hotel.",
     address: "35 Truong Sa Street, Ngu Hanh Son Ward, Da Nang", neighborhood: "Non Nuoc Beach (south of the city)", beachfront: true, district1: false,
@@ -94,9 +94,9 @@ window.VO2_DATA.hotels = [
   {
     id: "hotel-fusion-resort-danang", city: "Da Nang", name: "Fusion Resort & Villas Da Nang",
     status: "estimated", sourceUrl: "https://fusionresorts.com/danang/", checkedDate: "2026-11-02",
-    image: "vietnam-option-2/images/hotels/my-khe-coastline.jpg",
-    imageAlt: "The Da Nang coastline with sand and sea",
-    imageNote: "Coastline photo for context; not this resort.",
+    image: null,
+    imageAlt: null,
+    imageNote: null,
     stars: 5, starsStatus: "reported", starsSource: "https://fusionandvillas.5starhotels.in/",
     starsNote: "5-star per booking aggregator listings; the official Fusion page does not state a star class.",
     address: "Truong Sa Street, Ngu Hanh Son Ward, Da Nang", neighborhood: "Non Nuoc coast (south of the city)", beachfront: true, district1: false,
@@ -120,9 +120,9 @@ window.VO2_DATA.hotels = [
   {
     id: "hotel-la-siesta-premium", city: "Ho Chi Minh City", name: "La Siesta Premium Saigon",
     status: "verified", sourceUrl: "https://lasiestapremiumsaigon.com/", checkedDate: "2026-11-02",
-    image: "vietnam-option-2/images/hotels/ly-tu-trong.jpg",
-    imageAlt: "Ly Tu Trong street near Dong Khoi in central Ho Chi Minh City",
-    imageNote: "Street photo from the hotel's neighbourhood; not the hotel.",
+    image: null,
+    imageAlt: null,
+    imageNote: null,
     stars: 5, starsStatus: "verified", starsSource: "https://lasiestapremiumsaigon.com/",
     starsNote: "The hotel's own site calls it a 5-star hotel.",
     address: "180-188 Ly Tu Trong, District 1", neighborhood: "District 1 (near Ben Thanh and Dong Khoi)", beachfront: false, district1: true,
@@ -144,9 +144,9 @@ window.VO2_DATA.hotels = [
   {
     id: "hotel-silverland-ben-thanh", city: "Ho Chi Minh City", name: "Silverland Ben Thanh",
     status: "verified", sourceUrl: "https://silverlandhotels.com/boutique-hotel-near-ben-thanh-market/", checkedDate: "2026-11-02",
-    image: "vietnam-option-2/images/hotels/ben-thanh-market.jpg",
-    imageAlt: "Ben Thanh Market building in Ho Chi Minh City",
-    imageNote: "Photo of the neighbouring Ben Thanh Market; not the hotel.",
+    image: null,
+    imageAlt: null,
+    imageNote: null,
     stars: 4, starsStatus: "verified", starsSource: "https://silverlandhotels.com/boutique-hotel-near-ben-thanh-market/",
     starsNote: "Described as a four-star boutique hotel on the group's site.",
     address: "14-16 Le Lai, Ben Thanh Ward, District 1", neighborhood: "District 1 (beside Ben Thanh Market)", beachfront: false, district1: true,
@@ -168,9 +168,9 @@ window.VO2_DATA.hotels = [
   {
     id: "hotel-liberty-central-citypoint", city: "Ho Chi Minh City", name: "Liberty Central Saigon Citypoint",
     status: "verified", sourceUrl: "https://www.libertycentralsaigoncitypoint.com", checkedDate: "2026-11-02",
-    image: "vietnam-option-2/images/general/city-hall.jpg",
-    imageAlt: "Ho Chi Minh City Hall, a central landmark in District 1",
-    imageNote: "Photo of a nearby landmark; not the hotel.",
+    image: "vietnam-option-2/images/hotels/liberty-central-saigon-citypoint.jpg",
+    imageAlt: "Exterior of the Liberty Central Saigon Citypoint hotel tower, Ho Chi Minh City",
+    imageNote: "Photo by Vano111ru (CC BY-SA 4.0).",
     stars: 4, starsStatus: "reported", starsSource: "https://liberty-central-saigon-citypoint.hochiminhhotels.com/",
     starsNote: "4-star per travel listings; official site does not state it in the text checked.",
     address: "Pasteur Street, District 1", neighborhood: "District 1", beachfront: false, district1: true,

@@ -689,3 +689,38 @@ main:focus { outline: none; }
 [data-theme="dark"] .travel-options-mixed { color: var(--gold); }
 .travel-options-links { margin: 0.4rem 0; }
 .travel-options-links .act-link { margin-right: 0.3rem; }
+
+/* ===== MOBILE-FRIENDLY (audit) =====
+   Layout/UX only: 44px tap targets, 16px form controls (no iOS zoom-on-focus), readable text
+   on phones, anchor offsets that clear the fixed header + sticky itinerary toggle, a
+   compact toggle, and a table whose first column no longer collapses to single letters. */
+html { scroll-padding-top: calc(var(--nav-h) + 84px); }
+.itinerary-switch { padding: 0.25rem 0.75rem; }
+.brand { min-width: 44px; min-height: 44px; }
+.btn-sm { min-height: 44px; }
+main input, main select, main textarea, .select, .budget-input { font-size: 1rem; }
+.nav-links { max-height: calc(100vh - var(--nav-h) - 32px); max-height: calc(100dvh - var(--nav-h) - 32px); }
+/* Stand-alone text links get a 44px hit area without changing the layout (padding offset by margin). */
+.facts dd .ext-link, .fine-print .ext-link, .act-link, .fm-link, .budget-fx a, td.small a, .compare-table td a {
+  display: inline-block; min-width: 44px; padding: 12px 2px; margin: -12px 0;
+}
+.map-links a, .footer-link { display: inline-flex; align-items: center; min-height: 44px; }
+.map-links { gap: 0; }
+.budget-table { min-width: 720px; }
+.budget-table th, .budget-table td { overflow-wrap: normal; word-break: normal; }
+.budget-table tbody th { min-width: 8.5rem; }
+.compare-table thead th { overflow-wrap: normal; word-break: normal; min-width: 6rem; }
+.leaflet-container.leaflet-touch .leaflet-bar a { width: 44px; height: 44px; line-height: 44px; }
+.leaflet-container.leaflet-touch .leaflet-control-zoom-in, .leaflet-container.leaflet-touch .leaflet-control-zoom-out { font-size: 22px; }
+.badge, .facts dt, .slot, .countdown-grid small { font-size: 0.75rem; }
+@media (max-width: 900px) {
+  .switch-seg { font-size: 1rem; }
+  .facts dd, .notice, .compare-table, .legend, .budget-legend, .small, .budget-fx, .btn-sm, .ext-link, .act-link, .plain-list li { font-size: 1rem; }
+  .fine-print, .img-caption, .card-city, .book-via, .day-city, .hero-note, .countdown-label, .hero-intro, .tag { font-size: 0.875rem; }
+}
+/* Short landscape phones: the toggle scrolls away instead of eating a third of the viewport. */
+@media (max-height: 500px) {
+  .itinerary-switch { position: static; }
+  html { scroll-padding-top: calc(var(--nav-h) + 12px); }
+  .map-canvas { height: 75vh; min-height: 260px; }
+}

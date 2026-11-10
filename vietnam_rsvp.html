@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="data:,">
     <title>RSVP — Keysha's 40th Birthday Escape | Phoenix Travels</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -30,7 +31,7 @@
             padding: 40px 20px 30px;
             border-bottom: 3px solid var(--soft-purple);
         }
-        .header img { max-width: 100px; margin-bottom: 12px; }
+        .header img { max-width: 100px; height: auto; margin-bottom: 12px; }
         .header h1 { font-size: 1.8rem; color: var(--deep-purple); margin-bottom: 4px; }
         .header p { color: #666; font-size: 0.95rem; }
         .header .trip-info {
@@ -166,6 +167,17 @@
             color: var(--bronze);
             margin-bottom: 20px;
         }
+        /* MOBILE-FRIENDLY (audit): 16px controls (no iOS zoom-on-focus), 44px targets, readable labels. */
+        input, select, textarea { font-size: 1rem; min-height: 44px; max-width: 100%; }
+        label { font-size: 0.875rem; }
+        .plus-one-toggle { min-height: 48px; }
+        .plus-one-toggle input[type="checkbox"] { width: 24px; height: 24px; min-height: 0; flex: 0 0 auto; }
+        .plus-one-toggle label { font-size: 1rem; flex: 1 1 auto; min-height: 44px; display: flex; align-items: center; }
+        .info-note { font-size: 0.95rem; overflow-wrap: anywhere; }
+        .info-note a { display: inline-block; padding: 10px 4px; }
+        .header .trip-info { font-size: 0.95rem; }
+        .btn-submit { min-height: 48px; }
+        @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
         @media (max-width: 600px) {
             .form-row { grid-template-columns: 1fr; }
             .form-card { padding: 20px; }
@@ -174,7 +186,7 @@
 </head>
 <body>
 <div class="header">
-    <img src="Phoenix-01.png" alt="Phoenix Travels">
+    <img src="Phoenix-01-320.webp" width="320" height="259" alt="Phoenix Travels">
     <h1>RSVP — Keysha's 40th Birthday Escape</h1>
     <p>Vietnam &nbsp;|&nbsp; November 21–29, 2027</p>
     <div class="trip-info" style="margin-top:8px; color:#C0392B; font-weight:700;">RSVP Deadline: December 4, 2026</div>
@@ -196,33 +208,33 @@
 
         <div class="form-row">
             <div class="form-group">
-                <label>First Name <span class="required">*</span></label>
-                <input type="text" name="firstName" required>
+                <label for="f-firstName">First Name <span class="required">*</span></label>
+                <input type="text" id="f-firstName" name="firstName" autocomplete="given-name" required>
             </div>
             <div class="form-group">
-                <label>Last Name <span class="required">*</span></label>
-                <input type="text" name="lastName" required>
+                <label for="f-lastName">Last Name <span class="required">*</span></label>
+                <input type="text" id="f-lastName" name="lastName" autocomplete="family-name" required>
             </div>
         </div>
 
         <div class="form-row">
             <div class="form-group">
-                <label>Email Address <span class="required">*</span></label>
-                <input type="email" name="email" required>
+                <label for="f-email">Email Address <span class="required">*</span></label>
+                <input type="email" id="f-email" name="email" autocomplete="email" required>
             </div>
             <div class="form-group">
-                <label>Phone Number <span class="required">*</span></label>
-                <input type="tel" name="phone" required placeholder="(555) 123-4567">
+                <label for="f-phone">Phone Number <span class="required">*</span></label>
+                <input type="tel" id="f-phone" name="phone" autocomplete="tel" required placeholder="(555) 123-4567">
             </div>
         </div>
         <div class="form-row">
             <div class="form-group">
-                <label>Date of Birth <span class="required">*</span></label>
-                <input type="date" name="dob" required>
+                <label for="f-dob">Date of Birth <span class="required">*</span></label>
+                <input type="date" id="f-dob" name="dob" autocomplete="bday" required>
             </div>
             <div class="form-group">
-                <label>Gender (as shown on passport) <span class="required">*</span></label>
-                <select name="gender" required>
+                <label for="f-gender">Gender (as shown on passport) <span class="required">*</span></label>
+                <select id="f-gender" name="gender" required>
                     <option value="">Select...</option>
                     <option value="Female">Female</option>
                     <option value="Male">Male</option>
@@ -233,12 +245,12 @@
 
         <div class="form-row">
             <div class="form-group">
-                <label>Dietary Restrictions / Allergies</label>
-                <input type="text" name="dietary" placeholder="None, vegetarian, shellfish allergy, etc.">
+                <label for="f-dietary">Dietary Restrictions / Allergies</label>
+                <input type="text" id="f-dietary" name="dietary" placeholder="None, vegetarian, shellfish allergy, etc.">
             </div>
             <div class="form-group">
-                <label>T-Shirt Size (for group merch)</label>
-                <select name="tshirtSize">
+                <label for="f-tshirtSize">T-Shirt Size (for group merch)</label>
+                <select id="f-tshirtSize" name="tshirtSize">
                     <option value="">Select...</option>
                     <option value="XS">XS</option>
                     <option value="S">S</option>
@@ -253,8 +265,8 @@
 
         <div class="form-row">
             <div class="form-group full">
-                <label>Additional Notes or Questions</label>
-                <textarea name="notes" placeholder="Anything else we should know — mobility needs, special requests, questions, etc."></textarea>
+                <label for="f-notes">Additional Notes or Questions</label>
+                <textarea id="f-notes" name="notes" placeholder="Anything else we should know — mobility needs, special requests, questions, etc."></textarea>
             </div>
         </div>
     </div>
@@ -271,33 +283,33 @@
 
             <div class="form-row">
                 <div class="form-group">
-                    <label>First Name <span class="required">*</span></label>
-                    <input type="text" name="p2firstName">
+                    <label for="f-p2firstName">First Name <span class="required">*</span></label>
+                    <input type="text" id="f-p2firstName" name="p2firstName">
                 </div>
                 <div class="form-group">
-                    <label>Last Name <span class="required">*</span></label>
-                    <input type="text" name="p2lastName">
+                    <label for="f-p2lastName">Last Name <span class="required">*</span></label>
+                    <input type="text" id="f-p2lastName" name="p2lastName">
                 </div>
             </div>
 
             <div class="form-row">
                 <div class="form-group">
-                    <label>Email Address <span class="required">*</span></label>
-                    <input type="email" name="p2email">
+                    <label for="f-p2email">Email Address <span class="required">*</span></label>
+                    <input type="email" id="f-p2email" name="p2email">
                 </div>
                 <div class="form-group">
-                    <label>Phone Number <span class="required">*</span></label>
-                    <input type="tel" name="p2phone" placeholder="(555) 123-4567">
+                    <label for="f-p2phone">Phone Number <span class="required">*</span></label>
+                    <input type="tel" id="f-p2phone" name="p2phone" placeholder="(555) 123-4567">
                 </div>
             </div>
             <div class="form-row">
                 <div class="form-group">
-                    <label>Date of Birth <span class="required">*</span></label>
-                    <input type="date" name="p2dob">
+                    <label for="f-p2dob">Date of Birth <span class="required">*</span></label>
+                    <input type="date" id="f-p2dob" name="p2dob">
                 </div>
                 <div class="form-group">
-                    <label>Gender (as shown on passport) <span class="required">*</span></label>
-                    <select name="p2gender">
+                    <label for="f-p2gender">Gender (as shown on passport) <span class="required">*</span></label>
+                    <select id="f-p2gender" name="p2gender">
                         <option value="">Select...</option>
                         <option value="Female">Female</option>
                         <option value="Male">Male</option>
@@ -308,12 +320,12 @@
 
             <div class="form-row">
                 <div class="form-group">
-                    <label>Dietary Restrictions / Allergies</label>
-                    <input type="text" name="p2dietary" placeholder="None, vegetarian, shellfish allergy, etc.">
+                    <label for="f-p2dietary">Dietary Restrictions / Allergies</label>
+                    <input type="text" id="f-p2dietary" name="p2dietary" placeholder="None, vegetarian, shellfish allergy, etc.">
                 </div>
                 <div class="form-group">
-                    <label>T-Shirt Size (for group merch)</label>
-                    <select name="p2tshirtSize">
+                    <label for="f-p2tshirtSize">T-Shirt Size (for group merch)</label>
+                    <select id="f-p2tshirtSize" name="p2tshirtSize">
                         <option value="">Select...</option>
                         <option value="XS">XS</option>
                         <option value="S">S</option>
@@ -328,8 +340,8 @@
 
             <div class="form-row">
                 <div class="form-group full">
-                    <label>Additional Notes for Plus-One</label>
-                    <textarea name="p2notes" placeholder="Anything else about your travel companion..."></textarea>
+                    <label for="f-p2notes">Additional Notes for Plus-One</label>
+                    <textarea id="f-p2notes" name="p2notes" placeholder="Anything else about your travel companion..."></textarea>
                 </div>
             </div>
         </div>

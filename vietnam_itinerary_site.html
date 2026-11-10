@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="data:,">
     <title>Keysha's 40th Birthday Escape — Vietnam 2027 | Phoenix Travels</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -33,7 +34,7 @@
             transform: translate(-50%, -50%);
             width: 400px;
             height: 400px;
-            background: url('Phoenix-01.png') center/contain no-repeat;
+            background: url('Phoenix-01-320.webp') center/contain no-repeat;
             opacity: 0.04;
             pointer-events: none;
             z-index: 0;
@@ -345,11 +346,39 @@
         }
         #flights p { margin-bottom: 12px; }
     </style>
+    <style>
+        /* MOBILE-FRIENDLY (audit): 44px tap targets, 16px reading text, single-row nav that
+           stays one line tall, anchor offsets under the sticky bars, reduced motion. */
+        .hero img { height: auto; }
+        section[id] { scroll-margin-top: 80px; }
+        @media (max-width: 900px) {
+            .nav { flex-wrap: nowrap; justify-content: flex-start; overflow-x: auto; overscroll-behavior-x: contain; -webkit-overflow-scrolling: touch; padding: 8px 12px; gap: 4px; scrollbar-width: none; }
+            .nav::-webkit-scrollbar { display: none; }
+            .nav a { flex: 0 0 auto; display: inline-flex; align-items: center; min-height: 44px; padding: 0 14px; font-size: 1rem; white-space: nowrap; }
+            /* Keep the RSVP call-to-action pinned in view while the other links scroll. */
+            .nav a[href="vietnam_rsvp.html"] { position: sticky; right: 0; margin-left: 4px; }
+            .itinerary-switch { top: 62px; padding: 4px 12px; }
+            section[id] { scroll-margin-top: 128px; }
+        }
+        @media (max-width: 900px) {
+            .switch-seg { font-size: 1rem; }
+            p, h4, .callout, table, .day-meta, .day-card li, ul.clean li, .wakeup, .day-note, .wear, .hero .route, .hotel-card p, .hotel-card a { font-size: 1rem; }
+        }
+        /* Short landscape phones: let the toggle scroll away instead of eating the viewport. */
+        @media (max-height: 500px) {
+            .itinerary-switch { position: static; }
+            section[id] { scroll-margin-top: 72px; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            html { scroll-behavior: auto; }
+            *, *::before, *::after { animation: none !important; transition: none !important; }
+        }
+    </style>
 </head>
 <body>
 <!-- HERO -->
 <div class="hero">
-    <img src="Phoenix-01.png" alt="Phoenix Travels Logo">
+    <img src="Phoenix-01-320.webp" width="320" height="259" alt="Phoenix Travels Logo">
     <h1>Keysha's 40th Birthday Escape</h1>
     <div class="tagline">Luxury, Culture & Coastal Bliss</div>
     <div class="dates">Vietnam &nbsp;|&nbsp; November 21–29, 2027</div>
@@ -455,7 +484,7 @@
     </div>
     <p class="wear">
         All fares and times are not verified until checked for your November 2027 dates. Nothing is booked.
-        <button type="button" id="copyTextBtn" style="margin-left:8px;background:var(--deep-purple);color:var(--white);border:none;border-radius:20px;padding:6px 16px;font-size:0.82rem;font-weight:600;cursor:pointer;">Copy as text</button>
+        <button type="button" id="copyTextBtn" style="margin-left:8px;background:var(--deep-purple);color:var(--white);border:none;border-radius:20px;padding:6px 16px;min-height:44px;font-size:1rem;font-weight:600;cursor:pointer;">Copy as text</button>
         <span id="copyTextStatus" aria-live="polite" style="margin-left:8px;font-size:0.82rem;color:var(--bronze);"></span>
     </p>
 </div>

@@ -95,3 +95,11 @@
   .fm-reco, .fm-timing-card { border: 1px solid #000; background: #fff; break-inside: avoid; }
   .fm-kind-mixed_cabin td { border-left: 0; }
 }
+
+/* Mobile readability (audit): reading text in the Flight Monitor stays at 16px on phones;
+   secondary notes stay at 14px or larger. */
+@media (max-width: 900px) {
+  .fm-status, .fm-table, .fm-reco-rationale, .fm-segments, .fm-timing-date, .fm-breakdown { font-size: 1rem; }
+  .fm-note, .fm-sub, .fm-timing-airline { font-size: 0.875rem; }
+  .fm-badge { font-size: 0.75rem; }
+}

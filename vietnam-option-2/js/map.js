@@ -97,7 +97,8 @@
     if (!window.L || typeof window.L.map !== 'function') { fallback('The map library could not be loaded.'); return; }
     try {
       var c0 = (D.mapCenters || {})[city] || { lat: 16.05, lng: 108.24, zoom: 12 };
-      map = window.L.map(mapEl, { scrollWheelZoom: false }).setView([c0.lat, c0.lng], c0.zoom);
+      // On touch devices one finger scrolls the page (no scroll trap); two fingers pan and pinch-zoom the map.
+      map = window.L.map(mapEl, { scrollWheelZoom: false, dragging: !window.L.Browser.mobile }).setView([c0.lat, c0.lng], c0.zoom);
       var tiles = window.L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19, attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       });

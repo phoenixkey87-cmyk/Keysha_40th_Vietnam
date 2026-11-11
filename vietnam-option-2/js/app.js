@@ -185,7 +185,7 @@
   if ('IntersectionObserver' in window) {
     var revealIO = new IntersectionObserver(function (entries) {
       entries.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add('in'); revealIO.unobserve(en.target); } });
-    }, { threshold: 0.08 });
+    }, { threshold: 0 });
     document.querySelectorAll('.reveal').forEach(function (n) { revealIO.observe(n); });
 
     var links = {};

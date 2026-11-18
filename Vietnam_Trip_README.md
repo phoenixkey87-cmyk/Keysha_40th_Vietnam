@@ -88,6 +88,8 @@
 ### Trip Summary
 - **Dates:** November 21–29, 2027
 - **Route:** Hanoi → Cruise → Da Nang / Hoi An → Ho Chi Minh City
+- **Hanoi Hotel:** Anatole Hotel Hanoi, Nov 21–23 (2 nights, itinerary #73592356274642)
+- **Cruise:** Genesis Regal Luxury Cruise, Nov 23–24 (2 days / 1 night)
 - **Flights:** Multi-city (fly INTO Hanoi HAN, fly HOME from HCMC SGN)
 - **Budget:** $2,750–$3,250 per person (excl. international airfare)
 - **Theme Night:** All Black Everything (Nov 28)

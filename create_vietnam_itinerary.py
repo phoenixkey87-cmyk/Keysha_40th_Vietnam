@@ -170,7 +170,7 @@ p = doc.add_paragraph(
 )
 doc.add_paragraph()
 add_callout(doc,
-    "The trip includes a one-night Hanoi welcome, a Genesis Regal Luxury Cruise "
+    "The trip includes a two-night Hanoi stay with shopping and custom shoes, a Genesis Regal Luxury Cruise "
     "through the Lan Ha Bay / Ha Long Bay region, a beach-resort stay in Da Nang "
     "with Hoi An shopping, and a Ho Chi Minh City finale featuring a Michelin-star "
     "dinner and All Black Everything night out."
@@ -290,9 +290,9 @@ add_styled_table(doc, ["Category", "Details"], snapshot_data, col_widths=[5, 12]
 # --- CONFIRMED AND PENDING DECISIONS ---
 add_heading_styled(doc, "Confirmed and Pending Decisions", level=1)
 decisions_data = [
-    ("Hanoi Hotel", "Confirmed", "Hanoi Marvellous Hotel & Spa for 1 night on November 21"),
-    ("Cruise", "Confirmed", "Genesis Regal Luxury Cruise, 3 days / 2 nights, Nov 22-24"),
-    ("Da Nang Hotel", "Finalists", "Melia Danang Beach Resort or Hyatt Regency Danang Resort & Spa"),
+    ("Hanoi Hotel", "Confirmed", "Anatole Hotel Hanoi for 2 nights, November 21-23"),
+    ("Cruise", "Confirmed", "Genesis Regal Luxury Cruise, 2 days / 1 night, Nov 23-24"),
+    ("Hoi An Hotel", "Confirmed", "Silk Sense Hoi An River Resort for 2 nights, November 24-26; night of Nov 26 not booked yet"),
     ("Ho Chi Minh City Hotel", "Finalists", "Mai House Saigon Hotel or La Siesta Premium Saigon"),
     ("Farewell Dinner", "Selected", "Anan Saigon, 1 Michelin Star, All Black Everything evening"),
     ("Nightlife", "Shortlist", "Piu Piu, Mershe Saigon, Weeknd Saigon, Afro Chill Lounge"),
@@ -307,64 +307,68 @@ days = [
         "title": "Day 1 - Sunday, November 21: Welcome to Vietnam",
         "destination": "Hanoi",
         "weather": "72-77\u00b0F (22-25\u00b0C). Mild days with cooler mornings and evenings.",
-        "stay": "Hanoi Marvellous Hotel & Spa (confirmed)",
+        "stay": "Anatole Hotel Hanoi - night 1 of 2 (confirmed)",
         "wakeup": "No set wake-up time. Arrive and rest at your own pace.",
         "activities": [
             "Arrive in Hanoi",
             "Check into hotel",
             "Explore the Old Quarter if arrival time allows",
+            "Get measured for custom shoes in the Old Quarter so they're ready before the cruise",
             "Shopping for Vietnamese coffee, silk, souvenirs, and local goods",
             "Optional welcome dinner for whoever arrives in time",
-            "Rest before the cruise pickup the next morning",
+            "Rest up for a full shopping day tomorrow",
         ],
         "wear": "Comfortable Chic: airport outfit, sneakers, light cardigan or jacket, crossbody bag.",
         "note": "This night is intentionally comfortable and practical because arrival times may vary after long-haul flights.",
     },
     {
-        "title": "Day 2 - Monday, November 22: Board Genesis Regal Luxury Cruise",
-        "destination": "Hanoi to Lan Ha Bay / Ha Long Bay region",
-        "weather": "73-79\u00b0F (23-26\u00b0C). Pleasant with breezes on the water.",
-        "stay": "Genesis Regal Luxury Cruise - night 1 of 2",
-        "wakeup": "Early morning — be ready by 7:30 AM. Breakfast then cruise shuttle pickup at 8:00-8:30 AM.",
+        "title": "Day 2 - Monday, November 22: Shopping & Custom Shoes in Hanoi",
+        "destination": "Hanoi",
+        "weather": "72-77\u00b0F (22-25\u00b0C). Mild days with cooler mornings and evenings.",
+        "stay": "Anatole Hotel Hanoi - night 2 of 2",
+        "wakeup": "Sleep in! No scheduled pickup. Shop at your own pace.",
         "activities": [
-            "Breakfast at Hanoi Marvellous Hotel & Spa (typically 6:30-10:00 AM)",
-            "Genesis Regal transfer / shuttle pickup from Hanoi (approximately 8:00-8:30 AM, ~2.5-3 hour drive to the pier)",
-            "Board the cruise",
-            "Welcome lunch, scenic cruising, sundeck time, and evening dinner onboard",
-            "Relax, take photos, and enjoy the start of the birthday cruise experience",
+            "Relaxed breakfast at Anatole Hotel Hanoi (included)",
+            "Custom shoe fitting and pickup (order on Nov 21 if possible so there's time for adjustments)",
+            "Old Quarter shopping: Hang Dau (shoe street), Hang Gai (silk street), and local boutiques",
+            "Shopping for Vietnamese coffee, silk, lacquerware, and souvenirs",
+            "Coffee break by Hoan Kiem Lake",
+            "Easy dinner in Hanoi",
+            "Pick up any remaining orders, then pack an overnight bag for the cruise",
         ],
-        "wear": "Resort Chic: maxi dress, linen set, romper, sandals, sunglasses, light sweater for evening deck breezes.",
+        "wear": "Comfortable Chic: easy walking outfit, sneakers or sandals, light layer, crossbody bag for shopping.",
         "note": None,
     },
     {
-        "title": "Day 3 - Tuesday, November 23: Birthday at Sea",
-        "destination": "Genesis Regal Luxury Cruise",
-        "weather": "73-79\u00b0F (23-26\u00b0C). Comfortable daytime, cooler on deck in the evening.",
-        "stay": "Genesis Regal Luxury Cruise - night 2 of 2",
-        "wakeup": "Sleep in! No scheduled pickup. Wake at your leisure for sunrise views or breakfast onboard.",
+        "title": "Day 3 - Tuesday, November 23: Board the Cruise & Birthday at Sea",
+        "destination": "Hanoi to Lan Ha Bay / Ha Long Bay region",
+        "weather": "73-79\u00b0F (23-26\u00b0C). Pleasant with breezes on the water.",
+        "stay": "Genesis Regal Luxury Cruise - night 1 of 1",
+        "wakeup": "Early morning \u2014 be ready by 7:30 AM. Breakfast, check out, then cruise shuttle pickup at 8:00-8:30 AM.",
         "activities": [
-            "Celebrate Keysha's actual birthday onboard the cruise",
-            "Sunrise or morning views in the bay",
-            "Kayaking, Tai Chi, cooking class, beach/cave excursion, or scenic cruise activities",
+            "Breakfast at Anatole Hotel Hanoi (included), then check out",
+            "Genesis Regal transfer / shuttle pickup from Hanoi (approximately 8:00-8:30 AM, ~2.5-3 hour drive to the pier)",
+            "Board the cruise and celebrate Keysha's actual birthday onboard",
+            "Welcome lunch, scenic cruising, sundeck time, kayaking or cave excursion",
             "Birthday photos on the sundeck",
             "Request birthday cake / decorations / special dinner from Genesis Regal in advance",
             "Champagne toast or group birthday moment onboard",
         ],
-        "wear": "Birthday at Sea: elevated resort wear for the day; beautiful birthday dinner outfit for the evening.",
+        "wear": "Birthday at Sea: resort chic for boarding; beautiful birthday dinner outfit for the evening; light sweater for deck breezes.",
         "note": "This is the official birthday date: November 23. Additional celebration moments happen later in the week.",
     },
     {
         "title": "Day 4 - Wednesday, November 24: Cruise Return & Travel to Da Nang",
         "destination": "Lan Ha Bay / Ha Long Bay region to Da Nang",
         "weather": "78-83\u00b0F (26-28\u00b0C). Warm tropical weather with possible passing showers.",
-        "stay": "Da Nang hotel (Melia Danang Beach Resort or Hyatt Regency Danang Resort & Spa)",
+        "stay": "Silk Sense Hoi An River Resort - night 1 of 2",
         "wakeup": "Early morning — cruise disembarkation schedule (typically 7:00-8:00 AM breakfast, then off by 9:00-9:30 AM). Travel day.",
         "activities": [
             "Breakfast / brunch onboard",
             "Disembark Genesis Regal Luxury Cruise",
             "Transfer back toward Hanoi / airport area",
             "Fly to Da Nang (~1.5 hour flight)",
-            "Check into beach resort (~10-15 min from Da Nang airport)",
+            "Transfer to Silk Sense Hoi An River Resort (about 45 min from Da Nang airport; check-in from 2:00 PM; book the resort pickup 48 hours ahead)",
             "Easy evening, dinner, and rest",
         ],
         "wear": "Travel + Beach Arrival: comfortable travel set, sandals or sneakers, easy dinner outfit.",
@@ -374,7 +378,7 @@ days = [
         "title": "Day 5 - Thursday, November 25: Relax & Celebrate in Da Nang",
         "destination": "Da Nang",
         "weather": "78-83\u00b0F (26-28\u00b0C). Warm, tropical, and beach-friendly.",
-        "stay": "Melia Danang Beach Resort or Hyatt Regency Danang Resort & Spa",
+        "stay": "Silk Sense Hoi An River Resort - night 2 of 2",
         "wakeup": "Sleep in! No schedule. Wake up whenever you want — it's a beach and pool day.",
         "activities": [
             "Relaxing breakfast at the resort",
@@ -511,25 +515,20 @@ for day in days:
 # --- HOTEL AND CRUISE DETAILS ---
 add_heading_styled(doc, "Hotel and Cruise Details", level=1)
 
-add_heading_styled(doc, "Hanoi - Hanoi Marvellous Hotel & Spa (Confirmed)", level=2)
+add_heading_styled(doc, "Hanoi - Anatole Hotel Hanoi (Confirmed)", level=2)
 add_bullet_list(doc, [
-    "Selected for the one-night arrival stay",
-    "Nice, clean, and polished without overspending because most travelers may only sleep there",
-    "Located in the Old Quarter area, convenient for walking, shopping, and Genesis Regal pickup",
-    "Breakfast served 6:30 AM-10:00 AM, which should work before cruise pickup",
-    "Good fit for travelers arriving at different times",
+    "2 nights, November 21-23 (check-in Sunday Nov 21, check-out Tuesday Nov 23)",
+    "Grand Executive Twin City View, 1 room, 2 guests",
+    "30 Nha Chung, Hanoi, near Hoan Kiem Lake and the Old Quarter",
+    "Breakfast included, free WiFi, welcome drink, pool, and fitness center",
+    "Shopping and custom shoes in Hanoi on November 21-22 before the cruise pickup on November 23",
 ])
-p = doc.add_paragraph()
-run = p.add_run("Website: ")
-run.bold = True
-run.font.size = Pt(10)
-add_hyperlink(p, "https://marvellous.hanoi-hotels.org/en/", "marvellous.hanoi-hotels.org")
 
 add_heading_styled(doc, "Genesis Regal Luxury Cruise (Confirmed)", level=2)
 add_bullet_list(doc, [
-    "3 days / 2 nights, November 22-24",
+    "2 days / 1 night, November 23-24",
     "Chosen for boutique luxury, balcony cabins, great value, and intimate cruise experience",
-    "Inclusions: en-suite room for 2 nights, full-board meals, pool/jacuzzi, activities, sightseeing fees, tour guide, onboard insurance, service charges, birthday/anniversary bakery",
+    "Inclusions: en-suite room for 1 night, full-board meals, pool/jacuzzi, activities, sightseeing fees, tour guide, onboard insurance, service charges, birthday/anniversary bakery",
     "This is where Keysha will celebrate her actual birthday on November 23",
 ])
 p = doc.add_paragraph()
@@ -538,21 +537,16 @@ run.bold = True
 run.font.size = Pt(10)
 add_hyperlink(p, "https://genesisregalcruise.com/", "genesisregalcruise.com")
 
-add_heading_styled(doc, "Da Nang Hotel Finalists", level=2)
-da_nang_data = [
-    ("Melia Danang Beach Resort", "Luxury beachfront, private beach, ocean-view balcony rooms, pools, resort atmosphere, often strong value"),
-    ("Hyatt Regency Danang Resort & Spa", "True luxury resort feel, private beach, ocean-view rooms, multiple pools, polished brand experience"),
-]
-add_styled_table(doc, ["Hotel", "Why It Fits"], da_nang_data, col_widths=[6, 12])
-p = doc.add_paragraph()
-run = p.add_run("Websites: ")
-run.bold = True
-run.font.size = Pt(10)
-add_hyperlink(p, "https://www.melia.com/en/hotels/vietnam/da-nang/melia-danang-beach-resort", "Melia Danang")
-run = p.add_run("  |  ")
-run.font.size = Pt(10)
-add_hyperlink(p, "https://www.hyatt.com/en-US/hotel/vietnam/hyatt-regency-danang-resort-and-spa/danhr", "Hyatt Regency Danang")
-
+add_heading_styled(doc, "Hoi An - Silk Sense Hoi An River Resort (Confirmed)", level=2)
+add_bullet_list(doc, [
+    "2 nights, November 24-26 (check-in Wednesday Nov 24 from 2:00 PM, check-out Friday Nov 26 by noon)",
+    "Deluxe Double or Twin Room, Bathtub, Garden View (Private Garden), 2 guests",
+    "01 Dong Da Street, Hoi An (about 45 minutes from Da Nang airport)",
+    "Breakfast included, free WiFi, free self parking, 24-hour room service",
+    "Airport pickup available (extra charge may apply): contact the resort at least 48 hours before arrival (Tel: +84 235 3754999)",
+    "Free cancellation until November 17, 2027",
+    "Night of November 26: not booked yet",
+])
 doc.add_paragraph()
 add_heading_styled(doc, "Ho Chi Minh City Hotel Finalists", level=2)
 hcmc_data = [
@@ -630,8 +624,8 @@ add_bullet_list(doc, [
 # --- WEATHER AND WHAT TO WEAR SUMMARY ---
 add_heading_styled(doc, "Weather and What to Wear Summary", level=1)
 weather_data = [
-    ("Nov 21-22", "Hanoi", "72-77\u00b0F; mild, cooler evenings", "Comfortable chic, light jacket, sneakers"),
-    ("Nov 22-24", "Cruise", "73-79\u00b0F; pleasant, breezy on water", "Resort chic, swimwear, cover-ups, light sweater"),
+    ("Nov 21-23", "Hanoi", "72-77\u00b0F; mild, cooler evenings", "Comfortable chic, light jacket, sneakers"),
+    ("Nov 23-24", "Cruise", "73-79\u00b0F; pleasant, breezy on water", "Resort chic, swimwear, cover-ups, light sweater"),
     ("Nov 24-27", "Da Nang / Hoi An", "78-83\u00b0F; warm tropical, possible showers", "Beach luxury, sandals, vacation dresses, umbrella"),
     ("Nov 27-29", "Ho Chi Minh City", "86-91\u00b0F; hot, humid, mostly dry", "City chic, breathable fabrics, stylish dinner outfits"),
     ("Nov 28", "All Black Everything", "Warm evening ~80\u00b0F", "All black with gold accessories; glam encouraged"),
@@ -662,8 +656,8 @@ p.runs[0].font.size = Pt(10)
 doc.add_paragraph()
 payment_data = [
     ("January 2027", "$250", "Deposit - secures your spot (non-refundable)"),
-    ("March 2027", "$900", "Genesis Regal Luxury Cruise (3 days / 2 nights, full board)"),
-    ("May 2027", "$750", "Hotels - Hanoi (1 night), Da Nang (3 nights), Ho Chi Minh City (2 nights)"),
+    ("March 2027", "$900", "Genesis Regal Luxury Cruise (2 days / 1 night, full board)"),
+    ("May 2027", "$750", "Hotels - Hanoi (2 nights), Da Nang (3 nights), Ho Chi Minh City (2 nights)"),
     ("July 2027", "$350", "Domestic flights - Hanoi to Da Nang and Da Nang to HCMC"),
     ("September 2027", "$500", "Transfers, Hoi An transport, farewell dinner, group activities"),
     ("October 2027", "Final balance", "Any remaining balance; final itinerary and pre-departure meeting"),
@@ -821,7 +815,7 @@ add_styled_table(doc, ["Month / Date", "Milestone"], dates_data, col_widths=[4.5
 doc.add_paragraph()
 add_heading_styled(doc, "Working Notes for Final Booking", level=1)
 add_bullet_list(doc, [
-    "Compare Melia Danang Beach Resort vs Hyatt Regency Danang once November 2027 rates are available",
+    "Book the night of November 26 (Silk Sense Hoi An River Resort is booked Nov 24-26)",
     "Compare Mai House Saigon vs La Siesta Premium Saigon once rates are available",
     "Confirm Genesis Regal birthday arrangements in advance",
     "Confirm Anan Saigon group reservation policies and menu availability closer to travel",

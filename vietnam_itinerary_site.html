@@ -235,30 +235,6 @@
         .day-scroll-prev .day-scroll-icon { transform: rotate(-135deg); margin-left: 4px; }
         .day-scroll-next .day-scroll-icon { transform: rotate(45deg); margin-right: 4px; }
         @media (prefers-reduced-motion: reduce) { .day-track { scroll-behavior: auto; } }
-        /* ORIGINAL | OPTION 2 SEGMENTED TOGGLE (sticky below nav) */
-        .itinerary-switch {
-            position: sticky; top: 52px; z-index: 99;
-            display: flex; justify-content: center; padding: 8px 12px;
-            pointer-events: none;
-        }
-        .itinerary-switch-inner {
-            pointer-events: auto; display: inline-flex; gap: 4px; padding: 4px;
-            background: var(--white); border: 1px solid var(--border);
-            border-radius: 999px; box-shadow: 0 4px 14px rgba(91,33,127,0.18);
-        }
-        .switch-seg {
-            display: inline-flex; align-items: center; justify-content: center;
-            min-height: 44px; min-width: 110px; padding: 0 1.2rem;
-            border-radius: 999px; text-decoration: none; font-weight: 700; font-size: 0.95rem;
-            color: var(--deep-purple); white-space: nowrap;
-        }
-        .switch-seg:hover { background: var(--soft-purple); }
-        .switch-seg.is-active { background: var(--deep-purple); color: var(--white); }
-        .switch-seg:focus-visible { outline: 3px solid var(--bronze); outline-offset: 2px; }
-        @media (max-width: 420px) {
-            .switch-seg { min-width: 0; flex: 1 1 auto; padding: 0 0.9rem; }
-            .itinerary-switch-inner { width: 100%; max-width: 360px; }
-        }
         /* LISTS */
         ul.clean { list-style: none; padding: 0; }
         ul.clean li { padding: 6px 0 6px 20px; position: relative; font-size: 0.9rem; }
@@ -301,7 +277,7 @@
             .nav a { font-size: 0.7rem; padding: 5px 8px; }
         }
         /* PRINT: plain black on white; print the inline Travel Options summary cleanly
-           (mirrors Option 2's #flights / #travelOptions print rules). */
+           (prints the inline Travel Options summary). */
         @media print {
             * { box-shadow: none !important; text-shadow: none !important; animation: none !important; transition: none !important; }
             body { background: #fff !important; color: #000 !important; }
@@ -331,6 +307,32 @@
             .day-scroll-btn { display: none !important; }
         }
     </style>
+    <link rel="stylesheet" href="vendor/leaflet/leaflet.css">
+    <style>
+        /* MERGED ITINERARY additions: day-slot labels, venue cards, map. */
+        .day-card li strong.slot { color: var(--medium-purple); }
+        .day-card li.sub { list-style: circle; margin-left: 18px; }
+        .flag { color: var(--bronze); font-weight: 600; font-size: 0.85rem; }
+        .small { font-size: 0.82rem; color: #555; }
+        .hotel-card .meta { font-size: 0.82rem; color: #555; margin-bottom: 6px; }
+        .hotel-card ul { padding-left: 18px; margin: 6px 0 8px; }
+        .hotel-card li { font-size: 0.85rem; margin-bottom: 3px; }
+        .chip-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; }
+        .chip {
+            min-height: 44px; padding: 0 16px; border-radius: 22px; cursor: pointer;
+            border: 1px solid var(--border); background: var(--white); color: var(--deep-purple);
+            font-weight: 600; font-size: 0.85rem; font-family: inherit;
+        }
+        .chip:hover { background: var(--soft-purple); }
+        .chip[aria-pressed="true"] { background: var(--deep-purple); color: var(--white); border-color: var(--deep-purple); }
+        .chip:focus-visible, .map-canvas a:focus-visible { outline: 3px solid var(--bronze); outline-offset: 2px; }
+        .map-canvas { height: 480px; border: 1px solid var(--border); border-radius: 10px; margin: 12px 0; background: var(--soft-purple); }
+        .map-list ul { list-style: none; padding: 0; columns: 2; column-gap: 24px; }
+        .map-list li { font-size: 0.88rem; padding: 3px 0; break-inside: avoid; }
+        .map-list a, .hotel-card a, .container li a, .container td a { color: var(--medium-purple); }
+        @media (max-width: 700px) { .map-list ul { columns: 1; } .map-canvas { height: 380px; } }
+        @media print { .map-canvas, #map .chip-row { display: none !important; } }
+    </style>
     <link rel="stylesheet" href="flight-monitor/ui/flight-monitor.css">
     <style>
         /* Flight Monitor (additive): map shared --fm-* variables to the purple/bronze palette. */
@@ -357,16 +359,12 @@
             .nav a { flex: 0 0 auto; display: inline-flex; align-items: center; min-height: 44px; padding: 0 14px; font-size: 1rem; white-space: nowrap; }
             /* Keep the RSVP call-to-action pinned in view while the other links scroll. */
             .nav a[href="vietnam_rsvp.html"] { position: sticky; right: 0; margin-left: 4px; }
-            .itinerary-switch { top: 62px; padding: 4px 12px; }
             section[id] { scroll-margin-top: 128px; }
         }
         @media (max-width: 900px) {
-            .switch-seg { font-size: 1rem; }
             p, h4, .callout, table, .day-meta, .day-card li, ul.clean li, .wakeup, .day-note, .wear, .hero .route, .hotel-card p, .hotel-card a { font-size: 1rem; }
         }
-        /* Short landscape phones: let the toggle scroll away instead of eating the viewport. */
         @media (max-height: 500px) {
-            .itinerary-switch { position: static; }
             section[id] { scroll-margin-top: 72px; }
         }
         @media (prefers-reduced-motion: reduce) {
@@ -398,7 +396,12 @@
     <a href="#itinerary">Day-by-Day</a>
     <a href="#hotels">Hotels</a>
     <a href="#dining">Dining</a>
+    <a href="#nightlife">Nightlife</a>
+    <a href="#cafes">Cafés</a>
     <a href="#shopping">Shopping</a>
+    <a href="#wellness">Wellness</a>
+    <a href="#budget">Budget</a>
+    <a href="#map">Map</a>
     <a href="#safety">Safety</a>
     <a href="#weather">Weather</a>
     <a href="#packing">Packing</a>
@@ -407,20 +410,16 @@
     <a href="#tips">Tips</a>
     <a href="vietnam_rsvp.html" style="background:var(--bronze);color:var(--white);border-radius:20px;animation:flash 2s ease-out infinite;">RSVP Now — by 12/4/26</a>
 </nav>
-<!-- ITINERARY SWITCH -->
-<div class="itinerary-switch" role="navigation" aria-label="Switch itinerary">
-    <div class="itinerary-switch-inner" role="group" aria-label="Choose itinerary">
-        <a class="switch-seg is-active" id="switchOriginal" href="vietnam_itinerary_site.html" aria-current="page" aria-label="Viewing the original itinerary">Original</a>
-        <a class="switch-seg" id="switchOption2" href="Vietnam_Option_2.html" aria-label="View Option 2 itinerary">Option 2</a>
-    </div>
-</div>
 <!-- WELCOME -->
 <section id="welcome">
 <div class="container">
     <h2>Welcome</h2>
     <p>Join Keysha for an unforgettable birthday escape through Vietnam. This group experience is designed to feel stylish, elevated, and easy to follow — with luxury where it matters, smart budgeting where it makes sense, and enough flexibility for everyone's travel style.</p>
     <div class="callout">
-        The trip includes a two-night Hanoi stay with shopping and custom shoes, a Genesis Regal Luxury Cruise through the Lan Ha Bay / Ha Long Bay region, a riverside resort stay in Hoi An with custom clothing and lantern-town shopping, and a Ho Chi Minh City finale featuring a Michelin-star dinner and All Black Everything night out.
+        The trip includes a two-night Hanoi stay with shopping and custom shoes, a Genesis Regal Luxury Cruise through the Lan Ha Bay / Ha Long Bay region, a riverside resort stay in Hoi An with custom clothing and lantern-town shopping, and a Ho Chi Minh City finale featuring a Michelin-star dinner and All Black Everything night out. Along the way you get two wellness days, dedicated shopping blocks in every city, two scenic coffee stops, and nightlife on several evenings.
+    </div>
+    <div class="callout">
+        Hotels and the cruise are booked. Activities, venues and evening plans are proposals, with details taken from venue listings as of November 2026. Confirm hours and reservations closer to the trip.
     </div>
     <div class="callout important">
         <strong>IMPORTANT:</strong> This is NOT a round-trip flight. Book a multi-city ticket: fly INTO Hanoi (HAN) and fly HOME from Ho Chi Minh City (SGN). We travel south through the country and depart from a different city than we arrive.
@@ -452,7 +451,10 @@
             <tr><td>Hoi An Hotel</td><td>Confirmed</td><td>Silk Sense Hoi An River Resort, 2 nights (Nov 24–26)</td></tr>
             <tr><td>HCMC Hotel</td><td>Confirmed</td><td>Hotel Grand Saigon, 3 nights (Nov 26–29)</td></tr>
             <tr><td>Farewell Dinner</td><td>Selected</td><td>Anan Saigon (1 Michelin Star), All Black Everything evening</td></tr>
-            <tr><td>Nightlife</td><td>Shortlist</td><td>Piu Piu, Mershe Saigon, Weeknd Saigon, Afro Chill Lounge</td></tr>
+            <tr><td>Nightlife</td><td>Shortlist</td><td>Hanoi and Hoi An night markets, Waterfront Danang bar, Saigon rooftops, and clubs: Piu Piu, Mershe Saigon, Weeknd SGN, Afro Chill Lounge, CUR8, Neighborhood Saigon, LOCO Complex, Bam Bam, PAPI</td></tr>
+            <tr><td>Wellness Days</td><td>Planned</td><td>Nov 25 (Silk Sense Hoi An spa and pool) and Nov 27 (Hotel Grand Saigon spa morning)</td></tr>
+            <tr><td>Coffee Stops</td><td>Selected</td><td>Café Phố Cổ (Hanoi, Nov 22) and Faifo Coffee (Hoi An, Nov 25), plus a Saigon cafe route on Nov 28</td></tr>
+            <tr><td>Da Nang Dinner</td><td>Selected</td><td>Waterfront Danang Restaurant &amp; Bar on the river, Nov 24 evening</td></tr>
         </tbody>
     </table>
 </div>
@@ -465,14 +467,17 @@
     <div data-flight-monitor data-itinerary="original" data-origin="STL" data-arrive="HAN" data-depart="SGN"></div>
 </div>
 </section>
-<!-- TRAVEL OPTIONS (lighter inline summary; full interactive version lives on Option 2) -->
+<!-- TRAVEL OPTIONS (inline summary; the live Flight Monitor is above) -->
 <section id="travel-options">
 <div class="container">
     <h2>Travel Options</h2>
     <p>
-        A quick summary for Itinerary A (arrive Hanoi, depart Ho Chi Minh City). The full interactive
-        version — live flight monitor and departure-timing view — lives on
-        <a href="Vietnam_Option_2.html#travelOptions" style="color:var(--medium-purple)">Option 2</a>.
+        A quick summary for this itinerary (arrive Hanoi, depart Ho Chi Minh City). The live fare
+        and departure-timing view is the Flight Monitor above. For the two domestic legs, compare airlines and
+        times with these Google Flights searches (search links only, not bookings):
+        <a href="https://www.google.com/travel/flights?q=Flights%20from%20HAN%20to%20DAD%20on%202027-11-24%20oneway" target="_blank" rel="noopener noreferrer" style="color:var(--medium-purple)">Hanoi to Da Nang, Nov 24</a>
+        &bull;
+        <a href="https://www.google.com/travel/flights?q=Flights%20from%20DAD%20to%20SGN%20on%202027-11-26%20oneway" target="_blank" rel="noopener noreferrer" style="color:var(--medium-purple)">Da Nang to Ho Chi Minh City, Nov 26</a>.
     </p>
     <div class="callout">
         <strong>Recommended provisional departure:</strong> November 19, 2027 from St. Louis (STL).
@@ -506,6 +511,8 @@
     <p>Da Nang is a modern coastal city with long stretches of white-sand beach, luxury resorts, and a relaxed pace. Just 30 minutes away, Hoi An Ancient Town is a UNESCO site known for its lantern-lined streets, centuries-old architecture, and world-famous tailor shops where you can get custom clothing made in 24–48 hours.</p>
     <p><strong style="color:var(--medium-purple)">Known For:</strong> Cao lau (thick noodles with pork, herbs, and crispy croutons — only made in Hoi An), banh xeo (sizzling crispy crepes stuffed with shrimp and bean sprouts), mi quang (turmeric noodles), and white rose dumplings (delicate shrimp dumplings unique to Hoi An). The food is colorful, fresh, and deeply regional.</p>
 
+    <p><strong style="color:var(--medium-purple)">Optional Da Nang add-ons (not scheduled):</strong> if your Nov 24 flight lands early, nearby extras include Han Market (fabric, souvenirs, local snacks), Con Market, and the Marble Mountains (entry listed at 40,000 VND per adult plus 30,000 VND for the round-trip elevator). Cafes, rooftop bars and dinner alternatives are in the <a href="#cafes">Cafés</a>, <a href="#nightlife">Nightlife</a> and <a href="#dining">Dining</a> sections.</p>
+
     <h3>Ho Chi Minh City (Saigon)</h3>
     <p>Vietnam's largest city is energetic, modern, and full of nightlife. District 1 is the heart of the action — rooftop bars, Michelin-starred restaurants, designer boutiques, and bustling markets like Ben Thanh. This is where the trip reaches its glamorous finale with the All Black Everything evening.</p>
     <p><strong style="color:var(--medium-purple)">Known For:</strong> Bold southern-style Vietnamese food — broken rice with grilled pork (com tam), fresh spring rolls (goi cuon), hu tieu (southern pork noodle soup), and banh trang tron (rice paper salad snack). Anan Saigon (your farewell dinner) holds a Michelin star for reimagining street food into elevated plates. Expect sweeter flavors, more coconut milk, and tropical fruit.</p>
@@ -515,6 +522,7 @@
 <section id="itinerary">
 <div class="container">
     <h2>Day-by-Day Itinerary</h2>
+    <p>November 21–29 covers nine calendar days and eight nights. Hotels and the cruise are booked; activities are proposals, and the first or last day may shift once international flights are set. Every day has a morning, afternoon and evening plan.</p>
 
     <div class="day-scroller">
     <button class="day-scroll-btn day-scroll-prev" type="button" aria-label="Scroll to previous day"><span class="day-scroll-icon" aria-hidden="true"></span></button>
@@ -530,13 +538,9 @@
         </div>
         <div class="wakeup">⏰ No set wake-up time. Arrive and rest at your own pace.</div>
         <ul>
-            <li>Arrive in Hanoi</li>
-            <li>Check into hotel</li>
-            <li>Explore the Old Quarter if arrival time allows</li>
-            <li>Get measured for custom shoes in the Old Quarter so they're ready before the cruise</li>
-            <li>Shopping for Vietnamese coffee, silk, souvenirs</li>
-            <li>Optional welcome dinner for whoever arrives in time</li>
-            <li>Rest up for a full shopping day tomorrow</li>
+            <li><strong class="slot">Morning:</strong> Arrive in Hanoi (HAN); arrival time depends on the final international flight schedule. Pre-booked private car or Grab to the hotel.</li>
+            <li><strong class="slot">Afternoon:</strong> Check into Anatole Hotel Hanoi (30 Nha Chung, near Hoan Kiem Lake). Get measured for custom shoes in the Old Quarter so they are ready before the cruise. If arrival time allows, stroll the Old Quarter for egg coffee, Vietnamese coffee, silk and souvenirs.</li>
+            <li><strong class="slot">Evening:</strong> Optional welcome dinner for whoever arrives in time. Nightlife option: the Hanoi Weekend Night Market along Hang Dao toward Dong Xuan Market (Fri–Sun evenings, about 6 PM to midnight; Nov 21 is a Sunday). Rest up for a full shopping day tomorrow.</li>
         </ul>
         <div class="wear">👗 Comfortable Chic: airport outfit, sneakers, light cardigan, crossbody bag.</div>
     </div>
@@ -550,16 +554,14 @@
         </div>
         <div class="wakeup">⏰ Sleep in! No scheduled pickup. Shop at your own pace.</div>
         <ul>
-            <li>Relaxed breakfast at the hotel (included)</li>
-            <li>Custom shoe fitting and pickup (order on Nov 21 if possible so there's time for adjustments)</li>
-            <li>Old Quarter shopping: Hang Dau (shoe street), Hang Gai (silk street), and local boutiques</li>
-            <li>Shopping for Vietnamese coffee, silk, lacquerware, and souvenirs</li>
-            <li>Coffee break by Hoan Kiem Lake</li>
-            <li>Easy dinner in Hanoi</li>
-            <li>Pick up any remaining orders, then pack an overnight bag for the cruise</li>
+            <li><strong class="slot">Morning:</strong> Relaxed breakfast at the hotel (included), then custom shoe fitting and pickup (order on Nov 21 if possible so there is time for adjustments).</li>
+            <li><strong class="slot">Afternoon:</strong> Shopping block in the Old Quarter: Hang Dau (shoe street), Hang Gai (silk street) and local boutiques for Vietnamese coffee, silk, lacquerware and souvenirs. Coffee break at <strong>Café Phố Cổ</strong> (11 Hang Gai), a hidden rooftop cafe with views over Hoan Kiem Lake, reached through a silk shop on the street.</li>
+            <li><strong class="slot">Evening:</strong> Easy dinner in Hanoi, pick up any remaining orders, and pack an overnight bag for the cruise. Keep the night low-key: the cruise shuttle leaves around 8 AM.</li>
         </ul>
         <div class="wear">👗 Comfortable Chic: easy walking outfit, sneakers or sandals, light layer, crossbody bag for shopping.</div>
+        <div class="day-note">Shopping day. The original "coffee break by Hoan Kiem Lake" is now Café Phố Cổ.</div>
     </div>
+
     <div class="day-card" id="day-2027-11-23" tabindex="0">
         <h3>Day 3 — Tuesday, November 23: 🎂 Board the Cruise &amp; Birthday at Sea</h3>
         <div class="day-meta">
@@ -569,37 +571,34 @@
         </div>
         <div class="wakeup">⏰ Early — be ready by 7:30 AM. Breakfast, check out, then cruise shuttle pickup at 8:00–8:30 AM.</div>
         <ul>
-            <li>Breakfast at hotel (included), then check out of Anatole Hotel Hanoi</li>
-            <li>Genesis Regal transfer / shuttle pickup from Hanoi (approximately 8:00–8:30 AM, ~2.5–3 hour drive to the pier)</li>
-            <li>Board the cruise and celebrate Keysha's actual birthday onboard</li>
-            <li>Welcome lunch, scenic cruising, sundeck time, kayaking or cave excursion</li>
-            <li>Birthday photos on the sundeck</li>
-            <li>Birthday cake / decorations / special dinner</li>
-            <li>Champagne toast or group birthday moment onboard</li>
+            <li><strong class="slot">Morning:</strong> Breakfast at the hotel (included), check out of Anatole Hotel Hanoi, then the Genesis Regal transfer / shuttle pickup from Hanoi (approximately 8:00–8:30 AM, ~2.5–3 hour drive to the pier).</li>
+            <li><strong class="slot">Afternoon:</strong> Board the cruise and celebrate Keysha's actual birthday onboard. Welcome lunch, scenic cruising through Lan Ha Bay / Ha Long Bay, sundeck time, kayaking or a cave excursion, and golden-hour birthday photos on the sundeck.</li>
+            <li><strong class="slot">Evening:</strong> Birthday dinner onboard with cake, decorations and a champagne toast or group birthday moment (request these from Genesis Regal in advance).</li>
         </ul>
         <div class="wear">👗 Birthday at Sea: resort chic for boarding; beautiful birthday dinner outfit for evening; light sweater for deck breezes.</div>
         <div class="day-note">This is the official birthday date: November 23. Additional celebrations happen later in the week.</div>
     </div>
+
     <div class="day-card" id="day-2027-11-24" tabindex="0">
-        <h3>Day 4 — Wednesday, November 24: Cruise Return & Travel to Hoi An</h3>
+        <h3>Day 4 — Wednesday, November 24: Cruise Return, Fly to Da Nang &amp; Waterfront Dinner</h3>
         <div class="day-meta">
-            <span><strong>Destination:</strong> Lan Ha Bay → Da Nang airport → Hoi An</span>
+            <span><strong>Destination:</strong> Lan Ha Bay → Hanoi airport → Da Nang → Hoi An</span>
             <span><strong>Weather:</strong> 78–83°F (26–28°C), warm tropical</span>
             <span><strong>Stay:</strong> Silk Sense Hoi An River Resort (night 1 of 2)</span>
         </div>
         <div class="wakeup">⏰ Early — disembarkation around 7–8 AM breakfast, off by 9–9:30 AM. Travel day.</div>
         <ul>
-            <li>Breakfast / brunch onboard</li>
-            <li>Disembark Genesis Regal Luxury Cruise</li>
-            <li>Transfer back toward Hanoi / airport area</li>
-            <li>Fly to Da Nang (~1.5 hour flight)</li>
-            <li>Transfer to Silk Sense Hoi An River Resort (about 45 min from Da Nang airport; check-in from 2:00 PM; book the resort pickup 48 hours ahead)</li>
-            <li>Easy evening: dinner near the resort or a first stroll through the lantern-lit Ancient Town</li>
+            <li><strong class="slot">Morning:</strong> Breakfast / brunch onboard, disembark Genesis Regal Luxury Cruise, and transfer back toward Hanoi / the airport area.</li>
+            <li><strong class="slot">Afternoon:</strong> Fly Hanoi to Da Nang (~1.5 hour flight). Book a private car for the rest of the day, with luggage in the car.</li>
+            <li><strong class="slot">Evening:</strong> Early dinner at <strong>Waterfront Danang Restaurant &amp; Bar</strong> (150–152 Bach Dang, on the Han River): upstairs restaurant, downstairs bar, relaxed riverside setting. Then the ~45 minute transfer to Silk Sense Hoi An River Resort (check-in from 2:00 PM; book the resort pickup at least 48 hours ahead, extra charge may apply).</li>
+            <li class="sub"><strong class="slot">Fallback:</strong> If the flight lands late, skip Waterfront and have an easy dinner near the resort. The lantern-lit Ancient Town stroll moves to tomorrow evening.</li>
         </ul>
         <div class="wear">👗 Travel + Resort Arrival: comfortable travel set, sandals or sneakers, easy dinner outfit.</div>
+        <div class="day-note">Waterfront Danang lists Tuesday to Friday 3 PM to 10:30 PM, so a Wednesday dinner fits.</div>
     </div>
+
     <div class="day-card" id="day-2027-11-25" tabindex="0">
-        <h3>Day 5 — Thursday, November 25: Relax & Celebrate in Hoi An</h3>
+        <h3>Day 5 — Thursday, November 25: Wellness Day, Tailors &amp; Lanterns in Hoi An</h3>
         <div class="day-meta">
             <span><strong>Destination:</strong> Hoi An</span>
             <span><strong>Weather:</strong> 78–83°F (26–28°C), warm</span>
@@ -607,19 +606,16 @@
         </div>
         <div class="wakeup">⏰ Sleep in! No schedule. Wake whenever — it's a resort and pool morning.</div>
         <ul>
-            <li>Relaxing breakfast at the resort (included)</li>
-            <li>Pool time and optional spa treatments</li>
-            <li>Afternoon in Hoi An Ancient Town: place custom clothing and leather orders so there's time for fittings</li>
-            <li>Birthday photos in the lantern streets</li>
-            <li>Optional group birthday dinner in Hoi An</li>
-            <li>Flexible day for everyone's energy levels</li>
+            <li><strong class="slot">Morning:</strong> <strong>Wellness day 1:</strong> relaxing breakfast at the resort (included), pool time, then a massage or facial at the resort spa (listed as Lotus Spa; book through the resort).</li>
+            <li><strong class="slot">Afternoon:</strong> Shopping block in Hoi An Ancient Town: place custom clothing and leather orders so there is time for fittings. Well-known tailors include A Dong Silk (62 Tran Hung Dao and 40 Le Loi), Bebe Tailor and Yaly Couture; ask each for a firm ready time before your Nov 26 departure. Coffee stop at <strong>Faifo Coffee</strong> (130 Tran Phu), a rooftop cafe above the yellow heritage rooftops.</li>
+            <li><strong class="slot">Evening:</strong> Birthday photos in the lantern streets, a stroll through the Hoi An Night Market on Nguyen Hoang Street (nightly, roughly 5 to 11 PM), and an optional group birthday dinner in Hoi An.</li>
         </ul>
         <div class="wear">👗 Resort Chic: swimsuit and cover-up for the morning; flowy dress and sandals for the Ancient Town; elegant dinner outfit at night.</div>
-        <div class="day-note">Relaxed group celebration day, not a replacement for the November 23 birthday at sea.</div>
+        <div class="day-note">Relaxed group celebration and recovery day after the travel day, not a replacement for the November 23 birthday at sea.</div>
     </div>
 
     <div class="day-card" id="day-2027-11-26" tabindex="0">
-        <h3>Day 6 — Friday, November 26: Hoi An Shopping & Fly to Ho Chi Minh City</h3>
+        <h3>Day 6 — Friday, November 26: Final Fittings &amp; Fly to Ho Chi Minh City</h3>
         <div class="day-meta">
             <span><strong>Destination:</strong> Hoi An → Da Nang airport → Ho Chi Minh City</span>
             <span><strong>Weather:</strong> 78–83°F in Hoi An; 86–91°F in Ho Chi Minh City</span>
@@ -627,34 +623,29 @@
         </div>
         <div class="wakeup">⏰ Morning — aim for 8:00–8:30 AM. Breakfast at the resort, then final shopping. Check out of Silk Sense by noon.</div>
         <ul>
-            <li>Breakfast at the resort (included)</li>
-            <li>Final fittings and pickups for custom clothing and leather goods</li>
-            <li>Last-minute shopping and photos in the lantern streets</li>
-            <li>Check out of Silk Sense Hoi An River Resort by noon</li>
-            <li>Transfer to Da Nang airport (~45 min from Hoi An)</li>
-            <li>Fly from Da Nang to Ho Chi Minh City (~1.5 hour flight)</li>
-            <li>Check into Hotel Grand Saigon (~20–30 min from HCMC airport to District 1)</li>
-            <li>Easy dinner or rooftop cocktail in District 1</li>
+            <li><strong class="slot">Morning:</strong> Breakfast at the resort (included), final fittings and pickups for custom clothing and leather goods, last-minute shopping and photos in the lantern streets. Check out of Silk Sense Hoi An River Resort by noon.</li>
+            <li><strong class="slot">Afternoon:</strong> Transfer to Da Nang airport (~45 min from Hoi An) and fly Da Nang to Ho Chi Minh City (~1.5 hour flight). Check into Hotel Grand Saigon, No. 8 Dong Khoi Street (~20–30 min from the airport to District 1).</li>
+            <li><strong class="slot">Evening:</strong> Easy dinner and a rooftop cocktail at Saigon Saigon Rooftop Bar (Caravelle, near the Opera House). Late-night option if energy allows: CUR8 Saigon's Friday hip-hop night (about 10 PM).</li>
         </ul>
         <div class="wear">👗 Cute and Comfortable: matching two-piece set, comfortable sandals, crossbody bag; easy dinner look for the evening.</div>
         <div class="day-note">Place Hoi An custom orders on Nov 25 so they're ready before you leave. Leave space in your luggage!</div>
     </div>
+
     <div class="day-card" id="day-2027-11-27" tabindex="0">
-        <h3>Day 7 — Saturday, November 27: Explore Ho Chi Minh City</h3>
+        <h3>Day 7 — Saturday, November 27: Wellness Morning &amp; Explore Ho Chi Minh City</h3>
         <div class="day-meta">
             <span><strong>Destination:</strong> Ho Chi Minh City</span>
-            <span><strong>Weather:</strong> 86–91°F (30–33°C), hot & humid</span>
+            <span><strong>Weather:</strong> 86–91°F (30–33°C), hot &amp; humid</span>
             <span><strong>Stay:</strong> Hotel Grand Saigon (night 2 of 3)</span>
         </div>
         <div class="wakeup">⏰ Sleep in! No scheduled pickup. Explore at your own pace.</div>
         <ul>
-            <li>Breakfast at the hotel</li>
-            <li>Explore District 1: Dong Khoi Street, Saigon Opera House, and the Central Post Office area</li>
-            <li>Shopping at local boutiques and cafes</li>
-            <li>Afternoon rest or pool / spa time</li>
-            <li>Optional rooftop cocktails or casual dinner</li>
+            <li><strong class="slot">Morning:</strong> <strong>Wellness day 2:</strong> breakfast at the hotel, then a massage, facial or sauna session at the Hotel Grand Saigon spa (on site). If you decide on a medical or dental option from the <a href="#wellness">Wellness section</a>, it takes this slot instead.</li>
+            <li><strong class="slot">Afternoon:</strong> Shopping and sights in District 1: Dong Khoi Street boutiques, Saigon Opera House and the Central Post Office area, plus Saigon Centre and Takashimaya (65 Le Loi) for fashion, beauty and a food hall. All within a short walk of the hotel.</li>
+            <li><strong class="slot">Evening:</strong> Rooftop dinner or cocktails (Social Club Rooftop Bar at Hotel des Arts, or Saigon Saigon). Nightlife option: Saturday night at CUR8 Saigon (house night) or Neighborhood Saigon, both near Ben Thanh Market.</li>
         </ul>
         <div class="wear">👗 City Chic: lightweight outfit, comfortable shoes, stylish dinner look.</div>
+        <div class="day-note">Wellness treatments from the Wellness section are still being decided; nothing is booked.</div>
     </div>
 
     <div class="day-card" id="day-2027-11-28" tabindex="0">
@@ -666,17 +657,12 @@
         </div>
         <div class="wakeup">⏰ Sleep in! No morning schedule. Rest up for the big night out.</div>
         <ul>
-            <li>Shopping at Ben Thanh Market and nearby boutiques</li>
-            <li>Free time / rest before the evening</li>
-            <li>All Black Everything dress code</li>
-            <li>Michelin-star farewell dinner at Anan Saigon</li>
-            <li>Rooftop cocktails</li>
-            <li>Group photos</li>
-            <li>Hip-Hop / Afrobeats night out</li>
-            <li>Return to hotel together using Grab</li>
+            <li><strong class="slot">Morning:</strong> Cafe and market crawl in District 1: The Cafe Apartment at 42 Nguyen Hue (cafes and boutiques), specialty coffee at The Workshop Coffee, then Ben Thanh Market and nearby boutiques. Coconut coffee at Cong Ca Phe (93 Yersin) is an easy stop on the way back.</li>
+            <li><strong class="slot">Afternoon:</strong> Free time to rest before the evening: pool, spa or a slow lunch. Glam hair and makeup time.</li>
+            <li><strong class="slot">Evening:</strong> All Black Everything dress code. Michelin-star farewell dinner at Anan Saigon (dinner only, Tuesday to Sunday; seatings 5:30 or 8:30 PM), group photos, rooftop cocktails, then a Hip-Hop / Afrobeats night out. Return to the hotel together using Grab.</li>
         </ul>
         <div class="wear">👗 All Black Everything: all-black attire, gold accessories encouraged, glam hair and makeup, dress to impress.</div>
-        <div class="day-note">Club options: Piu Piu, Mershe Saigon, Weeknd Saigon, Afro Chill Lounge.</div>
+        <div class="day-note">Club options: Piu Piu, Mershe Saigon, Weeknd SGN (open Fri–Sun), Afro Chill Lounge, Neighborhood Saigon (open Sunday), LOCO Complex, Bam Bam, PAPI.</div>
     </div>
 
     <div class="day-card" id="day-2027-11-29" tabindex="0">
@@ -688,10 +674,9 @@
         </div>
         <div class="wakeup">⏰ Depends on flight time. Allow 3+ hours before departure for checkout and airport transfer.</div>
         <ul>
-            <li>Breakfast</li>
-            <li>Hotel checkout</li>
-            <li>Airport transfer (~20–30 min to Tan Son Nhat International Airport)</li>
-            <li>Fly home from Ho Chi Minh City (SGN)</li>
+            <li><strong class="slot">Morning:</strong> Breakfast, then last-minute shopping if flight timing allows (Ben Thanh Market or Saigon Centre, both close to District 1).</li>
+            <li><strong class="slot">Afternoon:</strong> Hotel checkout and airport transfer (~20–30 min to Tan Son Nhat International Airport).</li>
+            <li><strong class="slot">Evening:</strong> Fly home from Ho Chi Minh City (SGN). Departure time depends on the international flight schedule.</li>
         </ul>
         <div class="wear">👗 Airport Comfortable: jogger set or matching sweatsuit, sneakers, light jacket for the flight.</div>
     </div>
@@ -710,6 +695,7 @@
         <li>Grand Executive Twin City View, 1 room, 2 guests</li>
         <li>30 Nha Chung, Hanoi, near Hoan Kiem Lake and the Old Quarter</li>
         <li>Breakfast included, free WiFi, welcome drink, pool, fitness center</li>
+        <li>Booking reference: Itinerary #73592356274642</li>
     </ul>
     <p><a href="https://www.youtube.com/watch?v=ZbrvwWcnzxQ" target="_blank" rel="noopener noreferrer">Watch the hotel video on YouTube →</a></p>
 
@@ -737,6 +723,8 @@
         <li>Breakfast included, free WiFi, free self parking, 24-hour room service</li>
         <li>Airport pickup available (extra charge may apply): contact the resort at least 48 hours before arrival (Tel: +84 235 3754999)</li>
         <li>Free cancellation until Nov 17, 2027</li>
+        <li>On-site spa (listed as Lotus Spa) for massage, facials and body treatments</li>
+        <li>Booking reference: Itinerary #73592431490681</li>
     </ul>
     <p><a href="https://www.youtube.com/watch?v=E0z37uusYqE" target="_blank" rel="noopener noreferrer">Watch the hotel video on YouTube →</a></p>
     <h3>Hotel Grand Saigon (Confirmed)</h3>
@@ -779,6 +767,287 @@
         <li>Tasting menus may be available for guests who want the full experience</li>
     </ul>
     <p><a href="https://anansaigon.com/" target="_blank">Visit Website →</a> &nbsp;|&nbsp; <a href="https://anansaigon.com/booking/" target="_blank">Make a Reservation →</a></p>
+    <ul class="clean">
+        <li>Address: 89 Ton That Dam, District 1, inside the old market area. Dinner only, Tuesday to Sunday; Nov 28, 2027 is a Sunday</li>
+        <li>Tasting menus listed at US$115 (Saigon) and US$145 (Chef Peter's), food only, with seatings at 5:30 or 8:30 PM. Everyone at the table orders the same tasting menu; pre-booking required</li>
+        <li>Reservations by email to hello@anansaigon.com; the restaurant suggests booking about two weeks ahead. Not suitable for wheelchairs or children under 12</li>
+    </ul>
+
+    <h3>November 24 — Waterfront Danang Restaurant &amp; Bar</h3>
+    <ul class="clean">
+        <li>150–152 Bach Dang, Hai Chau, on the Han River in Da Nang. Two levels: restaurant upstairs, bar downstairs</li>
+        <li>International and Vietnamese menu; relaxed rather than formal</li>
+        <li>Official site lists Tuesday to Friday 3 PM to 10:30 PM and Saturday and Sunday 11 AM to 10:30 PM. Other listings show longer hours, so go by the official site</li>
+        <li>Fits between the Da Nang flight and the transfer to Hoi An</li>
+    </ul>
+    <p><a href="https://waterfrontdanang.com/" target="_blank" rel="noopener noreferrer">Visit Website →</a> &nbsp;|&nbsp; <a href="https://waterfrontdanang.com/contact/" target="_blank" rel="noopener noreferrer">Contact →</a></p>
+
+    <h3>Da Nang Dinner Alternatives (not scheduled)</h3>
+    <ul class="clean">
+        <li><strong>La Maison 1888</strong> (InterContinental Danang Sun Peninsula Resort, Son Tra): contemporary French by Chef Christian Le Squer, one Michelin star per the resort page, dinner 6:30–9:00 PM. Courtesy deposit of VND 1,000,000 per guest. Needs a separate evening in Da Nang, so it only fits if you extend or swap it for Waterfront. <a href="https://www.danang.intercontinental.com/dining/la-maison-1888/" target="_blank" rel="noopener noreferrer">Resort page →</a></li>
+        <li><strong>Nen Danang</strong> (16 My Da Tay 2, Ngu Hanh Son): Michelin Green Star, one set menu revamped every six months. Reserve by phone or message. <a href="https://restaurantnen.com/" target="_blank" rel="noopener noreferrer">Website →</a></li>
+    </ul>
+
+    <h3>Ho Chi Minh City Dining Options</h3>
+    <ul class="clean">
+        <li><strong>AKUNA</strong> (9F, Le Meridien Saigon, 3C Ton Duc Thang): one Michelin star, contemporary tasting menu. Back-up if Anan Saigon is full. <a href="https://akunarestaurant.com/contact/" target="_blank" rel="noopener noreferrer">Contact →</a></li>
+        <li><strong>Saigon Saigon Rooftop Bar</strong> (10th floor, Caravelle Saigon, near the Opera House): classic hotel rooftop for cocktails; used for the Nov 26 arrival evening. <a href="https://www.caravellehotel.com/contact-us/" target="_blank" rel="noopener noreferrer">Hotel contact →</a></li>
+        <li><strong>Social Club Rooftop Bar</strong> (Hotel des Arts Saigon, District 3): rooftop terrace with an infinity pool; used for the Nov 27 evening. <a href="https://www.hoteldesartssaigon.com/restaurants-bars/social-club-rooftop-bar/" target="_blank" rel="noopener noreferrer">Reserve →</a></li>
+    </ul>
+</div>
+</section>
+<!-- NIGHTLIFE -->
+<section id="nightlife">
+<div class="container">
+    <h2>Nightlife</h2>
+    <p>R&amp;B, hip-hop and Afrobeats are the brief, with night markets and rooftops for the quieter evenings. Venue details come from listings dated November 2026; no event schedule is confirmed for November 2027.</p>
+
+    <h3>Evening-by-Evening</h3>
+    <table>
+        <thead><tr><th>Date</th><th>Where</th><th>Evening Plan</th></tr></thead>
+        <tbody>
+            <tr><td>Sun Nov 21</td><td>Hanoi</td><td>Optional Hanoi Weekend Night Market (Hang Dao to Dong Xuan Market, Fri–Sun, about 6 PM to midnight)</td></tr>
+            <tr><td>Mon Nov 22</td><td>Hanoi</td><td>Easy dinner, early night before the cruise pickup</td></tr>
+            <tr><td>Tue Nov 23</td><td>Cruise</td><td>Birthday dinner, cake and champagne toast onboard</td></tr>
+            <tr><td>Wed Nov 24</td><td>Da Nang</td><td>Waterfront Danang Restaurant &amp; Bar (restaurant upstairs, bar downstairs)</td></tr>
+            <tr><td>Thu Nov 25</td><td>Hoi An</td><td>Lantern streets and the Hoi An Night Market (nightly)</td></tr>
+            <tr><td>Fri Nov 26</td><td>Ho Chi Minh City</td><td>Saigon Saigon Rooftop Bar; optional CUR8 Saigon Friday hip-hop night</td></tr>
+            <tr><td>Sat Nov 27</td><td>Ho Chi Minh City</td><td>Social Club Rooftop Bar; optional CUR8 house night or Neighborhood Saigon</td></tr>
+            <tr><td>Sun Nov 28</td><td>Ho Chi Minh City</td><td>All Black Everything: Anan Saigon, rooftop cocktails, then a club (Weeknd SGN, Neighborhood Saigon, LOCO, Bam Bam, PAPI, Piu Piu, Mershe Saigon or Afro Chill Lounge)</td></tr>
+        </tbody>
+    </table>
+
+    <div class="callout">
+        Original shortlist: Piu Piu, Mershe Saigon, Weeknd SGN, Afro Chill Lounge. Use Grab, go together and return together; see the <a href="#safety">Night Out &amp; Safety Plan</a>.
+    </div>
+    <h3>Night Markets</h3>
+    <div class="hotel-grid">
+        <div class="hotel-card">
+            <h4>Hanoi Weekend Night Market</h4>
+            <p class="meta">Old Quarter, Hang Dao to Dong Xuan Market · Fri–Sun only</p>
+            <p>Streets close to traffic and fill with stalls selling clothes, souvenirs, accessories and street snacks. Stalls open around 6 PM and wind down between 10:30 PM and midnight. Nov 21 is a Sunday, so the night of arrival works.</p>
+            <p><a href="https://www.vietnamairlines.com/us/en/plan-book/travel/travel-guide/hanoi-night-market" target="_blank" rel="noopener noreferrer">Vietnam Airlines guide →</a></p>
+        </div>
+        <div class="hotel-card">
+            <h4>Hoi An Night Market</h4>
+            <p class="meta">Nguyen Hoang Street, An Hoi, across the river from the Ancient Town · nightly</p>
+            <p>Lantern-lit stalls with street food, souvenirs and handicrafts, opening around 5 PM and running to about 10–11 PM. Busiest from 6:30 to 9 PM.</p>
+            <p><a href="https://www.google.com/maps/search/?api=1&amp;query=Hoi%20An%20Night%20Market%2C%20Nguyen%20Hoang%2C%20Hoi%20An" target="_blank" rel="noopener noreferrer">Map →</a></p>
+        </div>
+    </div>
+    <h3>Ho Chi Minh City Clubs and Lounges</h3>
+    <div class="hotel-grid">
+        <div class="hotel-card">
+            <h4>Weeknd SGN</h4>
+            <p class="meta">Hip-hop club, about 300 capacity · 66 Huynh Thuc Khang, central Ho Chi Minh City, about 3 minutes&#x27; walk from Nguyen Hue</p>
+            <p>Hours and table prices come from a dated third-party guide. Ask the club to confirm both when you reserve.</p>
+            <ul>
+                <li>Hours: Friday to Sunday, 22:00 to 05:00 (guide). Nov 28, 2027 is a Sunday.</li>
+                <li>Music: A 2026 guide lists hip-hop and R&amp;B. Eras not stated.</li>
+                <li>Tables: Guide reports standard-sofa packages from about VND 6 million before VAT and service charge. Confirm with the club.</li>
+                <li>Table service model; reserve through the club.</li>
+            </ul>
+            <p><a href="https://www.google.com/maps/search/?api=1&amp;query=Weeknd+SGN+66+Huynh+Thuc+Khang+Ho+Chi+Minh+City" target="_blank" rel="noopener noreferrer">Reserve / enquire →</a> &nbsp;|&nbsp; <a href="https://www.google.com/maps/search/?api=1&amp;query=Weeknd%20SGN%2C%2066%20Huynh%20Thuc%20Khang%2C%20Ho%20Chi%20Minh%20City" target="_blank" rel="noopener noreferrer">Map →</a></p>
+        </div>
+        <div class="hotel-card">
+            <h4>LOCO Complex</h4>
+            <p class="meta">Two-floor club, about 300 capacity · 11 Nam Quoc Cang, Ben Thanh Ward, central Ho Chi Minh City</p>
+            <p>Neighborhood Saigon is on Floor 1 of the same building (11 Nam Quoc Cang), so one stop covers two rooms.</p>
+            <ul>
+                <li>Hours: Tuesday to Sunday, 22:00 to 05:00 (guide)</li>
+                <li>Music: Guide: first floor hip-hop and R&amp;B; upstairs Heatroom Top 40, EDM and House.</li>
+                <li>Tables: Guide reports table minimums from about VND 3.5 million, excluding VAT and service charge. Confirm with the club.</li>
+                <li>Table-oriented; VIP zones exist per the guide.</li>
+            </ul>
+            <p><a href="https://www.google.com/maps/search/?api=1&amp;query=LOCO%20Complex%2C%2011%20Nam%20Quoc%20Cang%2C%20Ho%20Chi%20Minh%20City" target="_blank" rel="noopener noreferrer">Map →</a></p>
+        </div>
+        <div class="hotel-card">
+            <h4>CUR8 Saigon</h4>
+            <p class="meta">Café bar, listening room and record shop · 49 Pho Duc Chinh, Ben Thanh, Ho Chi Minh City, a few steps from Ben Thanh Market</p>
+            <p>Best fit for the R&amp;B, hip-hop and neo-soul brief; also serves coffee, cocktails and comfort bites.</p>
+            <ul>
+                <li>Hours: Tuesday to Sunday, 9am until late; closed Monday</li>
+                <li>Music: Official site lists a weekly hip-hop night (Friday) and live music nights (Wednesday). Recent bookings were billed as Hip-Hop and R&amp;B, and R&amp;B, Neo-Soul and Funk. Sub-styles and eras vary by act.</li>
+                <li>Nights: Weekly pattern on the official site: Wednesday live music 9pm to 11pm; Friday hip-hop night 10pm to late; Saturday house night 10pm to late. Nov 26, 2027 is a Friday. Specific acts for 2027 are announced closer to the date.</li>
+                <li>Entry: Wednesday live music was listed as free entry on Eventbrite. No cover charge is published for other nights.</li>
+            </ul>
+            <p><a href="https://www.cur8sgn.com/" target="_blank" rel="noopener noreferrer">Website →</a> &nbsp;|&nbsp; <a href="https://www.cur8sgn.com/private-hire" target="_blank" rel="noopener noreferrer">Reserve / enquire →</a> &nbsp;|&nbsp; <a href="https://www.google.com/maps/search/?api=1&amp;query=CUR8%20Saigon%2C%2049%20Pho%20Duc%20Chinh%2C%20Ben%20Thanh%2C%20Ho%20Chi%20Minh%20City" target="_blank" rel="noopener noreferrer">Map →</a></p>
+        </div>
+        <div class="hotel-card">
+            <h4>Neighborhood Saigon</h4>
+            <p class="meta">American-style house-party club · Floor 1, 11 Nam Quoc Cang, Pham Ngu Lao Ward, District 1 (same building as LOCO Complex)</p>
+            <p>A good birthday-night option: Nov 28, 2027 is a Sunday and the club is open.</p>
+            <ul>
+                <li>Hours: Tuesday to Sunday, 10:00 PM to 4:00 AM; closed Monday</li>
+                <li>Music: Venue site lists hip-hop, R&amp;B, pop and Top 40, plus Afro House, Amapiano and Afrobeats. Eras are not stated and the line-up changes nightly.</li>
+                <li>Dress code: Smart casual; no flip-flops or sportswear.</li>
+                <li>VIP booths are free to book with no prepayment and are held until 11:30 PM. Birthdays get a name drop on the mic around midnight.</li>
+                <li>Age: 18+ only; bring photo ID</li>
+            </ul>
+            <p><a href="https://neighborhoodsaigon.com/" target="_blank" rel="noopener noreferrer">Website →</a> &nbsp;|&nbsp; <a href="https://www.google.com/maps/search/?api=1&amp;query=Neighborhood%20Club%2C%2011%20Nam%20Quoc%20Cang%2C%20Pham%20Ngu%20Lao%2C%20District%201%2C%20Ho%20Chi%20Minh%20City" target="_blank" rel="noopener noreferrer">Map →</a></p>
+        </div>
+        <div class="hotel-card">
+            <h4>Bam Bam Tropical Club</h4>
+            <p class="meta">Hip-hop club · 41-43 Nam Ky Khoi Nghia, central Ho Chi Minh City, about 7 minutes&#x27; walk from Ben Thanh Market</p>
+            <p>Alternative on nights when Weeknd SGN is closed.</p>
+            <ul>
+                <li>Hours: 19:00 to 02:00 nightly (guide)</li>
+                <li>Music: Guide: hip-hop and current commercial tracks.</li>
+                <li>Nights: Guide mentions recurring themed nights without naming them; ask the club which night suits you.</li>
+                <li>Dress code: Smart casual; no flip-flops or sports shorts (guide)</li>
+                <li>Sofas and VIP areas per the guide.</li>
+            </ul>
+            <p><a href="https://www.google.com/maps/search/?api=1&amp;query=Bam%20Bam%20Tropical%20Club%2C%2041-43%20Nam%20Ky%20Khoi%20Nghia%2C%20Ho%20Chi%20Minh%20City" target="_blank" rel="noopener noreferrer">Map →</a></p>
+        </div>
+        <div class="hotel-card">
+            <h4>PAPI Club Saigon</h4>
+            <p class="meta">Upscale commercial club, about 300 capacity · 123 Le Loi, Ben Thanh Ward, central Ho Chi Minh City</p>
+            <p>Central option near Ben Thanh.</p>
+            <ul>
+                <li>Hours: 22:00 to 04:00 daily (guide)</li>
+                <li>Music: Guide: hip-hop, EDM and House.</li>
+                <li>Dress code: Smart elegant; avoid shorts, tank tops and flip-flops (guide)</li>
+                <li>Table tiers; confirm minimum spend, VAT and service charge before agreeing.</li>
+            </ul>
+            <p><a href="https://thepapisaigon.com/" target="_blank" rel="noopener noreferrer">Website →</a> &nbsp;|&nbsp; <a href="https://thepapisaigon.com/reservations" target="_blank" rel="noopener noreferrer">Reserve / enquire →</a> &nbsp;|&nbsp; <a href="https://www.google.com/maps/search/?api=1&amp;query=PAPI%20Club%20Saigon%2C%20123%20Le%20Loi%2C%20Ho%20Chi%20Minh%20City" target="_blank" rel="noopener noreferrer">Map →</a></p>
+        </div>
+    </div>
+    <h3>Da Nang Bars and Rooftops (optional add-ons)</h3>
+    <p>Waterfront Danang (Nov 24 dinner) has its bar downstairs. For a later night in Da Nang, SKY36 sits at 36 Bach Dang, a short ride from Waterfront, but the transfer to Hoi An makes a late night impractical on Nov 24.</p>
+    <div class="hotel-grid">
+        <div class="hotel-card">
+            <h4>The Roof Da Nang</h4>
+            <p class="meta">Rooftop bar and lounge · 3rd floor, 1A Vo Nguyen Giap, Son Tra, above East West Brewing, overlooking My Khe Beach</p>
+            <p>Location and the table-request form come from the venue&#x27;s own website. Ask about music, cover and dress code when you request a table.</p>
+            <p><a href="https://www.theroofdanang.com/" target="_blank" rel="noopener noreferrer">Website →</a> &nbsp;|&nbsp; <a href="https://www.theroofdanang.com/book-a-table" target="_blank" rel="noopener noreferrer">Reserve / enquire →</a> &nbsp;|&nbsp; <a href="https://www.google.com/maps/search/?api=1&amp;query=The%20Roof%20Da%20Nang%2C%201A%20Vo%20Nguyen%20Giap%2C%20Son%20Tra%2C%20Da%20Nang" target="_blank" rel="noopener noreferrer">Map →</a></p>
+        </div>
+        <div class="hotel-card">
+            <h4>BLENDS Social Bar &amp; Kitchen</h4>
+            <p class="meta">Bar and club dance floor · 49 Ngo Thi Si, My An, Ngu Hanh Son, Da Nang</p>
+            <p>Friday party nights are the venue&#x27;s signature; ask which resident DJs are playing on Nov 26.</p>
+            <ul>
+                <li>Hours: Open Monday to Sunday from 6pm until late (per the 2025 event post)</li>
+                <li>Music: A July 2025 event post says guest DJs blend R&amp;B, hip-hop, Amapiano and Afrobeats. Era or sub-style of R&amp;B and hip-hop was not stated.</li>
+                <li>Nights: &#x27;Matsuri&#x27; is described as a signature Friday party (July 18, 2025 post). Ask the venue whether it runs on your dates.</li>
+            </ul>
+            <p><a href="https://danangleisure.com/events/matsuri-x-nie-x-noizay" target="_blank" rel="noopener noreferrer">Website →</a> &nbsp;|&nbsp; <a href="https://www.google.com/maps/search/?api=1&amp;query=Blends+Social+Bar+%26+Kitchen+49+Ngo+Thi+Si+My+An+Da+Nang" target="_blank" rel="noopener noreferrer">Reserve / enquire →</a> &nbsp;|&nbsp; <a href="https://www.google.com/maps/search/?api=1&amp;query=Blends%20Social%20Bar%20%26%20Kitchen%2C%2049%20Ngo%20Thi%20Si%2C%20My%20An%2C%20Da%20Nang" target="_blank" rel="noopener noreferrer">Map →</a></p>
+        </div>
+        <div class="hotel-card">
+            <h4>SKY36 (Novotel Danang Premier Han River)</h4>
+            <p class="meta">Rooftop club and lounge · 35th to 37th floors, Novotel Danang Premier Han River, 36 Bach Dang</p>
+            <p>Hours and shows are from the venue&#x27;s own site. Nov 24 onward the trip is in Ho Chi Minh City, so this fits Nov 21 to 23.</p>
+            <ul>
+                <li>Hours: Open daily 18:00 to 02:00</li>
+                <li>Music: City tourism page lists Hip-Hop, EDM and R&amp;B. Eras not stated.</li>
+                <li>Nights: Official site lists a DJ set every night 21:00 to 01:30 and a stage event slot 21:30 to 00:00 (shows include Dance Showcase and Fire Dance).</li>
+                <li>Dress code: Smart casual</li>
+                <li>VIP areas seating up to 10 people (The Rooftop Guide). Ask the venue for table options.</li>
+                <li>Age: 18+ (listed)</li>
+            </ul>
+            <p><a href="https://sky36.vn/" target="_blank" rel="noopener noreferrer">Website →</a> &nbsp;|&nbsp; <a href="https://www.google.com/maps/search/?api=1&amp;query=SKY36%20Novotel%20Danang%20Premier%20Han%20River%2C%2036%20Bach%20Dang%2C%20Da%20Nang" target="_blank" rel="noopener noreferrer">Map →</a></p>
+        </div>
+    </div>
+</div>
+</section>
+<!-- CAFES -->
+<section id="cafes">
+<div class="container">
+    <h2>Beautiful Coffee Shops</h2>
+    <p>Two scenic stops are placed on the route: one in Hanoi and one in Hoi An. Saigon gets a cafe route on Nov 28. Da Nang cafes are optional add-ons if the Nov 24 flight lands early.</p>
+    <h3>Featured on Your Route</h3>
+    <div class="hotel-grid">
+        <div class="hotel-card">
+            <h4>Café Phố Cổ</h4>
+            <p class="meta">Hang Gai, Hoan Kiem, Hanoi · Day 2 (Nov 22)</p>
+            <p>Hidden coffee house at 11 Hang Gai: you walk through a silk shop and up winding stairs to a rooftop terrace overlooking Hoan Kiem Lake. Reviewers single out the lake view, especially toward evening, and the egg coffee and yogurt coffee. It sits on Silk Street, so it slots straight into the Nov 22 shopping block.</p>
+            <ul>
+                <li>Hours: listings show about 8 AM to 11 PM daily</li>
+                <li>The entrance is easy to miss: look for the silk shop on the street frontage</li>
+            </ul>
+            <p><a href="https://www.google.com/maps/search/?api=1&amp;query=Cafe%20Pho%20Co%2C%2011%20Hang%20Gai%2C%20Hoan%20Kiem%2C%20Hanoi" target="_blank" rel="noopener noreferrer">Map →</a> &nbsp;|&nbsp; <a href="https://www.tripadvisor.com.au/Restaurant_Review-g293924-d2413969-Reviews-Cafe_Pho_Co-Hanoi.html" target="_blank" rel="noopener noreferrer">Reviews on Tripadvisor →</a></p>
+        </div>
+        <div class="hotel-card">
+            <h4>Faifo Coffee</h4>
+            <p class="meta">130 Tran Phu, Hoi An Old Town · Day 5 (Nov 25)</p>
+            <p>One of the best-known cafes in Hoi An, with a rooftop terrace looking across the yellow heritage houses and red-tiled roofs of the Ancient Town. Reviewers praise the in-house roasted coffee and the egg coffee. Go in the morning or late afternoon for fewer crowds and better light; it fits between tailor fittings on Nov 25.</p>
+            <ul>
+                <li>Hours: listings show roughly 8 AM to 9:30 PM (earlier on weekends)</li>
+                <li>The rooftop gets busy with photo-takers at peak times</li>
+            </ul>
+            <p><a href="https://www.google.com/maps/search/?api=1&amp;query=Faifo%20Coffee%2C%20130%20Tran%20Phu%2C%20Hoi%20An" target="_blank" rel="noopener noreferrer">Map →</a> &nbsp;|&nbsp; <a href="https://www.tripadvisor.fr/Restaurant_Review-g298082-d8773820-Reviews-Faifo_Coffee-Hoi_An_Quang_Nam_Province.html" target="_blank" rel="noopener noreferrer">Reviews on Tripadvisor →</a></p>
+        </div>
+    </div>
+    <h3>Ho Chi Minh City Cafe Route (Nov 28)</h3>
+    <p>Morning at 42 Nguyen Hue, then specialty coffee, then coconut coffee. Egg coffee at Little Hanoi Egg Coffee is an optional detour. Tenants at 42 Nguyen Hue change often, so check which cafes are open that day.</p>
+    <div class="hotel-grid">
+        <div class="hotel-card">
+            <h4>The Cafe Apartment, 42 Nguyen Hue</h4>
+            <p class="meta">District 1, Nguyen Hue Walking Street</p>
+            <p>A crumbling nine-storey 1960s apartment block turned into a vertical collection of independent cafes, fashion boutiques, bars and coworking spaces.</p>
+            <ul>
+                <li>Known for: Independent specialty cafes, Tea rooms, Boutique shops</li>
+                <li>Individual tenants change often; check which cafes are open on the day.</li>
+            </ul>
+            <p><a href="https://www.google.com/maps/search/?api=1&amp;query=42%20Nguyen%20Hue%2C%20Ben%20Nghe%2C%20District%201%2C%20Ho%20Chi%20Minh%20City" target="_blank" rel="noopener noreferrer">Map →</a></p>
+        </div>
+        <div class="hotel-card">
+            <h4>The Workshop Coffee</h4>
+            <p class="meta">District 1</p>
+            <p>Loft-style space with natural light, known for serious specialty coffee (travel guide description).</p>
+            <ul>
+                <li>Known for: Pour-over, Siphon, Cold brew</li>
+                <li>Also recommended by The New York Times in a list reported by VnExpress.</li>
+            </ul>
+            <p><a href="https://www.google.com/maps/search/?api=1&amp;query=The%20Workshop%20Coffee%2C%2027%20Ngo%20Duc%20Ke%2C%20Ho%20Chi%20Minh%20City" target="_blank" rel="noopener noreferrer">Map →</a></p>
+        </div>
+        <div class="hotel-card">
+            <h4>Cong Ca Phe (Yersin)</h4>
+            <p class="meta">93 Yersin, former District 1</p>
+            <p>Retro Vietnamese decor; the chain is known for coconut coffee.</p>
+            <ul>
+                <li>Known for: Coconut coffee</li>
+                <li>A chain, so other branches are easy to find.</li>
+            </ul>
+            <p><a href="https://www.google.com/maps/search/?api=1&amp;query=Cong%20Ca%20Phe%2C%2093%20Yersin%2C%20Ho%20Chi%20Minh%20City" target="_blank" rel="noopener noreferrer">Map →</a></p>
+        </div>
+        <div class="hotel-card">
+            <h4>Little Hanoi Egg Coffee</h4>
+            <p class="meta">119/5 Yersin, Pham Ngu Lao Ward, District 1</p>
+            <p>Named in a list of Ho Chi Minh City cafes recommended by The New York Times (as reported by VnExpress).</p>
+            <ul>
+                <li>Known for: Egg coffee</li>
+                <li>Hours: 8:00 to 22:00 (4travel listing)</li>
+                <li>Down an alley off Yersin street, about 5 minutes on foot from Ben Thanh Market (Trip.com traveller post). A second branch is at 212 Le Lai.</li>
+            </ul>
+            <p><a href="https://www.google.com/maps/search/?api=1&amp;query=Little%20HaNoi%20Egg%20Coffee%20119/5%20Yersin%20Pham%20Ngu%20Lao%20District%201%20Ho%20Chi%20Minh%20City" target="_blank" rel="noopener noreferrer">Map →</a></p>
+        </div>
+    </div>
+    <h3>Da Nang Cafes (optional add-ons)</h3>
+    <p>Start with specialty coffee, then end with beach views if time allows.</p>
+    <div class="hotel-grid">
+        <div class="hotel-card">
+            <h4>XLIII Specialty Coffee (43 Factory Coffee Roaster)</h4>
+            <p class="meta">Lot 422 Ngo Thi Si, Ngu Hanh Son</p>
+            <p>Celebrated among specialty coffee fans; the roaster was renamed XLIII per Da Nang guides.</p>
+            <ul>
+                <li>Known for: Specialty single-origin coffee</li>
+                <li>Address from the roaster&#x27;s own site (xliiicoffee.com). Open-plan glass-fronted shop near the beach.</li>
+            </ul>
+            <p><a href="https://www.google.com/maps/search/?api=1&amp;query=XLIII%20Coffee%20Lot%20422%20Ngo%20Thi%20Si%20Ngu%20Hanh%20Son%20Da%20Nang" target="_blank" rel="noopener noreferrer">Map →</a></p>
+        </div>
+        <div class="hotel-card">
+            <h4>A La Carte rooftop cafe</h4>
+            <p class="meta">My Khe Beach</p>
+            <p>Top floor of the A La Carte hotel with panoramic views of My Khe Beach (guide description).</p>
+            <ul>
+                <li>Known for: Coffee with My Khe Beach views</li>
+                <li>Hours: Rooftop bar listed 6:00 PM to 11:00 PM</li>
+                <li>Rooftop of the A La Carte Da Nang Beach hotel, 200 Vo Nguyen Giap; listed as a public rooftop bar on the Da Nang tourism portal.</li>
+            </ul>
+            <p><a href="https://www.google.com/maps/search/?api=1&amp;query=A%20La%20Carte%20Danang%20Beach%20rooftop%20cafe%2C%20Da%20Nang" target="_blank" rel="noopener noreferrer">Map →</a></p>
+        </div>
+    </div>
+    <p class="small">The earlier "Hoi An cafes" idea is now Faifo Coffee. XLIII Coffee also has a Hoi An shop at 326 Ly Thuong Kiet.</p>
 </div>
 </section>
 <!-- SHOPPING -->
@@ -788,12 +1057,158 @@
     <table>
         <thead><tr><th>City</th><th>Shopping Plan</th></tr></thead>
         <tbody>
-            <tr><td>Hanoi</td><td>Old Quarter: Vietnamese coffee, silk, souvenirs, small gifts, local goods</td></tr>
-            <tr><td>Hoi An</td><td>Custom dresses, suits, blazers, leather goods, lanterns, artwork, handmade accessories</td></tr>
-            <tr><td>Ho Chi Minh City</td><td>Ben Thanh Market, boutiques, malls, fashion finds, skincare, souvenirs</td></tr>
+            <tr><td>Hanoi (Nov 21–22)</td><td>Old Quarter: Hang Gai (silk street), Hang Dau (shoe street) and custom shoes, Hanoi Weekend Night Market (Fri–Sun evenings), Vietnamese coffee, silk, lacquerware, souvenirs</td></tr>
+            <tr><td>Hoi An (Nov 25–26)</td><td>Custom dresses, suits, blazers and leather goods from tailors such as A Dong Silk (62 Tran Hung Dao, 40 Le Loi), Bebe Tailor and Yaly Couture; lanterns, artwork, handmade accessories; Hoi An Night Market</td></tr>
+            <tr><td>Da Nang (optional)</td><td>Han Market (fabric, souvenirs, custom clothing nearby) and Con Market (local food and gifts)</td></tr>
+            <tr><td>Ho Chi Minh City (Nov 27–29)</td><td>Dong Khoi Street boutiques, Saigon Centre and Takashimaya (65 Le Loi), Cafe Apartment boutiques at 42 Nguyen Hue, Ben Thanh Market, skincare, souvenirs</td></tr>
         </tbody>
     </table>
+    <h3>Shopping Blocks</h3>
+    <ul class="clean">
+        <li><strong>Mon Nov 22, afternoon (Hanoi):</strong> Hang Dau and Hang Gai, with a coffee stop at Café Phố Cổ</li>
+        <li><strong>Thu Nov 25, afternoon (Hoi An):</strong> tailors and leather orders, coffee at Faifo Coffee</li>
+        <li><strong>Fri Nov 26, morning (Hoi An):</strong> final fittings and pickups</li>
+        <li><strong>Sat Nov 27, afternoon (Saigon):</strong> Dong Khoi Street, Saigon Centre and Takashimaya (Takashimaya is reported open about 9:30 AM to 9:30 or 10 PM; confirm before going)</li>
+        <li><strong>Sun Nov 28, morning (Saigon):</strong> Cafe Apartment boutiques and Ben Thanh Market</li>
+        <li><strong>Mon Nov 29, morning (Saigon):</strong> last-minute shopping if flight timing allows</li>
+    </ul>
+    <h3>Shopping Tips</h3>
+    <ul class="clean">
+        <li>Payment guidance (general, not venue-verified): carry some Vietnamese dong in small notes for markets and taxis; malls, hotels and many boutiques accept international cards.</li>
+        <li>Bargaining is common at markets but not in malls or fixed-price boutiques.</li>
+        <li>Ask your bank about foreign-transaction fees and notify it of travel dates.</li>
+        <li>Keep valuables secured in crowded markets.</li>
+    </ul>
     <div class="callout important">Suggested personal shopping budget: $300–$500. Pack a foldable duffel bag or leave suitcase space.</div>
+</div>
+</section>
+
+<!-- WELLNESS -->
+<section id="wellness">
+<div class="container">
+    <h2>Wellness, Medical &amp; Beauty</h2>
+    <h3>Two Wellness Days</h3>
+    <ul class="clean">
+        <li><strong>Thu Nov 25 (Hoi An):</strong> slow recovery day after the cruise-and-flight day. Resort breakfast, pool and a massage or facial at the Silk Sense spa (listed as Lotus Spa, with massage, aromatherapy, sauna and yoga reported). The afternoon is a gentle tailor and coffee stroll.</li>
+        <li><strong>Sat Nov 27 (Saigon):</strong> sleep-in morning after the Nov 26 travel day with a treatment at the Hotel Grand Saigon spa (on-site spa with body treatments and facials; sauna and hot tub reported). Nov 28 afternoon is also kept open for rest before the finale.</li>
+    </ul>
+    <p>Ask each spa for its current menu, hours and prices when you book; none are booked.</p>
+    <div class="callout important">
+        <strong>Medical and beauty options are still being decided.</strong> This section is informational and is not medical advice. Provider details must be confirmed directly. Only a licensed clinician can decide whether any test or treatment is suitable. Noninvasive body contouring does not guarantee results. Eligibility, expected outcomes, recovery and scheduling require medical confirmation after an in-person consultation. Nothing is booked until a physician advises.
+    </div>
+    <p>Medical services (physical exam, dental, physician-led aesthetic care) are different from cosmetic spa services (massage, facials). They are listed separately. If you choose any of these, they take the Nov 27 morning slot in place of the spa. Nothing below is booked.</p>
+    <div class="hotel-grid">
+        <div class="hotel-card">
+            <h4>FV Hospital</h4>
+            <p class="meta">6 Nguyen Luong Bang, Tan My Ward (District 7)</p>
+            <ul>
+                <li>Services: Comprehensive health check-up; Executive health check-up programme; Optional add-ons such as dental exams (per FV news page)</li>
+                <li>Price: List prices on FV&#x27;s site: Standard 4,800,000 VND, Extensive 7,800,000 VND, Executive 16,700,000 VND (Executive is about US$650 at 25,631 VND per USD). FV advertises periodic discounts of 15%; 2027 prices are set by the hospital.</li>
+                <li>Appointment required. Phone: (84-28) 35 11 33 33, Mon to Fri 8:00 to 17:00, Sat 8:00 to 12:00 (as listed).</li>
+                <li>Credentials: States it has achieved JCI accreditation four consecutive times, from 2016 to the present.</li>
+                <li>The executive programme is described as a one-day, closed check-up with consultations, cardiovascular imaging, eye assessment and an extended blood panel. Contents differ between programmes.</li>
+            </ul>
+            <p><a href="https://www.fvhospital.com/en/make-an-appointment/" target="_blank" rel="noopener noreferrer">Book an appointment →</a> &nbsp;|&nbsp; <a href="https://www.fvhospital.com/en/" target="_blank" rel="noopener noreferrer">Official site →</a> &nbsp;|&nbsp; <a href="https://www.google.com/maps/search/?api=1&amp;query=FV%20Hospital%2C%206%20Nguyen%20Luong%20Bang%2C%20Ho%20Chi%20Minh%20City" target="_blank" rel="noopener noreferrer">Map →</a></p>
+        </div>
+        <div class="hotel-card">
+            <h4>HCMC Dental Clinic (District 1)</h4>
+            <p class="meta">District 1, Ho Chi Minh City</p>
+            <ul>
+                <li>Services: Routine teeth cleaning; Dental exam</li>
+                <li>Price: Clinic site lists scaling from US$12 and a deep clean from US$36, with a 40% online-booking discount advertised on the site.</li>
+                <li>Book through the contact page; the clinic also takes WhatsApp enquiries on +84 85 302 0003.</li>
+                <li>Credentials: The clinic&#x27;s own site describes international-standard care and English-speaking dentists. Ask the clinic for its operating licence and dentist registration before booking.</li>
+                <li>Self-described on the clinic&#x27;s marketing site. Verify licensing with the clinic before booking.</li>
+            </ul>
+            <p><a href="https://hcmcdental.com/" target="_blank" rel="noopener noreferrer">Official site →</a> &nbsp;|&nbsp; <a href="https://www.google.com/maps/search/?api=1&amp;query=HCMC%20Dental%20Clinic%20District%201%20Ho%20Chi%20Minh%20City" target="_blank" rel="noopener noreferrer">Map →</a></p>
+        </div>
+        <div class="hotel-card">
+            <h4>Family Medical Practice, Dermatology (Thao Dien)</h4>
+            <p class="meta">Thao Dien, Ho Chi Minh City. Thao Dien clinic phone +84 28 3744 2000; main clinic at Diamond Plaza, 34 Le Duan, District 1, open 24 hours.</p>
+            <ul>
+                <li>Services: Dermatology consultation (skin, hair and nail conditions)</li>
+                <li>Call or use the contact page for consultation fees. A physician consultation decides whether any noninvasive body contouring or skin tightening is suitable.</li>
+                <li>Credentials: Dermatologists listed on the official services page. Ask the clinic for licence and accreditation details.</li>
+                <li>The page lists medical dermatology. It does not confirm body-contouring or skin-tightening treatments; ask whether they are offered.</li>
+            </ul>
+            <p><a href="https://www.vietnammedicalpractice.com/" target="_blank" rel="noopener noreferrer">Official site →</a> &nbsp;|&nbsp; <a href="https://www.google.com/maps/search/?api=1&amp;query=Family%20Medical%20Practice%20Thao%20Dien%20Ho%20Chi%20Minh%20City" target="_blank" rel="noopener noreferrer">Map →</a></p>
+        </div>
+        <div class="hotel-card">
+            <h4>WEDO Skin Clinic</h4>
+            <p class="meta">11 Tran Doan Khanh, Da Kao Ward, District 1 (second branch: 17 Thai Thuan, Thu Duc City). Open 9:00 AM to 8:30 PM daily per the clinic.</p>
+            <ul>
+                <li>Services: Skin rejuvenation; Dermatology consultation</li>
+                <li>Price: Consultations from 300,000 VND (about US$12), per the clinic&#x27;s own listing.</li>
+                <li>Consultation required. Hotline, Zalo and WhatsApp: 0898 898 875.</li>
+                <li>Credentials: Self-described dermatology and aesthetics clinic with a named dermatologist. Ask the clinic for licence details.</li>
+                <li>Clinic content ranks itself first in its own list, so treat it as marketing. Ask which treatments exist for the abdomen and back and what the risks are.</li>
+            </ul>
+            <p><a href="https://wedoskinclinic.com/" target="_blank" rel="noopener noreferrer">Official site →</a> &nbsp;|&nbsp; <a href="https://www.google.com/maps/search/?api=1&amp;query=WEDO%20Skin%20Clinic%20Ho%20Chi%20Minh%20City" target="_blank" rel="noopener noreferrer">Map →</a></p>
+        </div>
+        <div class="hotel-card">
+            <h4>R&amp;R Beauty Clinic</h4>
+            <p class="meta">Thao Dien, Ho Chi Minh City</p>
+            <ul>
+                <li>Services: Non-surgical aesthetic treatments</li>
+                <li>Consultation required.</li>
+                <li>Credentials: Describes itself as a licensed aesthetic clinic offering non-surgical treatments, injectables and minor aesthetic surgery. Ask the clinic for licence details.</li>
+                <li>Also lists injectables and minor surgery. This trip only considers noninvasive options and only after physician advice.</li>
+            </ul>
+            <p><a href="https://www.rrbeautyclinic.com.vn/" target="_blank" rel="noopener noreferrer">Official site →</a> &nbsp;|&nbsp; <a href="https://www.google.com/maps/search/?api=1&amp;query=R%26R%20Beauty%20Clinic%20Ho%20Chi%20Minh%20City" target="_blank" rel="noopener noreferrer">Map →</a></p>
+        </div>
+        <div class="hotel-card">
+            <h4>Hotel spas (massage and facials)</h4>
+            <p class="meta">Inside several shortlisted hotels</p>
+            <ul>
+                <li>Services: Luxury massage; Facial treatment</li>
+                <li>Tell the spa about medications and any skin concerns.</li>
+                <li>Credentials: Cosmetic and relaxation services, not medical treatment.</li>
+                <li>Examples of hotels with spas: La Siesta Premium Saigon (La Spa) and Liberty Central Saigon Citypoint (The Spa). Ask each hotel for its current menu and prices.</li>
+            </ul>
+            <p><a href="https://www.google.com/maps/search/?api=1&amp;query=Hotel%20spas%20%28massage%20and%20facials%29%2C%20Ho%20Chi%20Minh%20City" target="_blank" rel="noopener noreferrer">Map →</a></p>
+        </div>
+    </div>
+</div>
+</section>
+<!-- BUDGET -->
+<section id="budget">
+<div class="container">
+    <h2>Budget Planner</h2>
+    <p>Planning estimates only, in USD. Items marked "Not priced yet" have no verified price. Amounts convert at about 25,631 VND per USD (State Bank of Vietnam reference rate, Nov 2, 2026; a late-2026 rate, not a 2027 forecast). The Payment Schedule below remains the group payment plan.</p>
+    <table>
+        <thead><tr><th>Item</th><th>Quantity</th><th>Planning Figure</th><th>Notes</th></tr></thead>
+        <tbody>
+            <tr><td>Hotels</td><td>7 nights</td><td>Booked</td><td>7 hotel nights (Hanoi 2, Hoi An 2, Ho Chi Minh City 3); the Nov 23 night is on the cruise. All three hotels are booked and paid at the property; see the Hotel &amp; Cruise Details.</td></tr>
+            <tr><td>Domestic flights</td><td>2 tickets</td><td>Not priced yet</td><td>Hanoi to Da Nang on Nov 24 and Da Nang to Ho Chi Minh City on Nov 26. Fares not researched; enter quotes.</td></tr>
+            <tr><td>Airport transfers</td><td>4 transfers</td><td>Not priced yet</td><td>Private transfers at both airports, in and out. No quotes yet.</td></tr>
+            <tr><td>Michelin dining</td><td>1 dinners</td><td>US$115 per dinner</td><td>Anan Saigon Saigon Tasting Menu, food only, listed at US$115 per person (Nov 2026). Drink pairings extra; check the 2027 price when booking.</td></tr>
+            <tr><td>Birthday extras on the cruise</td><td>1 package</td><td>Not priced yet</td><td>The birthday dinner is onboard the Genesis Regal cruise (full-board meals are included). Enter the cost of any cake, decorations or drinks requested from the cruise.</td></tr>
+            <tr><td>Nightlife</td><td>3 nights</td><td>Not priced yet</td><td>Cover and table minimums are mostly unpublished. Third-party guides mention table minimums from about VND 3.5 million.</td></tr>
+            <tr><td>Medical physical</td><td>1 exam</td><td>US$652 per exam</td><td>FV Executive programme list price of 16,700,000 VND, about US$650. Standard (4,800,000 VND) and Extensive (7,800,000 VND) packages cost less.</td></tr>
+            <tr><td>Dental cleaning</td><td>1 visit</td><td>US$36 per visit</td><td>HCMC Dental lists a deep clean from US$36 (scaling from US$12) on its own site.</td></tr>
+            <tr><td>Facial treatments</td><td>1 treatment</td><td>Not priced yet</td><td>No verified price.</td></tr>
+            <tr><td>Body contouring</td><td>1 consultation</td><td>Not priced yet</td><td>Consultation first; any treatment cost depends on a physician&#x27;s advice. No guaranteed results.</td></tr>
+            <tr><td>Spa &amp; massages</td><td>3 treatments</td><td>Not priced yet</td><td>Hotel spa menus not captured.</td></tr>
+            <tr><td>Shopping</td><td>1 budget</td><td>Not priced yet</td><td>Defaults to 0 and is left out of fixed totals until you enter an amount.</td></tr>
+            <tr><td>Excursions</td><td>1 outing</td><td>US$3 per outing</td><td>Marble Mountains entry is 40,000 VND per adult plus 30,000 VND for a round-trip elevator, about US$3 in total. Add other outings as you choose them.</td></tr>
+            <tr><td>Food &amp; beverages</td><td>9 days</td><td>US$50 per day</td><td>Planning allowance per day for meals other than the dinners above. Edit me.</td></tr>
+            <tr><td>Contingency fund</td><td>1 fund</td><td>Not priced yet</td><td>Set aside an amount for changes and surprises.</td></tr>
+        </tbody>
+    </table>
+</div>
+</section>
+<!-- MAP -->
+<section id="map">
+<div class="container">
+    <h2>Map</h2>
+    <p>Every stop in the plan: hotels, dining, nightlife, cafés, shopping, wellness and transport, including Waterfront Danang Restaurant &amp; Bar. Choose a city and category, then tap a pin for the day and a Google Maps link. Pins marked approximate are area-level estimates, so confirm the exact spot in Google Maps. Map tiles load from OpenStreetMap.</p>
+    <div id="mapBody">
+        <div class="chip-row" id="mapCityRow" role="group" aria-label="City"></div>
+        <div class="chip-row" id="mapCatRow" role="group" aria-label="Category"></div>
+        <p class="small" id="mapStatus" role="status">Loading map...</p>
+        <div id="tripMap" class="map-canvas" role="region" aria-label="Map of hotels, dining, nightlife, cafés, shopping, wellness and transport"></div>
+        <div id="mapList" class="map-list"></div>
+    </div>
 </div>
 </section>
 
@@ -806,7 +1221,7 @@
         <li>Use Grab instead of hailing taxis whenever possible</li>
         <li>Travel together at night and return together after the club</li>
         <li>Avoid staying directly on extremely noisy party streets if sleep is important</li>
-        <li>Club shortlist: Piu Piu, Mershe Saigon, Weeknd Saigon, Afro Chill Lounge</li>
+        <li>Club shortlist: Piu Piu, Mershe Saigon, Weeknd SGN, Afro Chill Lounge, CUR8 Saigon, Neighborhood Saigon, LOCO Complex, Bam Bam, PAPI (details in <a href="#nightlife" style="color:var(--medium-purple)">Nightlife</a>)</li>
     </ul>
 </div>
 </section>
@@ -986,6 +1401,110 @@
     Final rates, flight times, and hotel selections will be updated when November 2027 inventory is available.</p>
 </footer>
 
+<script src="vendor/leaflet/leaflet.js"></script>
+<script>
+/* Trip map: Leaflet + OpenStreetMap tiles. Falls back to a list of Google Maps links if the library or tiles fail. (ES5) */
+(function () {
+    'use strict';
+    var POINTS = [{"name": "Anatole Hotel Hanoi", "city": "Hanoi", "cat": "hotel", "lat": 21.0283, "lng": 105.849, "day": "Nov 21–23", "approx": true, "gm": "https://www.google.com/maps/search/?api=1&query=Anatole%20Hotel%20Hanoi%2C%2030%20Nha%20Chung%2C%20Hanoi"}, {"name": "Silk Sense Hoi An River Resort", "city": "Hoi An", "cat": "hotel", "lat": 15.884, "lng": 108.326, "day": "Nov 24–26", "approx": true, "gm": "https://www.google.com/maps/search/?api=1&query=Silk%20Sense%20Hoi%20An%20River%20Resort%2C%2001%20Dong%20Da%2C%20Hoi%20An"}, {"name": "Hotel Grand Saigon", "city": "Ho Chi Minh City", "cat": "hotel", "lat": 10.7752, "lng": 106.705, "day": "Nov 26–29", "approx": true, "gm": "https://www.google.com/maps/search/?api=1&query=Hotel%20Grand%20Saigon%2C%20Ho%20Chi%20Minh%20City"}, {"name": "La Maison 1888", "city": "Da Nang", "cat": "dining", "lat": 16.12109, "lng": 108.30614, "day": "Optional Da Nang alternative", "approx": false, "gm": "https://www.google.com/maps/search/?api=1&query=La%20Maison%201888%2C%20InterContinental%20Danang%20Sun%20Peninsula%20Resort"}, {"name": "Nen Danang", "city": "Da Nang", "cat": "dining", "lat": 16.039, "lng": 108.244, "day": "Optional Da Nang alternative", "approx": true, "gm": "https://www.google.com/maps/search/?api=1&query=Nen%20Danang%2C%2016%20My%20Da%20Tay%202%2C%20Da%20Nang"}, {"name": "Waterfront Danang Restaurant & Bar", "city": "Da Nang", "cat": "dining", "lat": 16.069, "lng": 108.223, "day": "Nov 24 evening", "approx": true, "gm": "https://www.google.com/maps/search/?api=1&query=Waterfront%20Danang%2C%20150%20Bach%20Dang%2C%20Da%20Nang"}, {"name": "Ănăn Saigon", "city": "Ho Chi Minh City", "cat": "dining", "lat": 10.77206, "lng": 106.70287, "day": "Nov 28 evening", "approx": false, "gm": "https://www.google.com/maps/search/?api=1&query=Anan%20Saigon%2C%2089%20Ton%20That%20Dam%2C%20Ho%20Chi%20Minh%20City"}, {"name": "AKUNA", "city": "Ho Chi Minh City", "cat": "dining", "lat": 10.77994, "lng": 106.70731, "day": "Back-up Michelin dinner", "approx": false, "gm": "https://www.google.com/maps/search/?api=1&query=AKUNA%20Restaurant%2C%20Le%20Meridien%20Saigon%2C%203C%20Ton%20Duc%20Thang%2C%20Ho%20Chi%20Minh%20City"}, {"name": "Saigon Saigon Rooftop Bar", "city": "Ho Chi Minh City", "cat": "dining", "lat": 10.77615, "lng": 106.70361, "day": "Nov 26 evening", "approx": false, "gm": "https://www.google.com/maps/search/?api=1&query=Saigon%20Saigon%20Rooftop%20Bar%2C%20Caravelle%20Saigon"}, {"name": "Social Club Rooftop Bar", "city": "Ho Chi Minh City", "cat": "dining", "lat": 10.78202, "lng": 106.69714, "day": "Nov 27 evening", "approx": false, "gm": "https://www.google.com/maps/search/?api=1&query=Social%20Club%20Rooftop%20Bar%2C%20Hotel%20des%20Arts%20Saigon"}, {"name": "The Roof Da Nang", "city": "Da Nang", "cat": "nightlife", "lat": 16.065, "lng": 108.2455, "day": "Optional Da Nang add-on", "approx": true, "gm": "https://www.google.com/maps/search/?api=1&query=The%20Roof%20Da%20Nang%2C%201A%20Vo%20Nguyen%20Giap%2C%20Da%20Nang"}, {"name": "BLENDS Social Bar & Kitchen", "city": "Da Nang", "cat": "nightlife", "lat": 16.04833, "lng": 108.24765, "day": "Optional Da Nang add-on", "approx": false, "gm": "https://www.google.com/maps/search/?api=1&query=Blends%20Social%20Bar%20%26%20Kitchen%2C%2049%20Ngo%20Thi%20Si%2C%20Da%20Nang"}, {"name": "SKY36", "city": "Da Nang", "cat": "nightlife", "lat": 16.0708, "lng": 108.2247, "day": "Optional Da Nang add-on", "approx": true, "gm": "https://www.google.com/maps/search/?api=1&query=SKY36%20Novotel%20Danang%20Premier%20Han%20River%2C%2036%20Bach%20Dang%2C%20Da%20Nang"}, {"name": "Weeknd SGN", "city": "Ho Chi Minh City", "cat": "nightlife", "lat": 10.77205, "lng": 106.70135, "day": "Nov 28 night", "approx": false, "gm": "https://www.google.com/maps/search/?api=1&query=Weeknd%20SGN%2C%2066%20Huynh%20Thuc%20Khang%2C%20Ho%20Chi%20Minh%20City"}, {"name": "LOCO Complex", "city": "Ho Chi Minh City", "cat": "nightlife", "lat": 10.7685, "lng": 106.6945, "day": "Nov 28 night option", "approx": true, "gm": "https://www.google.com/maps/search/?api=1&query=LOCO%20Complex%2C%2011%20Nam%20Quoc%20Cang%2C%20Ho%20Chi%20Minh%20City"}, {"name": "Bam Bam Tropical Club", "city": "Ho Chi Minh City", "cat": "nightlife", "lat": 10.76862, "lng": 106.70243, "day": "Nov 28 night option", "approx": false, "gm": "https://www.google.com/maps/search/?api=1&query=Bam%20Bam%20Tropical%20Club%2C%2041%20Nam%20Ky%20Khoi%20Nghia%2C%20Ho%20Chi%20Minh%20City"}, {"name": "PAPI Club Saigon", "city": "Ho Chi Minh City", "cat": "nightlife", "lat": 10.77242, "lng": 106.69968, "day": "Nov 28 night option", "approx": false, "gm": "https://www.google.com/maps/search/?api=1&query=PAPI%20Club%20Saigon%2C%20123%20Le%20Loi%2C%20Ho%20Chi%20Minh%20City"}, {"name": "The Cafe Apartment, 42 Nguyen Hue", "city": "Ho Chi Minh City", "cat": "cafe", "lat": 10.77406, "lng": 106.70413, "day": "Nov 28 morning", "approx": false, "gm": "https://www.google.com/maps/search/?api=1&query=42%20Nguyen%20Hue%2C%20District%201%2C%20Ho%20Chi%20Minh%20City"}, {"name": "The Workshop Coffee", "city": "Ho Chi Minh City", "cat": "cafe", "lat": 10.77341, "lng": 106.70554, "day": "Nov 28 morning", "approx": false, "gm": "https://www.google.com/maps/search/?api=1&query=The%20Workshop%20Coffee%2C%2027%20Ngo%20Duc%20Ke%2C%20Ho%20Chi%20Minh%20City"}, {"name": "Cong Ca Phe (Yersin)", "city": "Ho Chi Minh City", "cat": "cafe", "lat": 10.76808, "lng": 106.69691, "day": "Nov 28 morning", "approx": false, "gm": "https://www.google.com/maps/search/?api=1&query=Cong%20Ca%20Phe%2C%2093%20Yersin%2C%20Ho%20Chi%20Minh%20City"}, {"name": "Saigon Centre / Takashimaya", "city": "Ho Chi Minh City", "cat": "shopping", "lat": 10.7738, "lng": 106.7005, "day": "Nov 27 afternoon", "approx": true, "gm": "https://www.google.com/maps/search/?api=1&query=Takashimaya%20Saigon%20Centre%2C%2065%20Le%20Loi%2C%20Ho%20Chi%20Minh%20City"}, {"name": "Ben Thanh Market", "city": "Ho Chi Minh City", "cat": "shopping", "lat": 10.77253, "lng": 106.69804, "day": "Nov 28 morning, Nov 29", "approx": false, "gm": "https://www.google.com/maps/search/?api=1&query=Ben%20Thanh%20Market%2C%20Ho%20Chi%20Minh%20City"}, {"name": "Dong Khoi Street", "city": "Ho Chi Minh City", "cat": "shopping", "lat": 10.7743, "lng": 106.705, "day": "Nov 27 afternoon", "approx": false, "gm": "https://www.google.com/maps/search/?api=1&query=Dong%20Khoi%20Street%2C%20Ho%20Chi%20Minh%20City"}, {"name": "Han Market", "city": "Da Nang", "cat": "shopping", "lat": 16.06835, "lng": 108.22428, "day": "Optional Da Nang add-on", "approx": false, "gm": "https://www.google.com/maps/search/?api=1&query=Han%20Market%2C%20Da%20Nang"}, {"name": "Con Market", "city": "Da Nang", "cat": "shopping", "lat": 16.06813, "lng": 108.21452, "day": "Optional Da Nang add-on", "approx": false, "gm": "https://www.google.com/maps/search/?api=1&query=Con%20Market%2C%20Da%20Nang"}, {"name": "FV Hospital", "city": "Ho Chi Minh City", "cat": "wellness", "lat": 10.73243, "lng": 106.71788, "day": "Nov 27 option (still deciding)", "approx": false, "gm": "https://www.google.com/maps/search/?api=1&query=FV%20Hospital%2C%206%20Nguyen%20Luong%20Bang%2C%20Ho%20Chi%20Minh%20City"}, {"name": "Café Phố Cổ", "city": "Hanoi", "cat": "cafe", "lat": 21.0323, "lng": 105.8508, "day": "Nov 22 afternoon", "approx": true, "gm": "https://www.google.com/maps/search/?api=1&query=Cafe%20Pho%20Co%2C%2011%20Hang%20Gai%2C%20Hoan%20Kiem%2C%20Hanoi"}, {"name": "Hang Gai (Silk Street)", "city": "Hanoi", "cat": "shopping", "lat": 21.03226, "lng": 105.85058, "day": "Nov 21–22", "approx": false, "gm": "https://www.google.com/maps/search/?api=1&query=Hang%20Gai%20Street%2C%20Hanoi"}, {"name": "Hang Dau (shoe street)", "city": "Hanoi", "cat": "shopping", "lat": 21.03111, "lng": 105.85393, "day": "Nov 21–22", "approx": true, "gm": "https://www.google.com/maps/search/?api=1&query=Hang%20Dau%20Street%2C%20Hanoi"}, {"name": "Hanoi Weekend Night Market (Hang Dao)", "city": "Hanoi", "cat": "nightlife", "lat": 21.03298, "lng": 105.85117, "day": "Nov 21 evening (Fri–Sun only)", "approx": true, "gm": "https://www.google.com/maps/search/?api=1&query=Hang%20Dao%20Street%2C%20Hanoi%20Old%20Quarter"}, {"name": "Noi Bai Airport (HAN)", "city": "Hanoi", "cat": "transport", "lat": 21.2189, "lng": 105.8045, "day": "Nov 21 arrival", "approx": false, "gm": "https://www.google.com/maps/search/?api=1&query=Noi%20Bai%20International%20Airport"}, {"name": "Genesis Regal cruise (Lan Ha Bay area)", "city": "Lan Ha Bay", "cat": "transport", "lat": 20.7667, "lng": 107.05, "day": "Nov 23–24 (approximate cruise area; pier not confirmed)", "approx": true, "gm": "https://www.google.com/maps/search/?api=1&query=Lan%20Ha%20Bay%2C%20Vietnam"}, {"name": "Faifo Coffee", "city": "Hoi An", "cat": "cafe", "lat": 15.87723, "lng": 108.32813, "day": "Nov 25 afternoon", "approx": false, "gm": "https://www.google.com/maps/search/?api=1&query=Faifo%20Coffee%2C%20130%20Tran%20Phu%2C%20Hoi%20An"}, {"name": "A Dong Silk (tailor)", "city": "Hoi An", "cat": "shopping", "lat": 15.87999, "lng": 108.32705, "day": "Nov 25–26", "approx": false, "gm": "https://www.google.com/maps/search/?api=1&query=A%20Dong%20Silk%2C%2062%20Tran%20Hung%20Dao%2C%20Hoi%20An"}, {"name": "Hoi An Night Market", "city": "Hoi An", "cat": "nightlife", "lat": 15.87578, "lng": 108.32593, "day": "Nov 25 evening", "approx": false, "gm": "https://www.google.com/maps/search/?api=1&query=Hoi%20An%20Night%20Market%2C%20Nguyen%20Hoang%2C%20Hoi%20An"}, {"name": "Da Nang Airport (DAD)", "city": "Da Nang", "cat": "transport", "lat": 16.0426, "lng": 108.1972, "day": "Nov 24 arrival, Nov 26 departure", "approx": false, "gm": "https://www.google.com/maps/search/?api=1&query=Da%20Nang%20International%20Airport"}, {"name": "XLIII Specialty Coffee", "city": "Da Nang", "cat": "cafe", "lat": 16.04808, "lng": 108.24598, "day": "Optional Da Nang add-on", "approx": false, "gm": "https://www.google.com/maps/search/?api=1&query=XLIII%20Coffee%2C%20422%20Ngo%20Thi%20Si%2C%20Da%20Nang"}, {"name": "A La Carte rooftop cafe", "city": "Da Nang", "cat": "cafe", "lat": 16.06869, "lng": 108.24462, "day": "Optional Da Nang add-on", "approx": false, "gm": "https://www.google.com/maps/search/?api=1&query=A%20La%20Carte%20Danang%20Beach%2C%20200%20Vo%20Nguyen%20Giap%2C%20Da%20Nang"}, {"name": "Tan Son Nhat Airport (SGN)", "city": "Ho Chi Minh City", "cat": "transport", "lat": 10.818, "lng": 106.6563, "day": "Nov 26 arrival, Nov 29 departure", "approx": false, "gm": "https://www.google.com/maps/search/?api=1&query=Tan%20Son%20Nhat%20International%20Airport"}, {"name": "CUR8 Saigon", "city": "Ho Chi Minh City", "cat": "nightlife", "lat": 10.7723, "lng": 106.6981, "day": "Nov 26–27 night option", "approx": true, "gm": "https://www.google.com/maps/search/?api=1&query=CUR8%20Saigon%2C%2049%20Pho%20Duc%20Chinh%2C%20Ho%20Chi%20Minh%20City"}, {"name": "Neighborhood Saigon (floor 1, 11 Nam Quoc Cang)", "city": "Ho Chi Minh City", "cat": "nightlife", "lat": 10.7685, "lng": 106.6945, "day": "Nov 27–28 night option", "approx": true, "gm": "https://www.google.com/maps/search/?api=1&query=Neighborhood%20Club%2C%2011%20Nam%20Quoc%20Cang%2C%20Ho%20Chi%20Minh%20City"}, {"name": "Little Hanoi Egg Coffee", "city": "Ho Chi Minh City", "cat": "cafe", "lat": 10.7678, "lng": 106.6957, "day": "Optional Nov 28 detour", "approx": true, "gm": "https://www.google.com/maps/search/?api=1&query=Little%20HaNoi%20Egg%20Coffee%2C%20119/5%20Yersin%2C%20Ho%20Chi%20Minh%20City"}];
+    var CENTERS = {"All stops": {"lat": 16.5, "lng": 107.0, "zoom": 6}, "Hanoi": {"lat": 21.0285, "lng": 105.852, "zoom": 14}, "Lan Ha Bay": {"lat": 20.7667, "lng": 107.05, "zoom": 9}, "Da Nang": {"lat": 16.0544, "lng": 108.2428, "zoom": 12}, "Hoi An": {"lat": 15.8801, "lng": 108.338, "zoom": 14}, "Ho Chi Minh City": {"lat": 10.7745, "lng": 106.7005, "zoom": 14}};
+    var CATS = [['all', 'All'], ['hotel', 'Hotels'], ['dining', 'Dining'], ['nightlife', 'Nightlife'], ['cafe', 'Cafés'], ['shopping', 'Shopping'], ['wellness', 'Wellness'], ['transport', 'Transport']];
+    var CITY_NAMES = ['All stops', 'Hanoi', 'Lan Ha Bay', 'Da Nang', 'Hoi An', 'Ho Chi Minh City'];
+    var cityRow = document.getElementById('mapCityRow'), catRow = document.getElementById('mapCatRow');
+    var status = document.getElementById('mapStatus'), mapEl = document.getElementById('tripMap'), listBox = document.getElementById('mapList');
+    if (!cityRow || !catRow || !mapEl) { return; }
+    var city = 'All stops', cat = 'all', map = null, layer = null, tilesOk = false, tileErrors = 0;
+    var cityBtns = {}, catBtns = {};
+
+    function mk(tag, text, attrs) {
+        var n = document.createElement(tag);
+        if (text) { n.textContent = text; }
+        if (attrs) { for (var k in attrs) { if (attrs.hasOwnProperty(k)) { n.setAttribute(k, attrs[k]); } } }
+        return n;
+    }
+    function chip(label, pressed, onClick) {
+        var b = mk('button', label, { type: 'button', 'class': 'chip', 'aria-pressed': String(pressed) });
+        b.addEventListener('click', onClick);
+        return b;
+    }
+    CITY_NAMES.forEach(function (c) { cityBtns[c] = chip(c, c === city, function () { city = c; render(); }); cityRow.appendChild(cityBtns[c]); });
+    CATS.forEach(function (c) { catBtns[c[0]] = chip(c[1], c[0] === cat, function () { cat = c[0]; render(); }); catRow.appendChild(catBtns[c[0]]); });
+
+    function visible() {
+        return POINTS.filter(function (p) { return (city === 'All stops' || p.city === city) && (cat === 'all' || p.cat === cat); });
+    }
+    function renderList(asFallback) {
+        listBox.textContent = '';
+        var pts = visible();
+        listBox.appendChild(mk('h3', asFallback ? 'Places as Google Maps links' : 'Places on the map (' + pts.length + ')'));
+        if (!pts.length) { listBox.appendChild(mk('p', 'No places in this category for this city.')); return; }
+        var ul = mk('ul');
+        pts.forEach(function (p) {
+            var li = mk('li');
+            li.appendChild(mk('a', p.name, { href: p.gm, target: '_blank', rel: 'noopener noreferrer' }));
+            li.appendChild(document.createTextNode(' (' + p.day + (p.approx ? '; approximate pin' : '') + ')'));
+            ul.appendChild(li);
+        });
+        listBox.appendChild(ul);
+    }
+    function popup(p) {
+        var box = mk('div');
+        box.appendChild(mk('strong', p.name));
+        box.appendChild(mk('div', p.cat + ', ' + p.city));
+        if (p.day) { box.appendChild(mk('div', p.day)); }
+        if (p.approx) { box.appendChild(mk('div', 'Approximate pin. Confirm with Google Maps.')); }
+        box.appendChild(mk('a', 'Open in Google Maps', { href: p.gm, target: '_blank', rel: 'noopener noreferrer' }));
+        return box;
+    }
+    function fallback(reason) {
+        mapEl.style.display = 'none';
+        status.textContent = reason + ' Showing Google Maps links instead.';
+        renderList(true);
+    }
+    function render() {
+        Object.keys(cityBtns).forEach(function (k) { cityBtns[k].setAttribute('aria-pressed', String(k === city)); });
+        Object.keys(catBtns).forEach(function (k) { catBtns[k].setAttribute('aria-pressed', String(k === cat)); });
+        if (!map) { renderList(true); return; }
+        layer.clearLayers();
+        var pts = visible(), bounds = [];
+        pts.forEach(function (p) {
+            var m = window.L.marker([p.lat, p.lng], { title: p.name, alt: p.name, keyboard: true });
+            m.bindPopup(popup(p));
+            layer.addLayer(m);
+            bounds.push([p.lat, p.lng]);
+        });
+        var c = CENTERS[city];
+        if (bounds.length > 1) { map.fitBounds(bounds, { padding: [30, 30], maxZoom: 15 }); }
+        else if (bounds.length === 1) { map.setView(bounds[0], 15); }
+        else if (c) { map.setView([c.lat, c.lng], c.zoom); }
+        status.textContent = pts.length + ' place' + (pts.length === 1 ? '' : 's') + ' shown' + (city === 'All stops' ? '.' : ' in ' + city + '.');
+        renderList(false);
+    }
+    function init() {
+        if (!window.L || typeof window.L.map !== 'function') { fallback('The map library could not be loaded.'); return; }
+        try {
+            var c0 = CENTERS['All stops'];
+            map = window.L.map(mapEl, { scrollWheelZoom: false, dragging: !window.L.Browser.mobile }).setView([c0.lat, c0.lng], c0.zoom);
+            var tiles = window.L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19, attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            });
+            tiles.on('tileload', function () { tilesOk = true; });
+            tiles.on('tileerror', function () {
+                tileErrors++;
+                if (!tilesOk && tileErrors >= 4) { status.textContent = 'Map tiles could not be loaded. Pins and Google Maps links below still work.'; renderList(true); }
+            });
+            tiles.addTo(map);
+            layer = window.L.layerGroup().addTo(map);
+            render();
+            if ('IntersectionObserver' in window) {
+                var io = new IntersectionObserver(function (es) { if (es[0].isIntersecting) { map.invalidateSize(); io.disconnect(); } });
+                io.observe(mapEl);
+            }
+        } catch (err) { map = null; fallback('The map could not start.'); }
+    }
+    if (window.L) { init(); } else { window.addEventListener('load', init); }
+})();
+</script>
 <script src="flight-monitor/data/latest.js"></script>
 <script src="flight-monitor/ui/flight-monitor.js"></script>
 <!-- Copy-as-text for the inline Travel Options summary. Builds a plain-text summary
@@ -1044,7 +1563,7 @@
     });
 })();
 </script>
-<!-- Horizontal day scroller + Original|Option 2 toggle carry-over (ES5). -->
+<!-- Horizontal day scroller (ES5). -->
 <script>
 (function () {
     'use strict';
@@ -1098,51 +1617,6 @@
     }
     var allTracks = document.querySelectorAll('.day-track');
     for (var ti = 0; ti < allTracks.length; ti++) { initScroller(allTracks[ti]); }
-
-    /* The toggle carry-over logic is keyed specifically off the itinerary #dayTrack. */
-    var dayTrack = document.getElementById('dayTrack');
-
-    /* ---- Original | Option 2 toggle: carry current day across the jump ----
-       Nov 23-29 line up by date in both trips; Nov 21-22 do not, so fall back to top. */
-    function dayCarries(id) {
-        var m = /^day-2027-11-(\d{2})$/.exec(id || '');
-        if (!m) return false;
-        var dd = parseInt(m[1], 10);
-        return dd >= 23 && dd <= 29;
-    }
-    function currentDayId() {
-        if (!dayTrack) return null;
-        var c = dayTrack.querySelectorAll('.day-card');
-        if (!c.length) return null;
-        var best = null, bestDist = Infinity, i, r, dist;
-        for (i = 0; i < c.length; i++) {
-            r = c[i].getBoundingClientRect();
-            dist = Math.abs(r.left);
-            if (dist < bestDist) { bestDist = dist; best = c[i]; }
-        }
-        return best ? best.id : null;
-    }
-    var toOption2 = document.getElementById('switchOption2');
-    if (toOption2) {
-        var base = toOption2.getAttribute('href');
-        toOption2.addEventListener('click', function () {
-            var id = currentDayId();
-            toOption2.setAttribute('href', base + (dayCarries(id) ? '#' + id : ''));
-        });
-    }
-    function scrollToHashDay() {
-        var hash = (window.location.hash || '').replace('#', '');
-        if (!dayCarries(hash)) return;
-        var cell = document.getElementById(hash);
-        if (!cell || !dayTrack) return;
-        cell.scrollIntoView({ behavior: behavior(), inline: 'start', block: 'nearest' });
-        var section = document.getElementById('itinerary');
-        if (section) section.scrollIntoView({ behavior: behavior(), block: 'start' });
-    }
-    if (window.location.hash) {
-        if (window.requestAnimationFrame) window.requestAnimationFrame(scrollToHashDay);
-        else window.setTimeout(scrollToHashDay, 60);
-    }
 })();
 </script>
 </body>

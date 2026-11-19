@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="data:,">
     <title>Keysha's 40th Birthday Escape — Vietnam 2027 | Phoenix Travels</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -17,35 +18,58 @@
             --light-gray: #FAFAFA;
             --border: #E8E0F0;
         }
+        html, body { overflow-x: clip; }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             color: var(--dark);
             line-height: 1.65;
             background: var(--white);
+            max-width: 100%;
+        }
+        body::after {
+            content: '';
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 400px;
+            height: 400px;
+            background: url('Phoenix-01-320.webp') center/contain no-repeat;
+            opacity: 0.04;
+            pointer-events: none;
+            z-index: 0;
         }
         /* HERO */
         .hero {
-            background: var(--white);
-            color: var(--dark);
+            background: url('Vietnam.webp') center/cover no-repeat;
+            color: var(--white);
             text-align: center;
             padding: 50px 20px 30px;
-            border-bottom: 3px solid var(--soft-purple);
+            position: relative;
         }
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.45);
+            z-index: 0;
+        }
+        .hero > * { position: relative; z-index: 1; }
         .hero img { max-width: 120px; margin-bottom: 16px; }
-        .hero h1 { font-size: 2.4rem; margin-bottom: 6px; font-weight: 700; color: var(--deep-purple); }
-        .hero .tagline { font-size: 1.15rem; color: var(--medium-purple); }
-        .hero .dates { font-size: 1rem; color: #555; margin-top: 8px; }
-        .hero .route { font-size: 0.88rem; color: #777; margin-top: 6px; letter-spacing: 0.5px; }
+        .hero h1 { font-size: 2.4rem; margin-bottom: 6px; font-weight: 700; color: #fff; text-shadow: 0 2px 4px rgba(0,0,0,0.3); }
+        .hero .tagline { font-size: 1.15rem; color: rgba(255,255,255,0.95); }
+        .hero .dates { font-size: 1rem; color: #fff; margin-top: 8px; }
+        .hero .route { font-size: 0.88rem; color: rgba(255,255,255,0.9); margin-top: 6px; letter-spacing: 0.5px; }
         .hero .alert {
             display: inline-block;
             background: #FFF8E1;
             border: 1px solid #F0D060;
             border-radius: 8px;
-            padding: 10px 20px;
+            padding: 14px 24px;
             margin-top: 20px;
-            font-size: 0.85rem;
+            font-size: 1.05rem;
             color: var(--bronze);
-            max-width: 600px;
+            max-width: 650px;
         }
         /* NAV */
         .nav {
@@ -110,6 +134,10 @@
             margin: 16px 0;
             font-size: 0.88rem;
         }
+        /* Wide multi-column tables (compare/snapshot) scroll inside their own
+           box on narrow screens instead of forcing horizontal PAGE overflow. Markup
+           is unchanged; the table simply becomes a horizontally scrollable block. */
+        .container > table { display: block; overflow-x: auto; max-width: 100%; }
         thead th {
             background: var(--deep-purple);
             color: var(--white);
@@ -159,6 +187,78 @@
             margin-top: 8px;
             font-style: italic;
         }
+        /* HORIZONTAL DAY SCROLLER (day-by-day itinerary only) */
+        .day-scroller { position: relative; }
+        .day-track {
+            display: flex;
+            gap: 16px;
+            overflow-x: auto;
+            overflow-y: visible;
+            scroll-snap-type: x mandatory;
+            align-items: flex-start;
+            padding: 6px 2px 14px;
+            scrollbar-width: thin;
+            scrollbar-color: var(--medium-purple) transparent;
+            -webkit-mask-image: linear-gradient(to right, transparent 0, #000 22px, #000 calc(100% - 22px), transparent 100%);
+            mask-image: linear-gradient(to right, transparent 0, #000 22px, #000 calc(100% - 22px), transparent 100%);
+        }
+        .day-track::-webkit-scrollbar { height: 8px; }
+        .day-track::-webkit-scrollbar-thumb { background: var(--medium-purple); border-radius: 8px; }
+        .day-track::-webkit-scrollbar-track { background: var(--soft-purple); border-radius: 8px; }
+        .day-track .day-card {
+            scroll-snap-align: start;
+            flex: 0 0 auto;
+            width: clamp(260px, 85vw, 340px);
+            margin: 0;
+            align-self: flex-start;
+        }
+        .day-track .day-card h3,
+        .day-track .day-card li,
+        .day-track .day-note,
+        .day-track .wear { overflow-wrap: anywhere; }
+        .day-track .day-card:focus-visible,
+        .day-track .day-card:focus { outline: 3px solid var(--medium-purple); outline-offset: 2px; }
+        @media (min-width: 760px) { .day-track .day-card { width: 340px; } }
+        .day-scroll-btn {
+            position: absolute; top: 40px; z-index: 3;
+            width: 44px; height: 44px; border-radius: 50%;
+            border: 1px solid var(--border); background: var(--white); color: var(--deep-purple);
+            box-shadow: 0 4px 14px rgba(0,0,0,0.18); cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .day-scroll-prev { left: -6px; }
+        .day-scroll-next { right: -6px; }
+        .day-scroll-btn:hover { background: var(--soft-purple); }
+        .day-scroll-btn:disabled { opacity: 0.35; cursor: default; }
+        .day-scroll-btn:focus-visible { outline: 3px solid var(--medium-purple); outline-offset: 2px; }
+        .day-scroll-icon { width: 11px; height: 11px; border-top: 2px solid currentColor; border-right: 2px solid currentColor; display: inline-block; }
+        .day-scroll-prev .day-scroll-icon { transform: rotate(-135deg); margin-left: 4px; }
+        .day-scroll-next .day-scroll-icon { transform: rotate(45deg); margin-right: 4px; }
+        @media (prefers-reduced-motion: reduce) { .day-track { scroll-behavior: auto; } }
+        /* ORIGINAL | OPTION 2 SEGMENTED TOGGLE (sticky below nav) */
+        .itinerary-switch {
+            position: sticky; top: 52px; z-index: 99;
+            display: flex; justify-content: center; padding: 8px 12px;
+            pointer-events: none;
+        }
+        .itinerary-switch-inner {
+            pointer-events: auto; display: inline-flex; gap: 4px; padding: 4px;
+            background: var(--white); border: 1px solid var(--border);
+            border-radius: 999px; box-shadow: 0 4px 14px rgba(91,33,127,0.18);
+        }
+        .switch-seg {
+            display: inline-flex; align-items: center; justify-content: center;
+            min-height: 44px; min-width: 110px; padding: 0 1.2rem;
+            border-radius: 999px; text-decoration: none; font-weight: 700; font-size: 0.95rem;
+            color: var(--deep-purple); white-space: nowrap;
+        }
+        .switch-seg:hover { background: var(--soft-purple); }
+        .switch-seg.is-active { background: var(--deep-purple); color: var(--white); }
+        .switch-seg:focus-visible { outline: 3px solid var(--bronze); outline-offset: 2px; }
+        @media (max-width: 420px) {
+            .switch-seg { min-width: 0; flex: 1 1 auto; padding: 0 0.9rem; }
+            .itinerary-switch-inner { width: 100%; max-width: 360px; }
+        }
         /* LISTS */
         ul.clean { list-style: none; padding: 0; }
         ul.clean li { padding: 6px 0 6px 20px; position: relative; font-size: 0.9rem; }
@@ -170,7 +270,7 @@
             left: 0;
         }
         /* HOTEL CARDS */
-        .hotel-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 16px 0; }
+        .hotel-grid { display: grid; grid-template-columns: 1fr; gap: 16px; margin: 16px 0; }
         .hotel-card {
             background: var(--light-gray);
             border: 1px solid var(--border);
@@ -189,19 +289,96 @@
             font-size: 0.85rem;
         }
         footer a { color: rgba(255,255,255,0.8); }
-        /* RESPONSIVE */
+        @keyframes flash {
+            0% { background: #B8860B; box-shadow: 0 0 0 0 rgba(184, 134, 11, 0.6); }
+            70% { background: #B8860B; box-shadow: 0 0 0 12px rgba(184, 134, 11, 0); }
+            100% { background: #B8860B; box-shadow: 0 0 0 0 rgba(184, 134, 11, 0); }
+        }
         @media (max-width: 700px) {
             .hero h1 { font-size: 1.8rem; }
             .day-meta { grid-template-columns: 1fr; }
             .hotel-grid { grid-template-columns: 1fr; }
             .nav a { font-size: 0.7rem; padding: 5px 8px; }
         }
+        /* PRINT: plain black on white; print the inline Travel Options summary cleanly
+           (mirrors Option 2's #flights / #travelOptions print rules). */
+        @media print {
+            * { box-shadow: none !important; text-shadow: none !important; animation: none !important; transition: none !important; }
+            body { background: #fff !important; color: #000 !important; }
+            body::after, .hero::before { display: none !important; }
+            .hero { background: none !important; color: #000 !important; padding: 12pt 0 !important; }
+            .hero h1, .hero .tagline, .hero .dates, .hero .route { color: #000 !important; }
+            .nav, #copyTextBtn, #copyTextStatus { display: none !important; }
+            section { padding: 12pt 0 !important; border-bottom: 1px solid #000 !important; break-inside: avoid; }
+            #travel-options { break-inside: avoid; background: #fff !important; color: #000 !important; }
+            #travel-options a, a { color: #000 !important; text-decoration: underline; }
+            #travel-options .callout { background: #fff !important; border-left: 2px solid #000 !important; }
+            #travel-options table { width: 100% !important; }
+            #travel-options thead th { background: #fff !important; color: #000 !important; border-bottom: 1px solid #000 !important; }
+            #travel-options tbody td { border-bottom: 1px solid #000 !important; }
+            #travel-options tbody tr:nth-child(even) { background: #fff !important; }
+            /* Day-cell scroller prints as wrapped rows so every day is on paper. */
+            .day-track {
+                display: flex !important;
+                flex-wrap: wrap !important;
+                overflow: visible !important;
+                scroll-snap-type: none !important;
+                -webkit-mask-image: none !important;
+                mask-image: none !important;
+                gap: 8pt !important;
+            }
+            .day-track .day-card { width: 46% !important; flex: 0 0 46% !important; break-inside: avoid; }
+            .day-scroll-btn { display: none !important; }
+        }
+    </style>
+    <link rel="stylesheet" href="flight-monitor/ui/flight-monitor.css">
+    <style>
+        /* Flight Monitor (additive): map shared --fm-* variables to the purple/bronze palette. */
+        #flights {
+            --fm-surface: var(--white);
+            --fm-text: var(--dark);
+            --fm-muted: #5f5870;
+            --fm-line: var(--border);
+            --fm-accent: var(--deep-purple);
+            --fm-head-bg: var(--deep-purple);
+            --fm-head-text: var(--white);
+            --fm-badge-bg: var(--soft-purple);
+        }
+        #flights p { margin-bottom: 12px; }
+    </style>
+    <style>
+        /* MOBILE-FRIENDLY (audit): 44px tap targets, 16px reading text, single-row nav that
+           stays one line tall, anchor offsets under the sticky bars, reduced motion. */
+        .hero img { height: auto; }
+        section[id] { scroll-margin-top: 80px; }
+        @media (max-width: 900px) {
+            .nav { flex-wrap: nowrap; justify-content: flex-start; overflow-x: auto; overscroll-behavior-x: contain; -webkit-overflow-scrolling: touch; padding: 8px 12px; gap: 4px; scrollbar-width: none; }
+            .nav::-webkit-scrollbar { display: none; }
+            .nav a { flex: 0 0 auto; display: inline-flex; align-items: center; min-height: 44px; padding: 0 14px; font-size: 1rem; white-space: nowrap; }
+            /* Keep the RSVP call-to-action pinned in view while the other links scroll. */
+            .nav a[href="vietnam_rsvp.html"] { position: sticky; right: 0; margin-left: 4px; }
+            .itinerary-switch { top: 62px; padding: 4px 12px; }
+            section[id] { scroll-margin-top: 128px; }
+        }
+        @media (max-width: 900px) {
+            .switch-seg { font-size: 1rem; }
+            p, h4, .callout, table, .day-meta, .day-card li, ul.clean li, .wakeup, .day-note, .wear, .hero .route, .hotel-card p, .hotel-card a { font-size: 1rem; }
+        }
+        /* Short landscape phones: let the toggle scroll away instead of eating the viewport. */
+        @media (max-height: 500px) {
+            .itinerary-switch { position: static; }
+            section[id] { scroll-margin-top: 72px; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            html { scroll-behavior: auto; }
+            *, *::before, *::after { animation: none !important; transition: none !important; }
+        }
     </style>
 </head>
 <body>
 <!-- HERO -->
 <div class="hero">
-    <img src="Phoenix-01.png" alt="Phoenix Travels Logo">
+    <img src="Phoenix-01-320.webp" width="320" height="259" alt="Phoenix Travels Logo">
     <h1>Keysha's 40th Birthday Escape</h1>
     <div class="tagline">Luxury, Culture & Coastal Bliss</div>
     <div class="dates">Vietnam &nbsp;|&nbsp; November 21–29, 2027</div>
@@ -212,13 +389,11 @@
 </div>
 
 <!-- NAV -->
-<div style="width:100%; max-height:350px; overflow:hidden;">
-    <img src="Vietnam.webp" alt="Ha Long Bay, Vietnam" style="width:100%; height:350px; object-fit:cover; display:block;">
-</div>
-
 <nav class="nav">
     <a href="#welcome">Welcome</a>
     <a href="#snapshot">Snapshot</a>
+    <a href="#flights">Flights</a>
+    <a href="#travel-options">Travel Options</a>
     <a href="#destinations">Destinations</a>
     <a href="#itinerary">Day-by-Day</a>
     <a href="#hotels">Hotels</a>
@@ -230,15 +405,22 @@
     <a href="#payment">Payment</a>
     <a href="#visa">Visa</a>
     <a href="#tips">Tips</a>
-    <a href="vietnam_rsvp.html" style="background:var(--deep-purple);color:var(--white);border-radius:20px;">RSVP Now</a>
+    <a href="vietnam_rsvp.html" style="background:var(--bronze);color:var(--white);border-radius:20px;animation:flash 2s ease-out infinite;">RSVP Now — by 12/4/26</a>
 </nav>
+<!-- ITINERARY SWITCH -->
+<div class="itinerary-switch" role="navigation" aria-label="Switch itinerary">
+    <div class="itinerary-switch-inner" role="group" aria-label="Choose itinerary">
+        <a class="switch-seg is-active" id="switchOriginal" href="vietnam_itinerary_site.html" aria-current="page" aria-label="Viewing the original itinerary">Original</a>
+        <a class="switch-seg" id="switchOption2" href="Vietnam_Option_2.html" aria-label="View Option 2 itinerary">Option 2</a>
+    </div>
+</div>
 <!-- WELCOME -->
 <section id="welcome">
 <div class="container">
     <h2>Welcome</h2>
     <p>Join Keysha for an unforgettable birthday escape through Vietnam. This group experience is designed to feel stylish, elevated, and easy to follow — with luxury where it matters, smart budgeting where it makes sense, and enough flexibility for everyone's travel style.</p>
     <div class="callout">
-        The trip includes a two-night Hanoi stay with shopping and custom shoes, a Genesis Regal Luxury Cruise through the Lan Ha Bay / Ha Long Bay region, a beach-resort stay in Da Nang with Hoi An shopping, and a Ho Chi Minh City finale featuring a Michelin-star dinner and All Black Everything girls' night out.
+        The trip includes a two-night Hanoi stay with shopping and custom shoes, a Genesis Regal Luxury Cruise through the Lan Ha Bay / Ha Long Bay region, a riverside resort stay in Hoi An with custom clothing and lantern-town shopping, and a Ho Chi Minh City finale featuring a Michelin-star dinner and All Black Everything night out.
     </div>
     <div class="callout important">
         <strong>IMPORTANT:</strong> This is NOT a round-trip flight. Book a multi-city ticket: fly INTO Hanoi (HAN) and fly HOME from Ho Chi Minh City (SGN). We travel south through the country and depart from a different city than we arrive.
@@ -267,12 +449,44 @@
         <tbody>
             <tr><td>Hanoi Hotel</td><td>Confirmed</td><td>Anatole Hotel Hanoi, 2 nights (Nov 21–23)</td></tr>
             <tr><td>Cruise</td><td>Confirmed</td><td>Genesis Regal Luxury Cruise, 2 days / 1 night (Nov 23–24)</td></tr>
-            <tr><td>Hoi An Hotel</td><td>Confirmed</td><td>Silk Sense Hoi An River Resort, 2 nights (Nov 24–26); night of Nov 26 not booked yet</td></tr>
-            <tr><td>HCMC Hotel</td><td>Finalists</td><td>Mai House Saigon or La Siesta Premium Saigon</td></tr>
+            <tr><td>Hoi An Hotel</td><td>Confirmed</td><td>Silk Sense Hoi An River Resort, 2 nights (Nov 24–26)</td></tr>
+            <tr><td>HCMC Hotel</td><td>Confirmed</td><td>Hotel Grand Saigon, 3 nights (Nov 26–29)</td></tr>
             <tr><td>Farewell Dinner</td><td>Selected</td><td>Anan Saigon (1 Michelin Star), All Black Everything evening</td></tr>
             <tr><td>Nightlife</td><td>Shortlist</td><td>Piu Piu, Mershe Saigon, Weeknd Saigon, Afro Chill Lounge</td></tr>
         </tbody>
     </table>
+</div>
+</section>
+<!-- FLIGHT MONITOR -->
+<section id="flights">
+<div class="container">
+    <h2>Flight Monitor</h2>
+    <p>Lowest round-trip fares per person from St. Louis (STL) into Hanoi (HAN), home from Ho Chi Minh City (SGN), checked daily. Fares the data source did not return are marked not verified, never estimated.</p>
+    <div data-flight-monitor data-itinerary="original" data-origin="STL" data-arrive="HAN" data-depart="SGN"></div>
+</div>
+</section>
+<!-- TRAVEL OPTIONS (lighter inline summary; full interactive version lives on Option 2) -->
+<section id="travel-options">
+<div class="container">
+    <h2>Travel Options</h2>
+    <p>
+        A quick summary for Itinerary A (arrive Hanoi, depart Ho Chi Minh City). The full interactive
+        version — live flight monitor and departure-timing view — lives on
+        <a href="Vietnam_Option_2.html#travelOptions" style="color:var(--medium-purple)">Option 2</a>.
+    </p>
+    <div class="callout">
+        <strong>Recommended provisional departure:</strong> November 19, 2027 from St. Louis (STL).
+        Landing in Vietnam on November 21, 2027 is fixed; the departure date stays provisional until Part 1
+        schedule data exists.<br>
+        <strong>Mixed cabin</strong> (business long-haul + economy elsewhere, not a single-ticket quote):
+        <strong>not verified</strong> — a per-person headline shows only when live fares return for both
+        searches, and group totals wait on a confirmed traveler count.
+    </div>
+    <p class="wear">
+        All fares and times are not verified until checked for your November 2027 dates. Nothing is booked.
+        <button type="button" id="copyTextBtn" style="margin-left:8px;background:var(--deep-purple);color:var(--white);border:none;border-radius:20px;padding:6px 16px;min-height:44px;font-size:1rem;font-weight:600;cursor:pointer;">Copy as text</button>
+        <span id="copyTextStatus" aria-live="polite" style="margin-left:8px;font-size:0.82rem;color:var(--bronze);"></span>
+    </p>
 </div>
 </section>
 <!-- DESTINATIONS -->
@@ -302,7 +516,12 @@
 <div class="container">
     <h2>Day-by-Day Itinerary</h2>
 
-    <div class="day-card">
+    <div class="day-scroller">
+    <button class="day-scroll-btn day-scroll-prev" type="button" aria-label="Scroll to previous day"><span class="day-scroll-icon" aria-hidden="true"></span></button>
+    <button class="day-scroll-btn day-scroll-next" type="button" aria-label="Scroll to next day"><span class="day-scroll-icon" aria-hidden="true"></span></button>
+    <div class="day-track" id="dayTrack">
+
+    <div class="day-card" id="day-2027-11-21" tabindex="0">
         <h3>Day 1 — Sunday, November 21: Welcome to Vietnam</h3>
         <div class="day-meta">
             <span><strong>Destination:</strong> Hanoi</span>
@@ -322,7 +541,7 @@
         <div class="wear">👗 Comfortable Chic: airport outfit, sneakers, light cardigan, crossbody bag.</div>
     </div>
 
-    <div class="day-card">
+    <div class="day-card" id="day-2027-11-22" tabindex="0">
         <h3>Day 2 — Monday, November 22: Shopping &amp; Custom Shoes in Hanoi</h3>
         <div class="day-meta">
             <span><strong>Destination:</strong> Hanoi</span>
@@ -341,7 +560,7 @@
         </ul>
         <div class="wear">👗 Comfortable Chic: easy walking outfit, sneakers or sandals, light layer, crossbody bag for shopping.</div>
     </div>
-    <div class="day-card">
+    <div class="day-card" id="day-2027-11-23" tabindex="0">
         <h3>Day 3 — Tuesday, November 23: 🎂 Board the Cruise &amp; Birthday at Sea</h3>
         <div class="day-meta">
             <span><strong>Destination:</strong> Hanoi → Lan Ha Bay</span>
@@ -361,10 +580,10 @@
         <div class="wear">👗 Birthday at Sea: resort chic for boarding; beautiful birthday dinner outfit for evening; light sweater for deck breezes.</div>
         <div class="day-note">This is the official birthday date: November 23. Additional celebrations happen later in the week.</div>
     </div>
-    <div class="day-card">
-        <h3>Day 4 — Wednesday, November 24: Cruise Return & Travel to Da Nang</h3>
+    <div class="day-card" id="day-2027-11-24" tabindex="0">
+        <h3>Day 4 — Wednesday, November 24: Cruise Return & Travel to Hoi An</h3>
         <div class="day-meta">
-            <span><strong>Destination:</strong> Lan Ha Bay → Da Nang</span>
+            <span><strong>Destination:</strong> Lan Ha Bay → Da Nang airport → Hoi An</span>
             <span><strong>Weather:</strong> 78–83°F (26–28°C), warm tropical</span>
             <span><strong>Stay:</strong> Silk Sense Hoi An River Resort (night 1 of 2)</span>
         </div>
@@ -373,73 +592,77 @@
             <li>Breakfast / brunch onboard</li>
             <li>Disembark Genesis Regal Luxury Cruise</li>
             <li>Transfer back toward Hanoi / airport area</li>
-            <li>Fly to Da Nang</li>
+            <li>Fly to Da Nang (~1.5 hour flight)</li>
             <li>Transfer to Silk Sense Hoi An River Resort (about 45 min from Da Nang airport; check-in from 2:00 PM; book the resort pickup 48 hours ahead)</li>
-            <li>Easy evening, dinner, and rest</li>
+            <li>Easy evening: dinner near the resort or a first stroll through the lantern-lit Ancient Town</li>
         </ul>
-        <div class="wear">👗 Travel + Beach Arrival: comfortable travel set, sandals or sneakers, easy dinner outfit.</div>
+        <div class="wear">👗 Travel + Resort Arrival: comfortable travel set, sandals or sneakers, easy dinner outfit.</div>
     </div>
-    <div class="day-card">
-        <h3>Day 5 — Thursday, November 25: Relax & Celebrate in Da Nang</h3>
+    <div class="day-card" id="day-2027-11-25" tabindex="0">
+        <h3>Day 5 — Thursday, November 25: Relax & Celebrate in Hoi An</h3>
         <div class="day-meta">
-            <span><strong>Destination:</strong> Da Nang</span>
-            <span><strong>Weather:</strong> 78–83°F (26–28°C), beach-friendly</span>
+            <span><strong>Destination:</strong> Hoi An</span>
+            <span><strong>Weather:</strong> 78–83°F (26–28°C), warm</span>
             <span><strong>Stay:</strong> Silk Sense Hoi An River Resort (night 2 of 2)</span>
         </div>
-        <div class="wakeup">⏰ Sleep in! No schedule. Wake whenever — it's a beach and pool day.</div>
+        <div class="wakeup">⏰ Sleep in! No schedule. Wake whenever — it's a resort and pool morning.</div>
         <ul>
-            <li>Relaxing breakfast at the resort</li>
-            <li>Beach and pool time</li>
-            <li>Optional spa treatments</li>
-            <li>Birthday photos at the beach</li>
-            <li>Optional group birthday dinner</li>
+            <li>Relaxing breakfast at the resort (included)</li>
+            <li>Pool time and optional spa treatments</li>
+            <li>Afternoon in Hoi An Ancient Town: place custom clothing and leather orders so there's time for fittings</li>
+            <li>Birthday photos in the lantern streets</li>
+            <li>Optional group birthday dinner in Hoi An</li>
             <li>Flexible day for everyone's energy levels</li>
         </ul>
-        <div class="wear">👗 Beach Luxury: swimsuit, cover-up, sunglasses, sandals. Elegant vacation dinner outfit at night.</div>
+        <div class="wear">👗 Resort Chic: swimsuit and cover-up for the morning; flowy dress and sandals for the Ancient Town; elegant dinner outfit at night.</div>
         <div class="day-note">Relaxed group celebration day, not a replacement for the November 23 birthday at sea.</div>
     </div>
 
-    <div class="day-card">
-        <h3>Day 6 — Friday, November 26: Hoi An Shopping Day</h3>
+    <div class="day-card" id="day-2027-11-26" tabindex="0">
+        <h3>Day 6 — Friday, November 26: Hoi An Shopping & Fly to Ho Chi Minh City</h3>
         <div class="day-meta">
-            <span><strong>Destination:</strong> Da Nang / Hoi An</span>
-            <span><strong>Weather:</strong> 78–83°F (26–28°C), warm</span>
-            <span><strong>Stay:</strong> Not booked yet (check out of Silk Sense by noon)</span>
+            <span><strong>Destination:</strong> Hoi An → Da Nang airport → Ho Chi Minh City</span>
+            <span><strong>Weather:</strong> 78–83°F in Hoi An; 86–91°F in Ho Chi Minh City</span>
+            <span><strong>Stay:</strong> Hotel Grand Saigon (night 1 of 3)</span>
         </div>
-        <div class="wakeup">⏰ Morning — aim for 8:00–8:30 AM. Breakfast then group transport to Hoi An.</div>
+        <div class="wakeup">⏰ Morning — aim for 8:00–8:30 AM. Breakfast at the resort, then final shopping. Check out of Silk Sense by noon.</div>
         <ul>
-            <li>Visit Hoi An Ancient Town</li>
-            <li>Shopping: custom clothing, dresses, blazers, leather goods, lanterns, artwork</li>
-            <li>Photos in the lantern streets</li>
-            <li>Dinner in Hoi An or return to Da Nang</li>
+            <li>Breakfast at the resort (included)</li>
+            <li>Final fittings and pickups for custom clothing and leather goods</li>
+            <li>Last-minute shopping and photos in the lantern streets</li>
+            <li>Check out of Silk Sense Hoi An River Resort by noon</li>
+            <li>Transfer to Da Nang airport (~45 min from Hoi An)</li>
+            <li>Fly from Da Nang to Ho Chi Minh City (~1.5 hour flight)</li>
+            <li>Check into Hotel Grand Saigon (~20–30 min from HCMC airport to District 1)</li>
+            <li>Easy dinner or rooftop cocktail in District 1</li>
         </ul>
-        <div class="wear">👗 Cute and Comfortable: matching two-piece set, comfortable sandals, hat, sunglasses, crossbody bag.</div>
-        <div class="day-note">Hoi An is one of the best places in Vietnam for custom clothing and leather goods. Leave space in your luggage!</div>
+        <div class="wear">👗 Cute and Comfortable: matching two-piece set, comfortable sandals, crossbody bag; easy dinner look for the evening.</div>
+        <div class="day-note">Place Hoi An custom orders on Nov 25 so they're ready before you leave. Leave space in your luggage!</div>
     </div>
-    <div class="day-card">
-        <h3>Day 7 — Saturday, November 27: Da Nang to Ho Chi Minh City</h3>
+    <div class="day-card" id="day-2027-11-27" tabindex="0">
+        <h3>Day 7 — Saturday, November 27: Explore Ho Chi Minh City</h3>
         <div class="day-meta">
-            <span><strong>Destination:</strong> Da Nang → Ho Chi Minh City</span>
+            <span><strong>Destination:</strong> Ho Chi Minh City</span>
             <span><strong>Weather:</strong> 86–91°F (30–33°C), hot & humid</span>
-            <span><strong>Stay:</strong> Mai House Saigon or La Siesta Premium Saigon</span>
+            <span><strong>Stay:</strong> Hotel Grand Saigon (night 2 of 3)</span>
         </div>
-        <div class="wakeup">⏰ Morning — breakfast and checkout by 9:00–10:00 AM (depends on flight time).</div>
+        <div class="wakeup">⏰ Sleep in! No scheduled pickup. Explore at your own pace.</div>
         <ul>
-            <li>Breakfast and checkout</li>
-            <li>Fly from Da Nang to Ho Chi Minh City</li>
-            <li>Check into hotel</li>
-            <li>Shopping / explore District 1 if time allows</li>
-            <li>Optional rooftop cocktail or casual dinner</li>
+            <li>Breakfast at the hotel</li>
+            <li>Explore District 1: Dong Khoi Street, Saigon Opera House, and the Central Post Office area</li>
+            <li>Shopping at local boutiques and cafes</li>
+            <li>Afternoon rest or pool / spa time</li>
+            <li>Optional rooftop cocktails or casual dinner</li>
         </ul>
         <div class="wear">👗 City Chic: lightweight outfit, comfortable shoes, stylish dinner look.</div>
     </div>
 
-    <div class="day-card">
+    <div class="day-card" id="day-2027-11-28" tabindex="0">
         <h3>Day 8 — Sunday, November 28: 🖤 All Black Everything Finale</h3>
         <div class="day-meta">
             <span><strong>Destination:</strong> Ho Chi Minh City</span>
             <span><strong>Weather:</strong> 86–91°F day; ~80°F evening</span>
-            <span><strong>Stay:</strong> Mai House Saigon or La Siesta Premium Saigon</span>
+            <span><strong>Stay:</strong> Hotel Grand Saigon (night 3 of 3)</span>
         </div>
         <div class="wakeup">⏰ Sleep in! No morning schedule. Rest up for the big night out.</div>
         <ul>
@@ -449,14 +672,14 @@
             <li>Michelin-star farewell dinner at Anan Saigon</li>
             <li>Rooftop cocktails</li>
             <li>Group photos</li>
-            <li>Hip-Hop / Afrobeats girls' night out</li>
+            <li>Hip-Hop / Afrobeats night out</li>
             <li>Return to hotel together using Grab</li>
         </ul>
         <div class="wear">👗 All Black Everything: all-black attire, gold accessories encouraged, glam hair and makeup, dress to impress.</div>
         <div class="day-note">Club options: Piu Piu, Mershe Saigon, Weeknd Saigon, Afro Chill Lounge.</div>
     </div>
 
-    <div class="day-card">
+    <div class="day-card" id="day-2027-11-29" tabindex="0">
         <h3>Day 9 — Monday, November 29: Departure Day</h3>
         <div class="day-meta">
             <span><strong>Destination:</strong> Ho Chi Minh City</span>
@@ -467,10 +690,12 @@
         <ul>
             <li>Breakfast</li>
             <li>Hotel checkout</li>
-            <li>Airport transfer</li>
+            <li>Airport transfer (~20–30 min to Tan Son Nhat International Airport)</li>
             <li>Fly home from Ho Chi Minh City (SGN)</li>
         </ul>
         <div class="wear">👗 Airport Comfortable: jogger set or matching sweatsuit, sneakers, light jacket for the flight.</div>
+    </div>
+    </div>
     </div>
 </div>
 </section>
@@ -486,6 +711,7 @@
         <li>30 Nha Chung, Hanoi, near Hoan Kiem Lake and the Old Quarter</li>
         <li>Breakfast included, free WiFi, welcome drink, pool, fitness center</li>
     </ul>
+    <p><a href="https://www.youtube.com/watch?v=ZbrvwWcnzxQ" target="_blank" rel="noopener noreferrer">Watch the hotel video on YouTube →</a></p>
 
     <h3>Genesis Regal Luxury Cruise (Confirmed)</h3>
     <ul class="clean">
@@ -493,6 +719,13 @@
         <li>Boutique luxury, balcony cabins, intimate experience</li>
         <li>Full-board meals, pool/jacuzzi, activities, sightseeing fees, tour guide, onboard insurance</li>
         <li>Birthday celebration on November 23</li>
+        <li>Check-in 12:00 PM on Nov 23, check-out 9:30 AM on Nov 24</li>
+        <li>Included: en-suite room on board, all meals, tea, coffee and water in the room, entrance and sightseeing fees, onboard insurance and service charges</li>
+        <li>Not included: spa and massage, beverages, tips, personal expenses. Paying by credit card adds a 4% bank charge</li>
+        <li>Payment: 30% deposit at booking, balance due 15 days before arrival (Nov 8, 2027)</li>
+        <li>Cancel or change more than 29 days before arrival (before Oct 25): 30% charged. 29 to 14 days (Oct 25 to Nov 9): 50%. 14 to 7 days (Nov 9 to Nov 16): 75%. Under 7 days or no-show: 100%</li>
+        <li>Date changes are allowed up to 14 days before departure by contacting the cruise to confirm availability</li>
+        <li>Free one-way limousine bus from Hanoi Old Quarter hotels (pickup and drop-off at Old Quarter hotels only)</li>
     </ul>
     <p><a href="https://genesisregalcruise.com/" target="_blank">Visit Website →</a></p>
 
@@ -505,20 +738,15 @@
         <li>Airport pickup available (extra charge may apply): contact the resort at least 48 hours before arrival (Tel: +84 235 3754999)</li>
         <li>Free cancellation until Nov 17, 2027</li>
     </ul>
-    <p><strong>Night of Nov 26:</strong> not booked yet.</p>
-    <h3>Ho Chi Minh City Hotel Finalists</h3>
-    <div class="hotel-grid">
-        <div class="hotel-card">
-            <h4>Mai House Saigon Hotel</h4>
-            <p>Elegant, quieter luxury feel; short Grab ride to nightlife; better for sleep and calm after going out.</p>
-            <a href="https://maihouse.com.vn/" target="_blank">Visit Website →</a>
-        </div>
-        <div class="hotel-card">
-            <h4>La Siesta Premium Saigon</h4>
-            <p>Boutique luxury, rooftop bar/pool, central District 1 location, breakfast, easy access to nightlife.</p>
-            <a href="https://lasiestapremiumsaigon.com/" target="_blank">Visit Website →</a>
-        </div>
-    </div>
+    <p><a href="https://www.youtube.com/watch?v=E0z37uusYqE" target="_blank" rel="noopener noreferrer">Watch the hotel video on YouTube →</a></p>
+    <h3>Hotel Grand Saigon (Confirmed)</h3>
+    <ul class="clean">
+        <li>3 nights, November 26–29 (check-in Fri Nov 26, check-out Mon Nov 29)</li>
+        <li>No. 8 Dong Khoi Street, District 1, Ho Chi Minh City</li>
+        <li>Senior Deluxe Twin, 2 guests, breakfast buffet included, free WiFi, air conditioning, 24-hour room service, full-service spa</li>
+        <li>Total ₫12,599,997 for 3 nights including taxes and fees (about $492 at 25,631 VND per USD), paid at the property</li>
+    </ul>
+    <p><a href="https://www.youtube.com/watch?v=x68gevz5U1M" target="_blank" rel="noopener noreferrer">Watch the hotel video on YouTube →</a></p>
 </div>
 </section>
 <!-- DINING -->
@@ -533,11 +761,11 @@
         <li>Sunset photos and group toast on the sundeck</li>
     </ul>
 
-    <h3>November 25 — Relaxed Da Nang Celebration</h3>
+    <h3>November 25 — Relaxed Hoi An Celebration</h3>
     <ul class="clean">
-        <li>Beach and pool day</li>
+        <li>Resort pool morning</li>
         <li>Optional spa treatments</li>
-        <li>Birthday photos at the resort</li>
+        <li>Birthday photos in the Ancient Town lantern streets</li>
         <li>Optional group dinner</li>
     </ul>
 
@@ -572,7 +800,7 @@
 <!-- SAFETY -->
 <section id="safety">
 <div class="container">
-    <h2>Girls' Night Out & Safety Plan</h2>
+    <h2>Night Out & Safety Plan</h2>
     <ul class="clean">
         <li>Stay in or near central areas with easy Grab access</li>
         <li>Use Grab instead of hailing taxis whenever possible</li>
@@ -591,8 +819,8 @@
         <tbody>
             <tr><td>Nov 21–23</td><td>Hanoi</td><td>72–77°F; mild, cooler evenings</td><td>Comfortable chic, light jacket, sneakers</td></tr>
             <tr><td>Nov 23–24</td><td>Cruise</td><td>73–79°F; pleasant, breezy</td><td>Resort chic, swimwear, cover-ups, light sweater</td></tr>
-            <tr><td>Nov 24–27</td><td>Da Nang / Hoi An</td><td>78–83°F; warm tropical, possible showers</td><td>Beach luxury, sandals, vacation dresses, umbrella</td></tr>
-            <tr><td>Nov 27–29</td><td>Ho Chi Minh City</td><td>86–91°F; hot, humid, mostly dry</td><td>City chic, breathable fabrics, stylish dinner outfits</td></tr>
+            <tr><td>Nov 24–26</td><td>Da Nang / Hoi An</td><td>78–83°F; warm tropical, possible showers</td><td>Beach luxury, sandals, vacation dresses, umbrella</td></tr>
+            <tr><td>Nov 26–29</td><td>Ho Chi Minh City</td><td>86–91°F; hot, humid, mostly dry</td><td>City chic, breathable fabrics, stylish dinner outfits</td></tr>
             <tr><td>Nov 28</td><td>All Black Everything</td><td>Warm evening ~80°F</td><td>All black with gold accessories; glam encouraged</td></tr>
         </tbody>
     </table>
@@ -610,7 +838,7 @@
             <tr><td>Clothing</td><td>Airport outfit, resort wear, swimsuits, cover-ups, vacation dresses, city outfits, All Black Everything look, light jacket</td></tr>
             <tr><td>Shoes</td><td>Comfortable sneakers, sandals, dressy sandals/heels</td></tr>
             <tr><td>Tech</td><td>Portable charger, universal adapter, phone charger, camera if desired</td></tr>
-            <tr><td>Health/Comfort</td><td>Sunscreen, insect repellent, hand sanitizer, tissues, personal medication</td></tr>
+            <tr><td>Health/Comfort</td><td>Sunscreen, insect repellent, hand sanitizer, tissues, personal medication, <strong>probiotics, Imodium, Dramamine/Bonine</strong>, personal soap and washcloth</td></tr>
             <tr><td>Cruise/Beach</td><td>Waterproof phone pouch, sunglasses, hat, beach bag</td></tr>
             <tr><td>Shopping</td><td>Foldable duffel bag or extra suitcase room</td></tr>
         </tbody>
@@ -627,7 +855,7 @@
         <tbody>
             <tr><td>January 2027</td><td>$250</td><td>Deposit — secures your spot (non-refundable)</td></tr>
             <tr><td>March 2027</td><td>$900</td><td>Genesis Regal Luxury Cruise (2 days / 1 night, full board)</td></tr>
-            <tr><td>May 2027</td><td>$750</td><td>Hotels — Hanoi (2 nights), Da Nang (3 nights), Ho Chi Minh City (2 nights)</td></tr>
+            <tr><td>May 2027</td><td>$750</td><td>Hotels — Hanoi (2 nights), Hoi An (2 nights), Ho Chi Minh City (3 nights)</td></tr>
             <tr><td>July 2027</td><td>$350</td><td>Domestic flights — Hanoi → Da Nang and Da Nang → HCMC</td></tr>
             <tr><td>September 2027</td><td>$500</td><td>Transfers, Hoi An day trip transport, farewell dinner, group activities</td></tr>
             <tr><td>October 2027</td><td>Final balance</td><td>Any remaining balance; final itinerary and pre-departure meeting</td></tr>
@@ -635,6 +863,12 @@
     </table>
     <div class="callout">
         <strong>Estimated total:</strong> $2,750–$3,250 per person depending on final hotel and activity selections. Amounts above are estimates and may shift slightly once November 2027 rates are confirmed.
+    </div>
+    <div class="callout">
+        <strong>Payment Methods:</strong><br>
+        <a href="https://venmo.com/PhoenixTravel" target="_blank" style="color:var(--deep-purple); font-weight:700; text-decoration:underline;">Venmo @PhoenixTravel</a> &nbsp;|&nbsp;
+        <a href="https://cash.app/$PhoenixTravel" target="_blank" style="color:var(--deep-purple); font-weight:700; text-decoration:underline;">CashApp $PhoenixTravel</a> &nbsp;|&nbsp;
+        <a href="https://paypal.me/ohphoenix" target="_blank" style="color:var(--deep-purple); font-weight:700; text-decoration:underline;">PayPal @ohphoenix</a>
     </div>
 
     <h3>Included in Land Package</h3>
@@ -681,6 +915,12 @@
     <div class="callout important">
         <strong>Do not wait until the last minute</strong> to apply for the Vietnam e-visa. Travelers without required documents may be denied boarding or entry.
     </div>
+    <p><strong>Apply here (official government site):</strong> <a href="https://evisa.gov.vn" target="_blank" style="color:var(--medium-purple); font-weight:600;">evisa.gov.vn →</a></p>
+    <p style="font-size:0.82rem; color:#888;">⚠️ Only use the official .gov.vn website. Avoid third-party sites that charge extra fees.</p>
+
+    <h3>Register with the U.S. Embassy</h3>
+    <p>Enroll in the <strong>Smart Traveler Enrollment Program (STEP)</strong> — a free service from the U.S. Department of State. It sends you safety alerts and helps the embassy reach you in an emergency abroad.</p>
+    <p><a href="https://step.state.gov" target="_blank" style="color:var(--medium-purple); font-weight:600;">Register at step.state.gov →</a></p>
 </div>
 </section>
 
@@ -722,6 +962,21 @@
         <li>Stay flexible</li>
         <li>Have fun, take pictures, and celebrate Keysha's 40th birthday in Vietnam!</li>
     </ul>
+
+    <h3>Budget & Tipping Tips</h3>
+    <ul class="clean">
+        <li>Meals at nice restaurants will cost around <strong>$10–$20 USD</strong> per person; street food and casual spots are $3–$7</li>
+        <li>All included meals are listed, but we encourage you to tip tour guides, drivers, and cruise staff</li>
+        <li>Please be mindful that our tour guides and drivers work largely off <strong>TIPS</strong> — it is customary and appreciated</li>
+        <li>Shopping will be available at each location — please make sure you have separate money for food, shopping, and tips</li>
+        <li>Please tell your banks/credit card companies that you will be traveling abroad</li>
+        <li>As with any tourist destination, pickpocketing and theft can be a concern in busy areas. Be vigilant and don't leave belongings unattended. Use a money belt or hidden pouch for passports, credit cards, and cash. Avoid flashing valuable items.</li>
+        <li><strong>Food & Stomach Prep:</strong> Vietnamese food is fresh and delicious, but your stomach may need time to adjust to new ingredients, spices, and street food. Bring <strong>probiotics</strong> (start taking them a week before the trip), <strong>Imodium</strong>, and <strong>motion sickness/nausea medicine</strong> (Dramamine or Bonine — helpful for the cruise and winding roads). Stay hydrated and only drink bottled or filtered water.</li>
+    </ul>
+
+    <h3>Travel Insurance</h3>
+    <p>Travel insurance is strongly recommended for international trips. We suggest:</p>
+    <p><a href="https://www.allianztravelinsurance.com/" target="_blank" style="color:var(--medium-purple); font-weight:600;">Allianz Travel Insurance →</a></p>
 </div>
 </section>
 <!-- FOOTER -->
@@ -731,5 +986,164 @@
     Final rates, flight times, and hotel selections will be updated when November 2027 inventory is available.</p>
 </footer>
 
+<script src="flight-monitor/data/latest.js"></script>
+<script src="flight-monitor/ui/flight-monitor.js"></script>
+<!-- Copy-as-text for the inline Travel Options summary. Builds a plain-text summary
+     from values ALREADY on the page; copies with navigator.clipboard and falls back to
+     a hidden textarea + document.execCommand('copy'). Vanilla ES5, no dependencies. -->
+<script>
+(function () {
+    var btn = document.getElementById('copyTextBtn');
+    if (!btn) { return; }
+    var status = document.getElementById('copyTextStatus');
+
+    function clean(s) { return s ? s.replace(/\s+/g, ' ').replace(/\u00a0/g, ' ').trim() : ''; }
+
+    function buildSummary() {
+        var lines = ['Vietnam (Itinerary A) - Travel Options summary'];
+        var sec = document.getElementById('travel-options');
+        if (sec) {
+            var callout = sec.getElementsByClassName('callout')[0];
+            if (callout) { lines.push(''); lines.push(clean(callout.textContent)); }
+        }
+        lines.push('');
+        lines.push('All fares and times are not verified until checked for your November 2027 dates. Nothing is booked.');
+        return lines.join('\n');
+    }
+
+    function fallbackCopy(text) {
+        var ta = document.createElement('textarea');
+        ta.value = text;
+        ta.setAttribute('readonly', '');
+        ta.style.position = 'absolute';
+        ta.style.left = '-9999px';
+        document.body.appendChild(ta);
+        ta.select();
+        var ok = false;
+        try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+        document.body.removeChild(ta);
+        return ok;
+    }
+
+    function flash(msg) {
+        if (status) {
+            status.textContent = msg;
+            setTimeout(function () { status.textContent = ''; }, 2000);
+        }
+    }
+
+    btn.addEventListener('click', function () {
+        var text = buildSummary();
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).then(function () { flash('Copied'); }, function () {
+                flash(fallbackCopy(text) ? 'Copied' : 'Copy failed');
+            });
+        } else {
+            flash(fallbackCopy(text) ? 'Copied' : 'Copy failed');
+        }
+    });
+})();
+</script>
+<!-- Horizontal day scroller + Original|Option 2 toggle carry-over (ES5). -->
+<script>
+(function () {
+    'use strict';
+    function reducedMotion() {
+        return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+    }
+    function behavior() { return reducedMotion() ? 'auto' : 'smooth'; }
+
+    /* ---- horizontal cell scroller: runs on EVERY .day-track (day cells + card rows) ---- */
+    function initScroller(track) {
+        var scroller = track.parentNode;
+        var prev = scroller.querySelector('.day-scroll-prev');
+        var next = scroller.querySelector('.day-scroll-next');
+        function cells() { return track.querySelectorAll('.day-card'); }
+        function step() {
+            var c = cells();
+            if (!c.length) return track.clientWidth;
+            var gap = 0;
+            if (c.length > 1) gap = c[1].offsetLeft - (c[0].offsetLeft + c[0].offsetWidth);
+            if (gap < 0) gap = 0;
+            return c[0].offsetWidth + gap;
+        }
+        function scrollByCells(n) { track.scrollBy({ left: n * step(), behavior: behavior() }); }
+        function updateButtons() {
+            /* A small tolerance: the scroll mask can leave scrollLeft a pixel or two
+               off zero at rest, so treat near-zero as the left end. */
+            var maxScroll = track.scrollWidth - track.clientWidth - 2;
+            if (prev) prev.disabled = track.scrollLeft <= 2;
+            if (next) next.disabled = track.scrollLeft >= maxScroll;
+        }
+        if (prev) prev.addEventListener('click', function () { scrollByCells(-1); });
+        if (next) next.addEventListener('click', function () { scrollByCells(1); });
+        track.addEventListener('scroll', updateButtons);
+        window.addEventListener('resize', updateButtons);
+        track.addEventListener('keydown', function (e) {
+            var key = e.key || e.keyIdentifier;
+            if (key !== 'ArrowRight' && key !== 'ArrowLeft' && key !== 'Right' && key !== 'Left') return;
+            var c = cells();
+            if (!c.length) return;
+            var current = document.activeElement, idx = -1, i;
+            for (i = 0; i < c.length; i++) { if (c[i] === current) { idx = i; break; } }
+            var dir = (key === 'ArrowRight' || key === 'Right') ? 1 : -1;
+            var target = idx === -1 ? (dir > 0 ? 0 : c.length - 1) : idx + dir;
+            if (target < 0 || target >= c.length) return;
+            e.preventDefault();
+            c[target].focus();
+            c[target].scrollIntoView({ behavior: behavior(), inline: 'start', block: 'nearest' });
+        });
+        updateButtons();
+        window.setTimeout(updateButtons, 300);
+    }
+    var allTracks = document.querySelectorAll('.day-track');
+    for (var ti = 0; ti < allTracks.length; ti++) { initScroller(allTracks[ti]); }
+
+    /* The toggle carry-over logic is keyed specifically off the itinerary #dayTrack. */
+    var dayTrack = document.getElementById('dayTrack');
+
+    /* ---- Original | Option 2 toggle: carry current day across the jump ----
+       Nov 23-29 line up by date in both trips; Nov 21-22 do not, so fall back to top. */
+    function dayCarries(id) {
+        var m = /^day-2027-11-(\d{2})$/.exec(id || '');
+        if (!m) return false;
+        var dd = parseInt(m[1], 10);
+        return dd >= 23 && dd <= 29;
+    }
+    function currentDayId() {
+        if (!dayTrack) return null;
+        var c = dayTrack.querySelectorAll('.day-card');
+        if (!c.length) return null;
+        var best = null, bestDist = Infinity, i, r, dist;
+        for (i = 0; i < c.length; i++) {
+            r = c[i].getBoundingClientRect();
+            dist = Math.abs(r.left);
+            if (dist < bestDist) { bestDist = dist; best = c[i]; }
+        }
+        return best ? best.id : null;
+    }
+    var toOption2 = document.getElementById('switchOption2');
+    if (toOption2) {
+        var base = toOption2.getAttribute('href');
+        toOption2.addEventListener('click', function () {
+            var id = currentDayId();
+            toOption2.setAttribute('href', base + (dayCarries(id) ? '#' + id : ''));
+        });
+    }
+    function scrollToHashDay() {
+        var hash = (window.location.hash || '').replace('#', '');
+        if (!dayCarries(hash)) return;
+        var cell = document.getElementById(hash);
+        if (!cell || !dayTrack) return;
+        cell.scrollIntoView({ behavior: behavior(), inline: 'start', block: 'nearest' });
+        var section = document.getElementById('itinerary');
+        if (section) section.scrollIntoView({ behavior: behavior(), block: 'start' });
+    }
+    if (window.location.hash) {
+        if (window.requestAnimationFrame) window.requestAnimationFrame(scrollToHashDay);
+        else window.setTimeout(scrollToHashDay, 60);
+    }
+})();
+</script>
 </body>
 </html>

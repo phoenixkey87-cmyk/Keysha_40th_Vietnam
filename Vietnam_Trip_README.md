@@ -69,7 +69,7 @@
 **Sections (nav order):** Welcome, Snapshot, Flights (Flight Monitor), Travel Options, Destinations, Day-by-Day (nine days, each with Morning / Afternoon / Evening plans), Hotels, Dining, Nightlife, Cafés, Shopping, Wellness, Budget, Map, Safety, Weather, Packing, Payment, Visa, Tips.
 
 **Where the additions are:**
-- Coffee: Café Phố Cổ (Nov 22, Hanoi), Faifo Coffee (Nov 25, Hoi An), Saigon cafe route (Nov 28)
+- Coffee: The Note Coffee (Nov 22, Hanoi), Faifo Coffee (Nov 25, Hoi An), Saigon cafe route (Nov 28)
 - Wellness days: Nov 25 (Hoi An) and Nov 27 (Saigon)
 - Shopping blocks: Nov 22, 25, 26, 27, 28, 29
 - Nightlife: Nov 21, 24, 25, 26, 27, 28

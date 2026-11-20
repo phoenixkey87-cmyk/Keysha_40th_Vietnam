@@ -37,7 +37,7 @@
             background: url('Phoenix-01-320.webp') center/contain no-repeat;
             opacity: 0.04;
             pointer-events: none;
-            z-index: 0;
+            z-index: -1;
         }
         /* HERO */
         .hero {
@@ -187,54 +187,6 @@
             margin-top: 8px;
             font-style: italic;
         }
-        /* HORIZONTAL DAY SCROLLER (day-by-day itinerary only) */
-        .day-scroller { position: relative; }
-        .day-track {
-            display: flex;
-            gap: 16px;
-            overflow-x: auto;
-            overflow-y: visible;
-            scroll-snap-type: x mandatory;
-            align-items: flex-start;
-            padding: 6px 2px 14px;
-            scrollbar-width: thin;
-            scrollbar-color: var(--medium-purple) transparent;
-            -webkit-mask-image: linear-gradient(to right, transparent 0, #000 22px, #000 calc(100% - 22px), transparent 100%);
-            mask-image: linear-gradient(to right, transparent 0, #000 22px, #000 calc(100% - 22px), transparent 100%);
-        }
-        .day-track::-webkit-scrollbar { height: 8px; }
-        .day-track::-webkit-scrollbar-thumb { background: var(--medium-purple); border-radius: 8px; }
-        .day-track::-webkit-scrollbar-track { background: var(--soft-purple); border-radius: 8px; }
-        .day-track .day-card {
-            scroll-snap-align: start;
-            flex: 0 0 auto;
-            width: clamp(260px, 85vw, 340px);
-            margin: 0;
-            align-self: flex-start;
-        }
-        .day-track .day-card h3,
-        .day-track .day-card li,
-        .day-track .day-note,
-        .day-track .wear { overflow-wrap: anywhere; }
-        .day-track .day-card:focus-visible,
-        .day-track .day-card:focus { outline: 3px solid var(--medium-purple); outline-offset: 2px; }
-        @media (min-width: 760px) { .day-track .day-card { width: 340px; } }
-        .day-scroll-btn {
-            position: absolute; top: 40px; z-index: 3;
-            width: 44px; height: 44px; border-radius: 50%;
-            border: 1px solid var(--border); background: var(--white); color: var(--deep-purple);
-            box-shadow: 0 4px 14px rgba(0,0,0,0.18); cursor: pointer;
-            display: flex; align-items: center; justify-content: center;
-        }
-        .day-scroll-prev { left: -6px; }
-        .day-scroll-next { right: -6px; }
-        .day-scroll-btn:hover { background: var(--soft-purple); }
-        .day-scroll-btn:disabled { opacity: 0.35; cursor: default; }
-        .day-scroll-btn:focus-visible { outline: 3px solid var(--medium-purple); outline-offset: 2px; }
-        .day-scroll-icon { width: 11px; height: 11px; border-top: 2px solid currentColor; border-right: 2px solid currentColor; display: inline-block; }
-        .day-scroll-prev .day-scroll-icon { transform: rotate(-135deg); margin-left: 4px; }
-        .day-scroll-next .day-scroll-icon { transform: rotate(45deg); margin-right: 4px; }
-        @media (prefers-reduced-motion: reduce) { .day-track { scroll-behavior: auto; } }
         /* LISTS */
         ul.clean { list-style: none; padding: 0; }
         ul.clean li { padding: 6px 0 6px 20px; position: relative; font-size: 0.9rem; }
@@ -293,25 +245,11 @@
             #travel-options thead th { background: #fff !important; color: #000 !important; border-bottom: 1px solid #000 !important; }
             #travel-options tbody td { border-bottom: 1px solid #000 !important; }
             #travel-options tbody tr:nth-child(even) { background: #fff !important; }
-            /* Day-cell scroller prints as wrapped rows so every day is on paper. */
-            .day-track {
-                display: flex !important;
-                flex-wrap: wrap !important;
-                overflow: visible !important;
-                scroll-snap-type: none !important;
-                -webkit-mask-image: none !important;
-                mask-image: none !important;
-                gap: 8pt !important;
-            }
-            .day-track .day-card { width: 46% !important; flex: 0 0 46% !important; break-inside: avoid; }
-            .day-scroll-btn { display: none !important; }
         }
     </style>
     <link rel="stylesheet" href="vendor/leaflet/leaflet.css">
     <style>
         /* MERGED ITINERARY additions: day-slot labels, venue cards, map. */
-        .day-card li strong.slot { color: var(--medium-purple); }
-        .day-card li.sub { list-style: circle; margin-left: 18px; }
         .flag { color: var(--bronze); font-weight: 600; font-size: 0.85rem; }
         .small { font-size: 0.82rem; color: #555; }
         .hotel-card .meta { font-size: 0.82rem; color: #555; margin-bottom: 6px; }
@@ -333,6 +271,86 @@
         @media (max-width: 700px) { .map-list ul { columns: 1; } .map-canvas { height: 380px; } }
         @media (max-width: 900px) { .hotel-card li, .hotel-card .meta, .map-list li, .flag, .small, .chip { font-size: 1rem; } }
         @media print { .map-canvas, #map .chip-row { display: none !important; } }
+    </style>
+    <style>
+        /* DAY-BY-DAY redesign: vertical cards, sticky day chips, labelled blocks, badges, callouts. */
+        :root { --nav-h: 52px; --ink-muted: #595959; --alert-ink: #4A3500; }
+        #itinerary .day-list { display: flex; flex-direction: column; gap: 22px; margin-top: 8px; }
+        .day-nav {
+            position: sticky; top: var(--nav-h); z-index: 90; display: flex; gap: 8px; overflow-x: auto;
+            padding: 8px 4px; margin: 14px 0 6px; background: rgba(255,255,255,0.97);
+            border-bottom: 2px solid var(--border); scrollbar-width: thin; -webkit-overflow-scrolling: touch;
+        }
+        .day-chip {
+            flex: 0 0 auto; min-width: 76px; min-height: 48px; padding: 4px 12px; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; text-decoration: none; border-radius: 12px;
+            border: 1px solid var(--border); background: var(--white); color: var(--deep-purple); line-height: 1.25;
+        }
+        .day-chip .chip-date { font-weight: 700; font-size: 0.95rem; }
+        .day-chip .chip-city { font-size: 0.8rem; color: var(--ink-muted); }
+        .day-chip:hover { background: var(--soft-purple); }
+        .day-chip.is-active { background: var(--deep-purple); border-color: var(--deep-purple); color: var(--white); }
+        .day-chip.is-active .chip-city { color: #E9D7F5; }
+        .day-chip:focus-visible, .toggle-btn:focus-visible, .map-link:focus-visible, .day-card:focus-visible { outline: 3px solid var(--medium-purple); outline-offset: 2px; }
+        .day-tools { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; margin: 8px 0 12px; }
+        .day-tools .legend { list-style: none; display: flex; flex-wrap: wrap; gap: 6px 16px; padding: 0; font-size: 0.9rem; color: var(--ink-muted); }
+        .day-tools .legend .badge { margin-right: 6px; }
+        .toggle-btn {
+            min-height: 44px; padding: 0 16px; border-radius: 22px; border: 1px solid var(--deep-purple);
+            background: var(--white); color: var(--deep-purple); font: inherit; font-weight: 600; font-size: 0.95rem; cursor: pointer;
+        }
+        .toggle-btn:hover { background: var(--soft-purple); }
+        .day-list .day-card {
+            margin: 0; padding: 22px 24px; background: var(--light-gray); border: 1px solid var(--border); border-radius: 14px;
+            font-size: 1rem; line-height: 1.6; scroll-margin-top: calc(var(--nav-h) + 84px);
+        }
+        .day-head h3 { margin: 2px 0 4px; font-size: 1.3rem; line-height: 1.3; color: var(--deep-purple); }
+        .day-kicker { margin: 0; font-size: 0.95rem; color: var(--ink-muted); font-weight: 600; }
+        .day-num { display: inline-block; background: var(--deep-purple); color: var(--white); border-radius: 999px; padding: 1px 12px; margin-right: 6px; font-size: 0.9rem; }
+        .day-city { margin: 0 0 10px; font-size: 1rem; color: var(--medium-purple); font-weight: 600; }
+        .day-info { display: flex; flex-wrap: wrap; gap: 8px 22px; margin: 4px 0 14px; padding: 10px 14px; background: var(--white); border: 1px solid var(--border); border-radius: 10px; }
+        .day-info div { min-width: 0; }
+        .day-info dt { font-size: 0.85rem; font-weight: 700; color: var(--deep-purple); }
+        .day-info dd { margin: 0; font-size: 0.95rem; }
+        .callout-alert, .callout-tip { display: flex; gap: 10px; align-items: flex-start; margin: 10px 0; padding: 10px 14px; border-radius: 8px; font-size: 0.95rem; line-height: 1.5; }
+        .callout-alert { background: var(--white); border: 1px solid #B8860B; border-left: 6px solid #B8860B; color: var(--alert-ink); font-weight: 600; }
+        .callout-tip { background: var(--soft-purple); color: #3E1659; border-left: 6px solid var(--medium-purple); }
+        .slot { margin: 14px 0; padding: 14px 16px; border-radius: 12px; border: 1px solid var(--border); }
+        .slot-morning { background: #FFF4E5; border-color: #F2D9B3; }
+        .slot-afternoon { background: #E8F3FC; border-color: #BFD9EE; }
+        .slot-evening { background: #EEE8F8; border-color: #D3C6EA; }
+        .slot-head { display: flex; align-items: center; gap: 8px; }
+        .slot-head h4 { margin: 0; font-size: 1.05rem; color: var(--deep-purple); }
+        .slot-icon { font-size: 1.3rem; }
+        .slot-summary { margin: 6px 0 10px; font-size: 1rem; }
+        .slot-details { margin-top: 10px; }
+        .items { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; }
+        .item { display: flex; gap: 10px; align-items: flex-start; font-size: 1rem; margin: 0; }
+        .item-body { min-width: 0; overflow-wrap: anywhere; }
+        .item-note { color: var(--dark); }
+        .item-meta { display: block; font-size: 0.88rem; color: var(--ink-muted); margin-top: 2px; }
+        .badge { flex: 0 0 auto; display: inline-block; min-width: 86px; text-align: center; border-radius: 999px; padding: 1px 10px; font-size: 0.78rem; font-weight: 700; border: 1px solid transparent; line-height: 1.6; }
+        .b-booked { background: #E3F4E6; color: #14532D; border-color: #8CC79A; }
+        .b-suggestion { background: #F3E5F5; color: #4A148C; border-color: #C9A3D9; }
+        .b-optional { background: #FFFFFF; color: #3B3B3B; border: 1px dashed #777; }
+        ul.chips { list-style: none; display: flex; flex-wrap: wrap; gap: 6px; padding: 0; margin: 6px 0 0; }
+        ul.chips li { background: var(--white); border: 1px solid var(--border); border-radius: 999px; padding: 2px 12px; font-size: 0.9rem; }
+        .day-actions { margin: 12px 0 0; }
+        .map-link { display: inline-flex; align-items: center; min-height: 44px; font-weight: 700; color: var(--medium-purple); }
+        .day-list a { color: var(--medium-purple); }
+        @media (max-width: 600px) {
+            .day-list .day-card { padding: 16px 14px; }
+            .item { flex-direction: column; gap: 4px; }
+            .badge { min-width: 0; }
+        }
+        @media print {
+            .day-nav, .day-tools .toggle-btn, .toggle-btn, .map-link, .day-actions { display: none !important; }
+            .slot-details[hidden] { display: block !important; }
+            .day-list { gap: 10pt !important; }
+            .day-list .day-card { break-inside: avoid; page-break-inside: avoid; font-size: 9.5pt; padding: 8pt 10pt !important; background: #fff !important; }
+            .slot, .callout-alert, .callout-tip { background: #fff !important; border: 1px solid #000 !important; color: #000 !important; }
+            .day-head h3 { font-size: 12pt; }
+        }
     </style>
     <link rel="stylesheet" href="flight-monitor/ui/flight-monitor.css">
     <style>
@@ -454,7 +472,7 @@
             <tr><td>Farewell Dinner</td><td>Selected</td><td>Anan Saigon (1 Michelin Star), All Black Everything evening</td></tr>
             <tr><td>Nightlife</td><td>Shortlist</td><td>Hanoi and Hoi An night markets, Waterfront Danang bar, Saigon rooftops, and clubs: Piu Piu, Mershe Saigon, Weeknd SGN, Afro Chill Lounge, CUR8, Neighborhood Saigon, LOCO Complex, Bam Bam, PAPI</td></tr>
             <tr><td>Wellness Days</td><td>Planned</td><td>Nov 25 (Silk Sense Hoi An spa and pool) and Nov 27 (Hotel Grand Saigon spa morning)</td></tr>
-            <tr><td>Coffee Stops</td><td>Selected</td><td>Café Phố Cổ (Hanoi, Nov 22) and Faifo Coffee (Hoi An, Nov 25), plus a Saigon cafe route on Nov 28</td></tr>
+            <tr><td>Coffee Stops</td><td>Selected</td><td>The Note Coffee (Hanoi, Nov 22) and Faifo Coffee (Hoi An, Nov 25), plus a Saigon cafe route on Nov 28</td></tr>
             <tr><td>Da Nang Dinner</td><td>Selected</td><td>Waterfront Danang Restaurant &amp; Bar on the river, Nov 24 evening</td></tr>
         </tbody>
     </table>
@@ -525,163 +543,416 @@
     <h2>Day-by-Day Itinerary</h2>
     <p>November 21–29 covers nine calendar days and eight nights. Hotels and the cruise are booked; activities are proposals, and the first or last day may shift once international flights are set. Every day has a morning, afternoon and evening plan.</p>
 
-    <div class="day-scroller">
-    <button class="day-scroll-btn day-scroll-prev" type="button" aria-label="Scroll to previous day"><span class="day-scroll-icon" aria-hidden="true"></span></button>
-    <button class="day-scroll-btn day-scroll-next" type="button" aria-label="Scroll to next day"><span class="day-scroll-icon" aria-hidden="true"></span></button>
-    <div class="day-track" id="dayTrack">
+    <nav class="day-nav" id="dayNav" aria-label="Jump to a day"><a class="day-chip" href="#day-2027-11-21" data-day="21"><span class="chip-date">Sun 21</span><span class="chip-city">Hanoi</span></a><a class="day-chip" href="#day-2027-11-22" data-day="22"><span class="chip-date">Mon 22</span><span class="chip-city">Hanoi</span></a><a class="day-chip" href="#day-2027-11-23" data-day="23"><span class="chip-date">Tue 23</span><span class="chip-city">Cruise</span></a><a class="day-chip" href="#day-2027-11-24" data-day="24"><span class="chip-date">Wed 24</span><span class="chip-city">Hoi An</span></a><a class="day-chip" href="#day-2027-11-25" data-day="25"><span class="chip-date">Thu 25</span><span class="chip-city">Hoi An</span></a><a class="day-chip" href="#day-2027-11-26" data-day="26"><span class="chip-date">Fri 26</span><span class="chip-city">Saigon</span></a><a class="day-chip" href="#day-2027-11-27" data-day="27"><span class="chip-date">Sat 27</span><span class="chip-city">Saigon</span></a><a class="day-chip" href="#day-2027-11-28" data-day="28"><span class="chip-date">Sun 28</span><span class="chip-city">Saigon</span></a><a class="day-chip" href="#day-2027-11-29" data-day="29"><span class="chip-date">Mon 29</span><span class="chip-city">Saigon</span></a></nav>
+    <div class="day-tools">
+        <ul class="legend" aria-label="Badge key"><li><span class="badge b-booked">Booked</span> confirmed</li><li><span class="badge b-suggestion">Suggestion</span> proposed plan</li><li><span class="badge b-optional">Optional</span> if energy and time allow</li></ul>
+        <button type="button" class="toggle-btn" id="expandAll" aria-pressed="false">Expand all details</button>
+    </div>
+    <div class="day-list" id="dayList">
+    <article class="day-card" id="day-2027-11-21" tabindex="-1" aria-labelledby="h-d21" data-city="Hanoi">
+        <header class="day-head">
+            <p class="day-kicker"><span class="day-num">Day 1</span> Sunday, November 21</p>
+            <h3 id="h-d21">Welcome to Vietnam</h3>
+            <p class="day-city"><span aria-hidden="true">📍</span> Hanoi</p>
+        </header>
+        <dl class="day-info">
+            <div><dt><span aria-hidden="true">🧭</span> Destination</dt><dd>Hanoi</dd></div>
+            <div><dt><span aria-hidden="true">🌤️</span> Weather</dt><dd>72–77°F (22–25°C), mild</dd></div>
+            <div><dt><span aria-hidden="true">🛏️</span> Stay</dt><dd>Anatole Hotel Hanoi (night 1 of 2)</dd></div>
+        </dl>
+        <p class="callout-alert"><span aria-hidden="true">⏰</span> <span>No set wake-up time. Arrive and rest at your own pace.</span></p>
+        <section class="slot slot-morning" aria-labelledby="d21-morning-h">
+            <div class="slot-head"><span class="slot-icon" aria-hidden="true">🌅</span><h4 id="d21-morning-h">Morning</h4></div>
+            <p class="slot-summary">Arrive in Hanoi (HAN) and transfer to the hotel.</p>
+            <button type="button" class="toggle-btn" aria-expanded="false" aria-controls="d21-morning" data-more="Show details" data-less="Hide details">Show details</button>
+            <div class="slot-details" id="d21-morning" hidden><ul class="items">
+<li class="item"><span class="badge b-suggestion">Suggestion</span><div class="item-body"><strong>Arrive in Hanoi (HAN)</strong> <span class="item-note">Arrival time depends on the final international flight schedule.</span></div></li>
+<li class="item"><span class="badge b-suggestion">Suggestion</span><div class="item-body"><strong>Private car or Grab to the hotel</strong> <span class="item-note">Pre-booked private car or Grab.</span></div></li>
+            </ul></div>
+        </section>
+        <section class="slot slot-afternoon" aria-labelledby="d21-afternoon-h">
+            <div class="slot-head"><span class="slot-icon" aria-hidden="true">☀️</span><h4 id="d21-afternoon-h">Afternoon</h4></div>
+            <p class="slot-summary">Check in, get measured for custom shoes, stroll the Old Quarter.</p>
+            <button type="button" class="toggle-btn" aria-expanded="false" aria-controls="d21-afternoon" data-more="Show details" data-less="Hide details">Show details</button>
+            <div class="slot-details" id="d21-afternoon" hidden><ul class="items">
+<li class="item"><span class="badge b-booked">Booked</span><div class="item-body"><strong>Check in to Anatole Hotel Hanoi</strong><span class="item-meta">30 Nha Chung, near Hoan Kiem Lake</span></div></li>
+<li class="item"><span class="badge b-suggestion">Suggestion</span><div class="item-body"><strong>Get measured for custom shoes in the Old Quarter</strong> <span class="item-note">So they are ready before the cruise.</span></div></li>
+<li class="item"><span class="badge b-optional">Optional</span><div class="item-body"><strong>Old Quarter stroll</strong> <span class="item-note">If arrival time allows: egg coffee, Vietnamese coffee, silk and souvenirs.</span></div></li>
+            </ul></div>
+        </section>
+        <section class="slot slot-evening" aria-labelledby="d21-evening-h">
+            <div class="slot-head"><span class="slot-icon" aria-hidden="true">🌙</span><h4 id="d21-evening-h">Evening</h4></div>
+            <p class="slot-summary">Optional welcome dinner and the weekend night market.</p>
+            <button type="button" class="toggle-btn" aria-expanded="false" aria-controls="d21-evening" data-more="Show details" data-less="Hide details">Show details</button>
+            <div class="slot-details" id="d21-evening" hidden><ul class="items">
+<li class="item"><span class="badge b-optional">Optional</span><div class="item-body"><strong>Welcome dinner</strong> <span class="item-note">For whoever arrives in time.</span></div></li>
+<li class="item"><span class="badge b-optional">Optional</span><div class="item-body"><strong>Hanoi Weekend Night Market</strong> <span class="item-note">Along Hang Dao toward Dong Xuan Market.</span><span class="item-meta">Fri–Sun evenings, about 6 PM to midnight; Nov 21 is a Sunday</span></div></li>
+<li class="item"><span class="badge b-suggestion">Suggestion</span><div class="item-body"><strong>Rest up</strong> <span class="item-note">Full shopping day tomorrow.</span></div></li>
+            </ul></div>
+        </section>
+        <p class="callout-tip"><span aria-hidden="true">👗</span> <span><strong>Comfortable Chic:</strong> airport outfit, sneakers, light cardigan, crossbody bag.</span></p>
+        <p class="day-actions"><a class="map-link" href="#map" data-day="21">View this day on the map</a></p>
+    </article>
 
-    <div class="day-card" id="day-2027-11-21" tabindex="0">
-        <h3>Day 1 — Sunday, November 21: Welcome to Vietnam</h3>
-        <div class="day-meta">
-            <span><strong>Destination:</strong> Hanoi</span>
-            <span><strong>Weather:</strong> 72–77°F (22–25°C), mild</span>
-            <span><strong>Stay:</strong> Anatole Hotel Hanoi (night 1 of 2)</span>
-        </div>
-        <div class="wakeup">⏰ No set wake-up time. Arrive and rest at your own pace.</div>
-        <ul>
-            <li><strong class="slot">Morning:</strong> Arrive in Hanoi (HAN); arrival time depends on the final international flight schedule. Pre-booked private car or Grab to the hotel.</li>
-            <li><strong class="slot">Afternoon:</strong> Check into Anatole Hotel Hanoi (30 Nha Chung, near Hoan Kiem Lake). Get measured for custom shoes in the Old Quarter so they are ready before the cruise. If arrival time allows, stroll the Old Quarter for egg coffee, Vietnamese coffee, silk and souvenirs.</li>
-            <li><strong class="slot">Evening:</strong> Optional welcome dinner for whoever arrives in time. Nightlife option: the Hanoi Weekend Night Market along Hang Dao toward Dong Xuan Market (Fri–Sun evenings, about 6 PM to midnight; Nov 21 is a Sunday). Rest up for a full shopping day tomorrow.</li>
-        </ul>
-        <div class="wear">👗 Comfortable Chic: airport outfit, sneakers, light cardigan, crossbody bag.</div>
-    </div>
+    <article class="day-card" id="day-2027-11-22" tabindex="-1" aria-labelledby="h-d22" data-city="Hanoi">
+        <header class="day-head">
+            <p class="day-kicker"><span class="day-num">Day 2</span> Monday, November 22</p>
+            <h3 id="h-d22">Shopping &amp; Custom Shoes in Hanoi</h3>
+            <p class="day-city"><span aria-hidden="true">📍</span> Hanoi</p>
+        </header>
+        <dl class="day-info">
+            <div><dt><span aria-hidden="true">🧭</span> Destination</dt><dd>Hanoi</dd></div>
+            <div><dt><span aria-hidden="true">🌤️</span> Weather</dt><dd>72–77°F (22–25°C), mild</dd></div>
+            <div><dt><span aria-hidden="true">🛏️</span> Stay</dt><dd>Anatole Hotel Hanoi (night 2 of 2)</dd></div>
+        </dl>
+        <p class="callout-alert"><span aria-hidden="true">⏰</span> <span>Sleep in! No scheduled pickup. Shop at your own pace.</span></p>
+        <p class="callout-alert"><span aria-hidden="true">ℹ️</span> <span>Shopping day. The original "coffee break by Hoan Kiem Lake" is now The Note Coffee.</span></p>
+        <section class="slot slot-morning" aria-labelledby="d22-morning-h">
+            <div class="slot-head"><span class="slot-icon" aria-hidden="true">🌅</span><h4 id="d22-morning-h">Morning</h4></div>
+            <p class="slot-summary">Relaxed breakfast, then custom shoe fitting and pickup.</p>
+            <button type="button" class="toggle-btn" aria-expanded="false" aria-controls="d22-morning" data-more="Show details" data-less="Hide details">Show details</button>
+            <div class="slot-details" id="d22-morning" hidden><ul class="items">
+<li class="item"><span class="badge b-booked">Booked</span><div class="item-body"><strong>Breakfast at the hotel</strong> <span class="item-note">Included.</span></div></li>
+<li class="item"><span class="badge b-suggestion">Suggestion</span><div class="item-body"><strong>Custom shoe fitting and pickup</strong> <span class="item-note">Order on Nov 21 if possible so there is time for adjustments.</span></div></li>
+            </ul></div>
+        </section>
+        <section class="slot slot-afternoon" aria-labelledby="d22-afternoon-h">
+            <div class="slot-head"><span class="slot-icon" aria-hidden="true">☀️</span><h4 id="d22-afternoon-h">Afternoon</h4></div>
+            <p class="slot-summary">Old Quarter shopping block with a coffee stop at The Note Coffee.</p>
+            <button type="button" class="toggle-btn" aria-expanded="false" aria-controls="d22-afternoon" data-more="Show details" data-less="Hide details">Show details</button>
+            <div class="slot-details" id="d22-afternoon" hidden><ul class="items">
+<li class="item"><span class="badge b-suggestion">Suggestion</span><div class="item-body"><strong>Hang Dau (shoe street) and Hang Gai (silk street)</strong> <span class="item-note">Plus local boutiques for Vietnamese coffee, silk, lacquerware and souvenirs.</span></div></li>
+<li class="item"><span class="badge b-suggestion">Suggestion</span><div class="item-body"><strong>Coffee at The Note Coffee</strong> <span class="item-note">Tiny cafe whose walls and ceiling are covered in colorful handwritten sticky notes from travelers.</span><span class="item-meta">64 Luong Van Can, a few minutes' walk from Hang Gai</span></div></li>
+            </ul></div>
+        </section>
+        <section class="slot slot-evening" aria-labelledby="d22-evening-h">
+            <div class="slot-head"><span class="slot-icon" aria-hidden="true">🌙</span><h4 id="d22-evening-h">Evening</h4></div>
+            <p class="slot-summary">Easy dinner, pack for the cruise, early night.</p>
+            <button type="button" class="toggle-btn" aria-expanded="false" aria-controls="d22-evening" data-more="Show details" data-less="Hide details">Show details</button>
+            <div class="slot-details" id="d22-evening" hidden><ul class="items">
+<li class="item"><span class="badge b-suggestion">Suggestion</span><div class="item-body"><strong>Easy dinner in Hanoi</strong></div></li>
+<li class="item"><span class="badge b-suggestion">Suggestion</span><div class="item-body"><strong>Pick up remaining orders and pack an overnight bag for the cruise</strong> <span class="item-note">Keep the night low-key: the cruise shuttle leaves around 8 AM.</span></div></li>
+            </ul></div>
+        </section>
+        <p class="callout-tip"><span aria-hidden="true">👗</span> <span><strong>Comfortable Chic:</strong> easy walking outfit, sneakers or sandals, light layer, crossbody bag for shopping.</span></p>
+        <p class="day-actions"><a class="map-link" href="#map" data-day="22">View this day on the map</a></p>
+    </article>
 
-    <div class="day-card" id="day-2027-11-22" tabindex="0">
-        <h3>Day 2 — Monday, November 22: Shopping &amp; Custom Shoes in Hanoi</h3>
-        <div class="day-meta">
-            <span><strong>Destination:</strong> Hanoi</span>
-            <span><strong>Weather:</strong> 72–77°F (22–25°C), mild</span>
-            <span><strong>Stay:</strong> Anatole Hotel Hanoi (night 2 of 2)</span>
-        </div>
-        <div class="wakeup">⏰ Sleep in! No scheduled pickup. Shop at your own pace.</div>
-        <ul>
-            <li><strong class="slot">Morning:</strong> Relaxed breakfast at the hotel (included), then custom shoe fitting and pickup (order on Nov 21 if possible so there is time for adjustments).</li>
-            <li><strong class="slot">Afternoon:</strong> Shopping block in the Old Quarter: Hang Dau (shoe street), Hang Gai (silk street) and local boutiques for Vietnamese coffee, silk, lacquerware and souvenirs. Coffee break at <strong>Café Phố Cổ</strong> (11 Hang Gai), a hidden rooftop cafe with views over Hoan Kiem Lake, reached through a silk shop on the street.</li>
-            <li><strong class="slot">Evening:</strong> Easy dinner in Hanoi, pick up any remaining orders, and pack an overnight bag for the cruise. Keep the night low-key: the cruise shuttle leaves around 8 AM.</li>
-        </ul>
-        <div class="wear">👗 Comfortable Chic: easy walking outfit, sneakers or sandals, light layer, crossbody bag for shopping.</div>
-        <div class="day-note">Shopping day. The original "coffee break by Hoan Kiem Lake" is now Café Phố Cổ.</div>
-    </div>
+    <article class="day-card" id="day-2027-11-23" tabindex="-1" aria-labelledby="h-d23" data-city="Cruise">
+        <header class="day-head">
+            <p class="day-kicker"><span class="day-num">Day 3</span> Tuesday, November 23</p>
+            <h3 id="h-d23">🎂 Board the Cruise &amp; Birthday at Sea</h3>
+            <p class="day-city"><span aria-hidden="true">📍</span> Hanoi → Lan Ha Bay</p>
+        </header>
+        <dl class="day-info">
+            <div><dt><span aria-hidden="true">🧭</span> Destination</dt><dd>Hanoi → Lan Ha Bay</dd></div>
+            <div><dt><span aria-hidden="true">🌤️</span> Weather</dt><dd>73–79°F (23–26°C), breezy</dd></div>
+            <div><dt><span aria-hidden="true">🛏️</span> Stay</dt><dd>Genesis Regal Luxury Cruise (night 1 of 1)</dd></div>
+        </dl>
+        <p class="callout-alert"><span aria-hidden="true">⏰</span> <span>Early — be ready by 7:30 AM. Breakfast, check out, then cruise shuttle pickup at 8:00–8:30 AM.</span></p>
+        <p class="callout-alert"><span aria-hidden="true">ℹ️</span> <span>This is the official birthday date: November 23. Additional celebrations happen later in the week.</span></p>
+        <section class="slot slot-morning" aria-labelledby="d23-morning-h">
+            <div class="slot-head"><span class="slot-icon" aria-hidden="true">🌅</span><h4 id="d23-morning-h">Morning</h4></div>
+            <p class="slot-summary">Breakfast, check out, and the cruise shuttle at 8:00–8:30 AM.</p>
+            <button type="button" class="toggle-btn" aria-expanded="false" aria-controls="d23-morning" data-more="Show details" data-less="Hide details">Show details</button>
+            <div class="slot-details" id="d23-morning" hidden><ul class="items">
+<li class="item"><span class="badge b-booked">Booked</span><div class="item-body"><strong>Breakfast and check out of Anatole Hotel Hanoi</strong> <span class="item-note">Breakfast is included.</span></div></li>
+<li class="item"><span class="badge b-booked">Booked</span><div class="item-body"><strong>Genesis Regal transfer / shuttle pickup from Hanoi</strong><span class="item-meta">About 8:00–8:30 AM, ~2.5–3 hour drive to the pier</span></div></li>
+            </ul></div>
+        </section>
+        <section class="slot slot-afternoon" aria-labelledby="d23-afternoon-h">
+            <div class="slot-head"><span class="slot-icon" aria-hidden="true">☀️</span><h4 id="d23-afternoon-h">Afternoon</h4></div>
+            <p class="slot-summary">Board the cruise, welcome lunch, scenic cruising and excursions.</p>
+            <button type="button" class="toggle-btn" aria-expanded="false" aria-controls="d23-afternoon" data-more="Show details" data-less="Hide details">Show details</button>
+            <div class="slot-details" id="d23-afternoon" hidden><ul class="items">
+<li class="item"><span class="badge b-booked">Booked</span><div class="item-body"><strong>Board the cruise and welcome lunch</strong> <span class="item-note">Celebrate Keysha's actual birthday onboard.</span></div></li>
+<li class="item"><span class="badge b-suggestion">Suggestion</span><div class="item-body"><strong>Scenic cruising, sundeck time, kayaking or a cave excursion</strong> <span class="item-note">Lan Ha Bay / Ha Long Bay.</span></div></li>
+<li class="item"><span class="badge b-suggestion">Suggestion</span><div class="item-body"><strong>Birthday photos on the sundeck</strong> <span class="item-note">Golden-hour light.</span></div></li>
+            </ul></div>
+        </section>
+        <section class="slot slot-evening" aria-labelledby="d23-evening-h">
+            <div class="slot-head"><span class="slot-icon" aria-hidden="true">🌙</span><h4 id="d23-evening-h">Evening</h4></div>
+            <p class="slot-summary">Birthday dinner onboard with cake and a champagne toast.</p>
+            <button type="button" class="toggle-btn" aria-expanded="false" aria-controls="d23-evening" data-more="Show details" data-less="Hide details">Show details</button>
+            <div class="slot-details" id="d23-evening" hidden><ul class="items">
+<li class="item"><span class="badge b-suggestion">Suggestion</span><div class="item-body"><strong>Birthday dinner onboard</strong> <span class="item-note">Cake, decorations and a champagne toast or group birthday moment.</span><span class="item-meta">Request these from Genesis Regal in advance</span></div></li>
+            </ul></div>
+        </section>
+        <p class="callout-tip"><span aria-hidden="true">👗</span> <span><strong>Birthday at Sea:</strong> resort chic for boarding; beautiful birthday dinner outfit for evening; light sweater for deck breezes.</span></p>
+        <p class="day-actions"><a class="map-link" href="#map" data-day="23">View this day on the map</a></p>
+    </article>
 
-    <div class="day-card" id="day-2027-11-23" tabindex="0">
-        <h3>Day 3 — Tuesday, November 23: 🎂 Board the Cruise &amp; Birthday at Sea</h3>
-        <div class="day-meta">
-            <span><strong>Destination:</strong> Hanoi → Lan Ha Bay</span>
-            <span><strong>Weather:</strong> 73–79°F (23–26°C), breezy</span>
-            <span><strong>Stay:</strong> Genesis Regal Luxury Cruise (night 1 of 1)</span>
-        </div>
-        <div class="wakeup">⏰ Early — be ready by 7:30 AM. Breakfast, check out, then cruise shuttle pickup at 8:00–8:30 AM.</div>
-        <ul>
-            <li><strong class="slot">Morning:</strong> Breakfast at the hotel (included), check out of Anatole Hotel Hanoi, then the Genesis Regal transfer / shuttle pickup from Hanoi (approximately 8:00–8:30 AM, ~2.5–3 hour drive to the pier).</li>
-            <li><strong class="slot">Afternoon:</strong> Board the cruise and celebrate Keysha's actual birthday onboard. Welcome lunch, scenic cruising through Lan Ha Bay / Ha Long Bay, sundeck time, kayaking or a cave excursion, and golden-hour birthday photos on the sundeck.</li>
-            <li><strong class="slot">Evening:</strong> Birthday dinner onboard with cake, decorations and a champagne toast or group birthday moment (request these from Genesis Regal in advance).</li>
-        </ul>
-        <div class="wear">👗 Birthday at Sea: resort chic for boarding; beautiful birthday dinner outfit for evening; light sweater for deck breezes.</div>
-        <div class="day-note">This is the official birthday date: November 23. Additional celebrations happen later in the week.</div>
-    </div>
+    <article class="day-card" id="day-2027-11-24" tabindex="-1" aria-labelledby="h-d24" data-city="Hoi An">
+        <header class="day-head">
+            <p class="day-kicker"><span class="day-num">Day 4</span> Wednesday, November 24</p>
+            <h3 id="h-d24">Cruise Return, Fly to Da Nang &amp; Waterfront Dinner</h3>
+            <p class="day-city"><span aria-hidden="true">📍</span> Lan Ha Bay → Hanoi airport → Da Nang → Hoi An</p>
+        </header>
+        <dl class="day-info">
+            <div><dt><span aria-hidden="true">🧭</span> Destination</dt><dd>Lan Ha Bay → Hanoi airport → Da Nang → Hoi An</dd></div>
+            <div><dt><span aria-hidden="true">🌤️</span> Weather</dt><dd>78–83°F (26–28°C), warm tropical</dd></div>
+            <div><dt><span aria-hidden="true">🛏️</span> Stay</dt><dd>Silk Sense Hoi An River Resort (night 1 of 2)</dd></div>
+        </dl>
+        <p class="callout-alert"><span aria-hidden="true">⏰</span> <span>Early — disembarkation around 7–8 AM breakfast, off by 9–9:30 AM. Travel day.</span></p>
+        <p class="callout-alert"><span aria-hidden="true">ℹ️</span> <span>Waterfront Danang lists Tuesday to Friday 3 PM to 10:30 PM, so a Wednesday dinner fits.</span></p>
+        <section class="slot slot-morning" aria-labelledby="d24-morning-h">
+            <div class="slot-head"><span class="slot-icon" aria-hidden="true">🌅</span><h4 id="d24-morning-h">Morning</h4></div>
+            <p class="slot-summary">Breakfast onboard, disembark, and transfer back toward Hanoi.</p>
+            <button type="button" class="toggle-btn" aria-expanded="false" aria-controls="d24-morning" data-more="Show details" data-less="Hide details">Show details</button>
+            <div class="slot-details" id="d24-morning" hidden><ul class="items">
+<li class="item"><span class="badge b-booked">Booked</span><div class="item-body"><strong>Breakfast / brunch onboard and disembark</strong> <span class="item-note">Genesis Regal Luxury Cruise.</span></div></li>
+<li class="item"><span class="badge b-booked">Booked</span><div class="item-body"><strong>Transfer back toward Hanoi / the airport area</strong></div></li>
+            </ul></div>
+        </section>
+        <section class="slot slot-afternoon" aria-labelledby="d24-afternoon-h">
+            <div class="slot-head"><span class="slot-icon" aria-hidden="true">☀️</span><h4 id="d24-afternoon-h">Afternoon</h4></div>
+            <p class="slot-summary">Fly Hanoi to Da Nang (~1.5 hours).</p>
+            <button type="button" class="toggle-btn" aria-expanded="false" aria-controls="d24-afternoon" data-more="Show details" data-less="Hide details">Show details</button>
+            <div class="slot-details" id="d24-afternoon" hidden><ul class="items">
+<li class="item"><span class="badge b-suggestion">Suggestion</span><div class="item-body"><strong>Fly Hanoi to Da Nang</strong> <span class="item-note">~1.5 hour flight.</span></div></li>
+<li class="item"><span class="badge b-suggestion">Suggestion</span><div class="item-body"><strong>Private car for the rest of the day</strong> <span class="item-note">Luggage stays in the car.</span></div></li>
+            </ul></div>
+        </section>
+        <section class="slot slot-evening" aria-labelledby="d24-evening-h">
+            <div class="slot-head"><span class="slot-icon" aria-hidden="true">🌙</span><h4 id="d24-evening-h">Evening</h4></div>
+            <p class="slot-summary">Early dinner at Waterfront Danang, then ~45 minutes to Hoi An.</p>
+            <button type="button" class="toggle-btn" aria-expanded="false" aria-controls="d24-evening" data-more="Show details" data-less="Hide details">Show details</button>
+            <div class="slot-details" id="d24-evening" hidden><ul class="items">
+<li class="item"><span class="badge b-suggestion">Suggestion</span><div class="item-body"><strong>Waterfront Danang Restaurant &amp; Bar</strong> <span class="item-note">Upstairs restaurant, downstairs bar, relaxed riverside setting.</span><span class="item-meta">150–152 Bach Dang, on the Han River</span></div></li>
+<li class="item"><span class="badge b-booked">Booked</span><div class="item-body"><strong>Transfer to Silk Sense Hoi An River Resort</strong> <span class="item-note">Check-in from 2:00 PM. Book the resort pickup at least 48 hours ahead; an extra charge may apply.</span><span class="item-meta">About 45 minutes</span></div></li>
+<li class="item"><span class="badge b-optional">Optional</span><div class="item-body"><strong>Fallback if the flight lands late</strong> <span class="item-note">Skip Waterfront and have an easy dinner near the resort. The lantern-lit Ancient Town stroll moves to tomorrow evening.</span></div></li>
+            </ul></div>
+        </section>
+        <p class="callout-tip"><span aria-hidden="true">👗</span> <span><strong>Travel + Resort Arrival:</strong> comfortable travel set, sandals or sneakers, easy dinner outfit.</span></p>
+        <p class="day-actions"><a class="map-link" href="#map" data-day="24">View this day on the map</a></p>
+    </article>
 
-    <div class="day-card" id="day-2027-11-24" tabindex="0">
-        <h3>Day 4 — Wednesday, November 24: Cruise Return, Fly to Da Nang &amp; Waterfront Dinner</h3>
-        <div class="day-meta">
-            <span><strong>Destination:</strong> Lan Ha Bay → Hanoi airport → Da Nang → Hoi An</span>
-            <span><strong>Weather:</strong> 78–83°F (26–28°C), warm tropical</span>
-            <span><strong>Stay:</strong> Silk Sense Hoi An River Resort (night 1 of 2)</span>
-        </div>
-        <div class="wakeup">⏰ Early — disembarkation around 7–8 AM breakfast, off by 9–9:30 AM. Travel day.</div>
-        <ul>
-            <li><strong class="slot">Morning:</strong> Breakfast / brunch onboard, disembark Genesis Regal Luxury Cruise, and transfer back toward Hanoi / the airport area.</li>
-            <li><strong class="slot">Afternoon:</strong> Fly Hanoi to Da Nang (~1.5 hour flight). Book a private car for the rest of the day, with luggage in the car.</li>
-            <li><strong class="slot">Evening:</strong> Early dinner at <strong>Waterfront Danang Restaurant &amp; Bar</strong> (150–152 Bach Dang, on the Han River): upstairs restaurant, downstairs bar, relaxed riverside setting. Then the ~45 minute transfer to Silk Sense Hoi An River Resort (check-in from 2:00 PM; book the resort pickup at least 48 hours ahead, extra charge may apply).</li>
-            <li class="sub"><strong class="slot">Fallback:</strong> If the flight lands late, skip Waterfront and have an easy dinner near the resort. The lantern-lit Ancient Town stroll moves to tomorrow evening.</li>
-        </ul>
-        <div class="wear">👗 Travel + Resort Arrival: comfortable travel set, sandals or sneakers, easy dinner outfit.</div>
-        <div class="day-note">Waterfront Danang lists Tuesday to Friday 3 PM to 10:30 PM, so a Wednesday dinner fits.</div>
-    </div>
+    <article class="day-card" id="day-2027-11-25" tabindex="-1" aria-labelledby="h-d25" data-city="Hoi An">
+        <header class="day-head">
+            <p class="day-kicker"><span class="day-num">Day 5</span> Thursday, November 25</p>
+            <h3 id="h-d25">Wellness Day, Tailors &amp; Lanterns in Hoi An</h3>
+            <p class="day-city"><span aria-hidden="true">📍</span> Hoi An</p>
+        </header>
+        <dl class="day-info">
+            <div><dt><span aria-hidden="true">🧭</span> Destination</dt><dd>Hoi An</dd></div>
+            <div><dt><span aria-hidden="true">🌤️</span> Weather</dt><dd>78–83°F (26–28°C), warm</dd></div>
+            <div><dt><span aria-hidden="true">🛏️</span> Stay</dt><dd>Silk Sense Hoi An River Resort (night 2 of 2)</dd></div>
+        </dl>
+        <p class="callout-alert"><span aria-hidden="true">⏰</span> <span>Sleep in! No schedule. Wake whenever — it's a resort and pool morning.</span></p>
+        <p class="callout-alert"><span aria-hidden="true">ℹ️</span> <span>Relaxed group celebration and recovery day after the travel day, not a replacement for the November 23 birthday at sea.</span></p>
+        <section class="slot slot-morning" aria-labelledby="d25-morning-h">
+            <div class="slot-head"><span class="slot-icon" aria-hidden="true">🌅</span><h4 id="d25-morning-h">Morning</h4></div>
+            <p class="slot-summary">Wellness day 1: resort breakfast, pool and a spa treatment.</p>
+            <button type="button" class="toggle-btn" aria-expanded="false" aria-controls="d25-morning" data-more="Show details" data-less="Hide details">Show details</button>
+            <div class="slot-details" id="d25-morning" hidden><ul class="items">
+<li class="item"><span class="badge b-booked">Booked</span><div class="item-body"><strong>Breakfast at the resort</strong> <span class="item-note">Included.</span></div></li>
+<li class="item"><span class="badge b-suggestion">Suggestion</span><div class="item-body"><strong>Pool time</strong></div></li>
+<li class="item"><span class="badge b-optional">Optional</span><div class="item-body"><strong>Massage or facial at the resort spa</strong><span class="item-meta">Listed as Lotus Spa; book through the resort</span></div></li>
+            </ul></div>
+        </section>
+        <section class="slot slot-afternoon" aria-labelledby="d25-afternoon-h">
+            <div class="slot-head"><span class="slot-icon" aria-hidden="true">☀️</span><h4 id="d25-afternoon-h">Afternoon</h4></div>
+            <p class="slot-summary">Shopping block: custom tailors, then Faifo Coffee.</p>
+            <button type="button" class="toggle-btn" aria-expanded="false" aria-controls="d25-afternoon" data-more="Show details" data-less="Hide details">Show details</button>
+            <div class="slot-details" id="d25-afternoon" hidden><ul class="items">
+<li class="item"><span class="badge b-suggestion">Suggestion</span><div class="item-body"><strong>Place custom clothing and leather orders</strong> <span class="item-note">So there is time for fittings. Ask each tailor for a firm ready time before your Nov 26 departure.</span><ul class="chips"><li>A Dong Silk (62 Tran Hung Dao, 40 Le Loi)</li><li>Bebe Tailor</li><li>Yaly Couture</li></ul></div></li>
+<li class="item"><span class="badge b-suggestion">Suggestion</span><div class="item-body"><strong>Coffee at Faifo Coffee</strong> <span class="item-note">Rooftop cafe above the yellow heritage rooftops of the Ancient Town.</span><span class="item-meta">130 Tran Phu</span></div></li>
+            </ul></div>
+        </section>
+        <section class="slot slot-evening" aria-labelledby="d25-evening-h">
+            <div class="slot-head"><span class="slot-icon" aria-hidden="true">🌙</span><h4 id="d25-evening-h">Evening</h4></div>
+            <p class="slot-summary">Lantern streets, Hoi An Night Market and an optional group dinner.</p>
+            <button type="button" class="toggle-btn" aria-expanded="false" aria-controls="d25-evening" data-more="Show details" data-less="Hide details">Show details</button>
+            <div class="slot-details" id="d25-evening" hidden><ul class="items">
+<li class="item"><span class="badge b-suggestion">Suggestion</span><div class="item-body"><strong>Birthday photos in the lantern streets</strong></div></li>
+<li class="item"><span class="badge b-suggestion">Suggestion</span><div class="item-body"><strong>Hoi An Night Market</strong><span class="item-meta">Nguyen Hoang Street, nightly, roughly 5 to 11 PM</span></div></li>
+<li class="item"><span class="badge b-optional">Optional</span><div class="item-body"><strong>Group birthday dinner in Hoi An</strong></div></li>
+            </ul></div>
+        </section>
+        <p class="callout-tip"><span aria-hidden="true">👗</span> <span><strong>Resort Chic:</strong> swimsuit and cover-up for the morning; flowy dress and sandals for the Ancient Town; elegant dinner outfit at night.</span></p>
+        <p class="day-actions"><a class="map-link" href="#map" data-day="25">View this day on the map</a></p>
+    </article>
 
-    <div class="day-card" id="day-2027-11-25" tabindex="0">
-        <h3>Day 5 — Thursday, November 25: Wellness Day, Tailors &amp; Lanterns in Hoi An</h3>
-        <div class="day-meta">
-            <span><strong>Destination:</strong> Hoi An</span>
-            <span><strong>Weather:</strong> 78–83°F (26–28°C), warm</span>
-            <span><strong>Stay:</strong> Silk Sense Hoi An River Resort (night 2 of 2)</span>
-        </div>
-        <div class="wakeup">⏰ Sleep in! No schedule. Wake whenever — it's a resort and pool morning.</div>
-        <ul>
-            <li><strong class="slot">Morning:</strong> <strong>Wellness day 1:</strong> relaxing breakfast at the resort (included), pool time, then a massage or facial at the resort spa (listed as Lotus Spa; book through the resort).</li>
-            <li><strong class="slot">Afternoon:</strong> Shopping block in Hoi An Ancient Town: place custom clothing and leather orders so there is time for fittings. Well-known tailors include A Dong Silk (62 Tran Hung Dao and 40 Le Loi), Bebe Tailor and Yaly Couture; ask each for a firm ready time before your Nov 26 departure. Coffee stop at <strong>Faifo Coffee</strong> (130 Tran Phu), a rooftop cafe above the yellow heritage rooftops.</li>
-            <li><strong class="slot">Evening:</strong> Birthday photos in the lantern streets, a stroll through the Hoi An Night Market on Nguyen Hoang Street (nightly, roughly 5 to 11 PM), and an optional group birthday dinner in Hoi An.</li>
-        </ul>
-        <div class="wear">👗 Resort Chic: swimsuit and cover-up for the morning; flowy dress and sandals for the Ancient Town; elegant dinner outfit at night.</div>
-        <div class="day-note">Relaxed group celebration and recovery day after the travel day, not a replacement for the November 23 birthday at sea.</div>
-    </div>
+    <article class="day-card" id="day-2027-11-26" tabindex="-1" aria-labelledby="h-d26" data-city="Saigon">
+        <header class="day-head">
+            <p class="day-kicker"><span class="day-num">Day 6</span> Friday, November 26</p>
+            <h3 id="h-d26">Final Fittings &amp; Fly to Ho Chi Minh City</h3>
+            <p class="day-city"><span aria-hidden="true">📍</span> Hoi An → Da Nang airport → Ho Chi Minh City</p>
+        </header>
+        <dl class="day-info">
+            <div><dt><span aria-hidden="true">🧭</span> Destination</dt><dd>Hoi An → Da Nang airport → Ho Chi Minh City</dd></div>
+            <div><dt><span aria-hidden="true">🌤️</span> Weather</dt><dd>78–83°F in Hoi An; 86–91°F in Ho Chi Minh City</dd></div>
+            <div><dt><span aria-hidden="true">🛏️</span> Stay</dt><dd>Hotel Grand Saigon (night 1 of 3)</dd></div>
+        </dl>
+        <p class="callout-alert"><span aria-hidden="true">⏰</span> <span>Morning — aim for 8:00–8:30 AM. Breakfast at the resort, then final shopping. Check out of Silk Sense by noon.</span></p>
+        <p class="callout-alert"><span aria-hidden="true">ℹ️</span> <span>Place Hoi An custom orders on Nov 25 so they're ready before you leave. Leave space in your luggage!</span></p>
+        <section class="slot slot-morning" aria-labelledby="d26-morning-h">
+            <div class="slot-head"><span class="slot-icon" aria-hidden="true">🌅</span><h4 id="d26-morning-h">Morning</h4></div>
+            <p class="slot-summary">Breakfast, final fittings and pickups, check out by noon.</p>
+            <button type="button" class="toggle-btn" aria-expanded="false" aria-controls="d26-morning" data-more="Show details" data-less="Hide details">Show details</button>
+            <div class="slot-details" id="d26-morning" hidden><ul class="items">
+<li class="item"><span class="badge b-booked">Booked</span><div class="item-body"><strong>Breakfast at the resort</strong> <span class="item-note">Included.</span></div></li>
+<li class="item"><span class="badge b-suggestion">Suggestion</span><div class="item-body"><strong>Final fittings and pickups</strong> <span class="item-note">Custom clothing and leather goods, plus last-minute shopping and photos in the lantern streets.</span></div></li>
+<li class="item"><span class="badge b-booked">Booked</span><div class="item-body"><strong>Check out of Silk Sense Hoi An River Resort</strong> <span class="item-note">By noon.</span></div></li>
+            </ul></div>
+        </section>
+        <section class="slot slot-afternoon" aria-labelledby="d26-afternoon-h">
+            <div class="slot-head"><span class="slot-icon" aria-hidden="true">☀️</span><h4 id="d26-afternoon-h">Afternoon</h4></div>
+            <p class="slot-summary">Transfer to Da Nang airport, fly to Ho Chi Minh City, check in.</p>
+            <button type="button" class="toggle-btn" aria-expanded="false" aria-controls="d26-afternoon" data-more="Show details" data-less="Hide details">Show details</button>
+            <div class="slot-details" id="d26-afternoon" hidden><ul class="items">
+<li class="item"><span class="badge b-suggestion">Suggestion</span><div class="item-body"><strong>Transfer to Da Nang airport</strong><span class="item-meta">About 45 minutes from Hoi An</span></div></li>
+<li class="item"><span class="badge b-suggestion">Suggestion</span><div class="item-body"><strong>Fly Da Nang to Ho Chi Minh City</strong> <span class="item-note">~1.5 hour flight.</span></div></li>
+<li class="item"><span class="badge b-booked">Booked</span><div class="item-body"><strong>Check in to Hotel Grand Saigon</strong><span class="item-meta">No. 8 Dong Khoi Street; ~20–30 min from the airport to District 1</span></div></li>
+            </ul></div>
+        </section>
+        <section class="slot slot-evening" aria-labelledby="d26-evening-h">
+            <div class="slot-head"><span class="slot-icon" aria-hidden="true">🌙</span><h4 id="d26-evening-h">Evening</h4></div>
+            <p class="slot-summary">Easy dinner and a rooftop cocktail.</p>
+            <button type="button" class="toggle-btn" aria-expanded="false" aria-controls="d26-evening" data-more="Show details" data-less="Hide details">Show details</button>
+            <div class="slot-details" id="d26-evening" hidden><ul class="items">
+<li class="item"><span class="badge b-suggestion">Suggestion</span><div class="item-body"><strong>Easy dinner and a rooftop cocktail at Saigon Saigon Rooftop Bar</strong><span class="item-meta">Caravelle, near the Opera House</span></div></li>
+<li class="item"><span class="badge b-optional">Optional</span><div class="item-body"><strong>CUR8 Saigon Friday hip-hop night</strong> <span class="item-note">Only if energy allows.</span><span class="item-meta">About 10 PM</span></div></li>
+            </ul></div>
+        </section>
+        <p class="callout-tip"><span aria-hidden="true">👗</span> <span><strong>Cute and Comfortable:</strong> matching two-piece set, comfortable sandals, crossbody bag; easy dinner look for the evening.</span></p>
+        <p class="day-actions"><a class="map-link" href="#map" data-day="26">View this day on the map</a></p>
+    </article>
 
-    <div class="day-card" id="day-2027-11-26" tabindex="0">
-        <h3>Day 6 — Friday, November 26: Final Fittings &amp; Fly to Ho Chi Minh City</h3>
-        <div class="day-meta">
-            <span><strong>Destination:</strong> Hoi An → Da Nang airport → Ho Chi Minh City</span>
-            <span><strong>Weather:</strong> 78–83°F in Hoi An; 86–91°F in Ho Chi Minh City</span>
-            <span><strong>Stay:</strong> Hotel Grand Saigon (night 1 of 3)</span>
-        </div>
-        <div class="wakeup">⏰ Morning — aim for 8:00–8:30 AM. Breakfast at the resort, then final shopping. Check out of Silk Sense by noon.</div>
-        <ul>
-            <li><strong class="slot">Morning:</strong> Breakfast at the resort (included), final fittings and pickups for custom clothing and leather goods, last-minute shopping and photos in the lantern streets. Check out of Silk Sense Hoi An River Resort by noon.</li>
-            <li><strong class="slot">Afternoon:</strong> Transfer to Da Nang airport (~45 min from Hoi An) and fly Da Nang to Ho Chi Minh City (~1.5 hour flight). Check into Hotel Grand Saigon, No. 8 Dong Khoi Street (~20–30 min from the airport to District 1).</li>
-            <li><strong class="slot">Evening:</strong> Easy dinner and a rooftop cocktail at Saigon Saigon Rooftop Bar (Caravelle, near the Opera House). Late-night option if energy allows: CUR8 Saigon's Friday hip-hop night (about 10 PM).</li>
-        </ul>
-        <div class="wear">👗 Cute and Comfortable: matching two-piece set, comfortable sandals, crossbody bag; easy dinner look for the evening.</div>
-        <div class="day-note">Place Hoi An custom orders on Nov 25 so they're ready before you leave. Leave space in your luggage!</div>
-    </div>
+    <article class="day-card" id="day-2027-11-27" tabindex="-1" aria-labelledby="h-d27" data-city="Saigon">
+        <header class="day-head">
+            <p class="day-kicker"><span class="day-num">Day 7</span> Saturday, November 27</p>
+            <h3 id="h-d27">Wellness Morning &amp; Explore Ho Chi Minh City</h3>
+            <p class="day-city"><span aria-hidden="true">📍</span> Ho Chi Minh City</p>
+        </header>
+        <dl class="day-info">
+            <div><dt><span aria-hidden="true">🧭</span> Destination</dt><dd>Ho Chi Minh City</dd></div>
+            <div><dt><span aria-hidden="true">🌤️</span> Weather</dt><dd>86–91°F (30–33°C), hot &amp; humid</dd></div>
+            <div><dt><span aria-hidden="true">🛏️</span> Stay</dt><dd>Hotel Grand Saigon (night 2 of 3)</dd></div>
+        </dl>
+        <p class="callout-alert"><span aria-hidden="true">⏰</span> <span>Sleep in! No scheduled pickup. Explore at your own pace.</span></p>
+        <p class="callout-alert"><span aria-hidden="true">ℹ️</span> <span>Wellness treatments from the Wellness section are still being decided; nothing is booked.</span></p>
+        <section class="slot slot-morning" aria-labelledby="d27-morning-h">
+            <div class="slot-head"><span class="slot-icon" aria-hidden="true">🌅</span><h4 id="d27-morning-h">Morning</h4></div>
+            <p class="slot-summary">Wellness day 2: breakfast, then a spa treatment at the hotel.</p>
+            <button type="button" class="toggle-btn" aria-expanded="false" aria-controls="d27-morning" data-more="Show details" data-less="Hide details">Show details</button>
+            <div class="slot-details" id="d27-morning" hidden><ul class="items">
+<li class="item"><span class="badge b-booked">Booked</span><div class="item-body"><strong>Breakfast at the hotel</strong></div></li>
+<li class="item"><span class="badge b-optional">Optional</span><div class="item-body"><strong>Massage, facial or sauna at the Hotel Grand Saigon spa</strong><span class="item-meta">On site</span></div></li>
+<li class="item"><span class="badge b-optional">Optional</span><div class="item-body"><strong>Medical or dental option</strong> <span class="item-note">If you decide on one from the <a href="#wellness">Wellness section</a>, it takes this slot instead.</span></div></li>
+            </ul></div>
+        </section>
+        <section class="slot slot-afternoon" aria-labelledby="d27-afternoon-h">
+            <div class="slot-head"><span class="slot-icon" aria-hidden="true">☀️</span><h4 id="d27-afternoon-h">Afternoon</h4></div>
+            <p class="slot-summary">Shopping and sights in District 1, all within a short walk of the hotel.</p>
+            <button type="button" class="toggle-btn" aria-expanded="false" aria-controls="d27-afternoon" data-more="Show details" data-less="Hide details">Show details</button>
+            <div class="slot-details" id="d27-afternoon" hidden><ul class="items">
+<li class="item"><span class="badge b-suggestion">Suggestion</span><div class="item-body"><strong>Dong Khoi Street boutiques</strong></div></li>
+<li class="item"><span class="badge b-suggestion">Suggestion</span><div class="item-body"><strong>Saigon Opera House and the Central Post Office area</strong></div></li>
+<li class="item"><span class="badge b-suggestion">Suggestion</span><div class="item-body"><strong>Saigon Centre and Takashimaya</strong> <span class="item-note">Fashion, beauty and a food hall.</span><span class="item-meta">65 Le Loi</span></div></li>
+            </ul></div>
+        </section>
+        <section class="slot slot-evening" aria-labelledby="d27-evening-h">
+            <div class="slot-head"><span class="slot-icon" aria-hidden="true">🌙</span><h4 id="d27-evening-h">Evening</h4></div>
+            <p class="slot-summary">Rooftop dinner or cocktails, then optional nightlife.</p>
+            <button type="button" class="toggle-btn" aria-expanded="false" aria-controls="d27-evening" data-more="Show details" data-less="Hide details">Show details</button>
+            <div class="slot-details" id="d27-evening" hidden><ul class="items">
+<li class="item"><span class="badge b-suggestion">Suggestion</span><div class="item-body"><strong>Social Club Rooftop Bar (Hotel des Arts) or Saigon Saigon</strong> <span class="item-note">Rooftop dinner or cocktails.</span></div></li>
+<li class="item"><span class="badge b-optional">Optional</span><div class="item-body"><strong>Saturday night out</strong> <span class="item-note">CUR8 Saigon (house night) or Neighborhood Saigon.</span><span class="item-meta">Both are near Ben Thanh Market</span></div></li>
+            </ul></div>
+        </section>
+        <p class="callout-tip"><span aria-hidden="true">👗</span> <span><strong>City Chic:</strong> lightweight outfit, comfortable shoes, stylish dinner look.</span></p>
+        <p class="day-actions"><a class="map-link" href="#map" data-day="27">View this day on the map</a></p>
+    </article>
 
-    <div class="day-card" id="day-2027-11-27" tabindex="0">
-        <h3>Day 7 — Saturday, November 27: Wellness Morning &amp; Explore Ho Chi Minh City</h3>
-        <div class="day-meta">
-            <span><strong>Destination:</strong> Ho Chi Minh City</span>
-            <span><strong>Weather:</strong> 86–91°F (30–33°C), hot &amp; humid</span>
-            <span><strong>Stay:</strong> Hotel Grand Saigon (night 2 of 3)</span>
-        </div>
-        <div class="wakeup">⏰ Sleep in! No scheduled pickup. Explore at your own pace.</div>
-        <ul>
-            <li><strong class="slot">Morning:</strong> <strong>Wellness day 2:</strong> breakfast at the hotel, then a massage, facial or sauna session at the Hotel Grand Saigon spa (on site). If you decide on a medical or dental option from the <a href="#wellness">Wellness section</a>, it takes this slot instead.</li>
-            <li><strong class="slot">Afternoon:</strong> Shopping and sights in District 1: Dong Khoi Street boutiques, Saigon Opera House and the Central Post Office area, plus Saigon Centre and Takashimaya (65 Le Loi) for fashion, beauty and a food hall. All within a short walk of the hotel.</li>
-            <li><strong class="slot">Evening:</strong> Rooftop dinner or cocktails (Social Club Rooftop Bar at Hotel des Arts, or Saigon Saigon). Nightlife option: Saturday night at CUR8 Saigon (house night) or Neighborhood Saigon, both near Ben Thanh Market.</li>
-        </ul>
-        <div class="wear">👗 City Chic: lightweight outfit, comfortable shoes, stylish dinner look.</div>
-        <div class="day-note">Wellness treatments from the Wellness section are still being decided; nothing is booked.</div>
-    </div>
+    <article class="day-card" id="day-2027-11-28" tabindex="-1" aria-labelledby="h-d28" data-city="Saigon">
+        <header class="day-head">
+            <p class="day-kicker"><span class="day-num">Day 8</span> Sunday, November 28</p>
+            <h3 id="h-d28">🖤 All Black Everything Finale</h3>
+            <p class="day-city"><span aria-hidden="true">📍</span> Ho Chi Minh City</p>
+        </header>
+        <dl class="day-info">
+            <div><dt><span aria-hidden="true">🧭</span> Destination</dt><dd>Ho Chi Minh City</dd></div>
+            <div><dt><span aria-hidden="true">🌤️</span> Weather</dt><dd>86–91°F day; ~80°F evening</dd></div>
+            <div><dt><span aria-hidden="true">🛏️</span> Stay</dt><dd>Hotel Grand Saigon (night 3 of 3)</dd></div>
+        </dl>
+        <p class="callout-alert"><span aria-hidden="true">⏰</span> <span>Sleep in! No morning schedule. Rest up for the big night out.</span></p>
+        <section class="slot slot-morning" aria-labelledby="d28-morning-h">
+            <div class="slot-head"><span class="slot-icon" aria-hidden="true">🌅</span><h4 id="d28-morning-h">Morning</h4></div>
+            <p class="slot-summary">Cafe and market crawl in District 1.</p>
+            <button type="button" class="toggle-btn" aria-expanded="false" aria-controls="d28-morning" data-more="Show details" data-less="Hide details">Show details</button>
+            <div class="slot-details" id="d28-morning" hidden><ul class="items">
+<li class="item"><span class="badge b-suggestion">Suggestion</span><div class="item-body"><strong>The Cafe Apartment</strong> <span class="item-note">Cafes and boutiques.</span><span class="item-meta">42 Nguyen Hue</span></div></li>
+<li class="item"><span class="badge b-suggestion">Suggestion</span><div class="item-body"><strong>Specialty coffee at The Workshop Coffee</strong></div></li>
+<li class="item"><span class="badge b-suggestion">Suggestion</span><div class="item-body"><strong>Ben Thanh Market and nearby boutiques</strong></div></li>
+<li class="item"><span class="badge b-optional">Optional</span><div class="item-body"><strong>Coconut coffee at Cong Ca Phe</strong> <span class="item-note">An easy stop on the way back.</span><span class="item-meta">93 Yersin</span></div></li>
+            </ul></div>
+        </section>
+        <section class="slot slot-afternoon" aria-labelledby="d28-afternoon-h">
+            <div class="slot-head"><span class="slot-icon" aria-hidden="true">☀️</span><h4 id="d28-afternoon-h">Afternoon</h4></div>
+            <p class="slot-summary">Free time to rest before the evening.</p>
+            <button type="button" class="toggle-btn" aria-expanded="false" aria-controls="d28-afternoon" data-more="Show details" data-less="Hide details">Show details</button>
+            <div class="slot-details" id="d28-afternoon" hidden><ul class="items">
+<li class="item"><span class="badge b-optional">Optional</span><div class="item-body"><strong>Pool, spa or a slow lunch</strong></div></li>
+<li class="item"><span class="badge b-suggestion">Suggestion</span><div class="item-body"><strong>Glam hair and makeup time</strong></div></li>
+            </ul></div>
+        </section>
+        <section class="slot slot-evening" aria-labelledby="d28-evening-h">
+            <div class="slot-head"><span class="slot-icon" aria-hidden="true">🌙</span><h4 id="d28-evening-h">Evening</h4></div>
+            <p class="slot-summary">All Black Everything: Anan Saigon, rooftop cocktails, then a club.</p>
+            <button type="button" class="toggle-btn" aria-expanded="false" aria-controls="d28-evening" data-more="Show details" data-less="Hide details">Show details</button>
+            <div class="slot-details" id="d28-evening" hidden><ul class="items">
+<li class="item"><span class="badge b-suggestion">Suggestion</span><div class="item-body"><strong>Michelin-star farewell dinner at Anan Saigon</strong> <span class="item-note">All Black Everything dress code.</span><span class="item-meta">Dinner only, Tuesday to Sunday; seatings 5:30 or 8:30 PM</span></div></li>
+<li class="item"><span class="badge b-suggestion">Suggestion</span><div class="item-body"><strong>Group photos and rooftop cocktails</strong></div></li>
+<li class="item"><span class="badge b-suggestion">Suggestion</span><div class="item-body"><strong>Hip-Hop / Afrobeats night out</strong> <span class="item-note">Club options:</span><ul class="chips"><li>Piu Piu</li><li>Mershe Saigon</li><li>Weeknd SGN (open Fri–Sun)</li><li>Afro Chill Lounge</li><li>Neighborhood Saigon (open Sunday)</li><li>LOCO Complex</li><li>Bam Bam</li><li>PAPI</li></ul></div></li>
+<li class="item"><span class="badge b-suggestion">Suggestion</span><div class="item-body"><strong>Return to the hotel together using Grab</strong></div></li>
+            </ul></div>
+        </section>
+        <p class="callout-tip"><span aria-hidden="true">👗</span> <span><strong>All Black Everything:</strong> all-black attire, gold accessories encouraged, glam hair and makeup, dress to impress.</span></p>
+        <p class="day-actions"><a class="map-link" href="#map" data-day="28">View this day on the map</a></p>
+    </article>
 
-    <div class="day-card" id="day-2027-11-28" tabindex="0">
-        <h3>Day 8 — Sunday, November 28: 🖤 All Black Everything Finale</h3>
-        <div class="day-meta">
-            <span><strong>Destination:</strong> Ho Chi Minh City</span>
-            <span><strong>Weather:</strong> 86–91°F day; ~80°F evening</span>
-            <span><strong>Stay:</strong> Hotel Grand Saigon (night 3 of 3)</span>
-        </div>
-        <div class="wakeup">⏰ Sleep in! No morning schedule. Rest up for the big night out.</div>
-        <ul>
-            <li><strong class="slot">Morning:</strong> Cafe and market crawl in District 1: The Cafe Apartment at 42 Nguyen Hue (cafes and boutiques), specialty coffee at The Workshop Coffee, then Ben Thanh Market and nearby boutiques. Coconut coffee at Cong Ca Phe (93 Yersin) is an easy stop on the way back.</li>
-            <li><strong class="slot">Afternoon:</strong> Free time to rest before the evening: pool, spa or a slow lunch. Glam hair and makeup time.</li>
-            <li><strong class="slot">Evening:</strong> All Black Everything dress code. Michelin-star farewell dinner at Anan Saigon (dinner only, Tuesday to Sunday; seatings 5:30 or 8:30 PM), group photos, rooftop cocktails, then a Hip-Hop / Afrobeats night out. Return to the hotel together using Grab.</li>
-        </ul>
-        <div class="wear">👗 All Black Everything: all-black attire, gold accessories encouraged, glam hair and makeup, dress to impress.</div>
-        <div class="day-note">Club options: Piu Piu, Mershe Saigon, Weeknd SGN (open Fri–Sun), Afro Chill Lounge, Neighborhood Saigon (open Sunday), LOCO Complex, Bam Bam, PAPI.</div>
-    </div>
-
-    <div class="day-card" id="day-2027-11-29" tabindex="0">
-        <h3>Day 9 — Monday, November 29: Departure Day</h3>
-        <div class="day-meta">
-            <span><strong>Destination:</strong> Ho Chi Minh City</span>
-            <span><strong>Weather:</strong> 86–91°F (30–33°C), hot</span>
-            <span><strong>Stay:</strong> Checkout day</span>
-        </div>
-        <div class="wakeup">⏰ Depends on flight time. Allow 3+ hours before departure for checkout and airport transfer.</div>
-        <ul>
-            <li><strong class="slot">Morning:</strong> Breakfast, then last-minute shopping if flight timing allows (Ben Thanh Market or Saigon Centre, both close to District 1).</li>
-            <li><strong class="slot">Afternoon:</strong> Hotel checkout and airport transfer (~20–30 min to Tan Son Nhat International Airport).</li>
-            <li><strong class="slot">Evening:</strong> Fly home from Ho Chi Minh City (SGN). Departure time depends on the international flight schedule.</li>
-        </ul>
-        <div class="wear">👗 Airport Comfortable: jogger set or matching sweatsuit, sneakers, light jacket for the flight.</div>
-    </div>
-    </div>
+    <article class="day-card" id="day-2027-11-29" tabindex="-1" aria-labelledby="h-d29" data-city="Saigon">
+        <header class="day-head">
+            <p class="day-kicker"><span class="day-num">Day 9</span> Monday, November 29</p>
+            <h3 id="h-d29">Departure Day</h3>
+            <p class="day-city"><span aria-hidden="true">📍</span> Ho Chi Minh City</p>
+        </header>
+        <dl class="day-info">
+            <div><dt><span aria-hidden="true">🧭</span> Destination</dt><dd>Ho Chi Minh City</dd></div>
+            <div><dt><span aria-hidden="true">🌤️</span> Weather</dt><dd>86–91°F (30–33°C), hot</dd></div>
+            <div><dt><span aria-hidden="true">🛏️</span> Stay</dt><dd>Checkout day</dd></div>
+        </dl>
+        <p class="callout-alert"><span aria-hidden="true">⏰</span> <span>Depends on flight time. Allow 3+ hours before departure for checkout and airport transfer.</span></p>
+        <section class="slot slot-morning" aria-labelledby="d29-morning-h">
+            <div class="slot-head"><span class="slot-icon" aria-hidden="true">🌅</span><h4 id="d29-morning-h">Morning</h4></div>
+            <p class="slot-summary">Breakfast, then last-minute shopping if flight timing allows.</p>
+            <button type="button" class="toggle-btn" aria-expanded="false" aria-controls="d29-morning" data-more="Show details" data-less="Hide details">Show details</button>
+            <div class="slot-details" id="d29-morning" hidden><ul class="items">
+<li class="item"><span class="badge b-booked">Booked</span><div class="item-body"><strong>Breakfast</strong></div></li>
+<li class="item"><span class="badge b-optional">Optional</span><div class="item-body"><strong>Last-minute shopping</strong> <span class="item-note">Ben Thanh Market or Saigon Centre, both close to District 1.</span></div></li>
+            </ul></div>
+        </section>
+        <section class="slot slot-afternoon" aria-labelledby="d29-afternoon-h">
+            <div class="slot-head"><span class="slot-icon" aria-hidden="true">☀️</span><h4 id="d29-afternoon-h">Afternoon</h4></div>
+            <p class="slot-summary">Hotel checkout and airport transfer.</p>
+            <button type="button" class="toggle-btn" aria-expanded="false" aria-controls="d29-afternoon" data-more="Show details" data-less="Hide details">Show details</button>
+            <div class="slot-details" id="d29-afternoon" hidden><ul class="items">
+<li class="item"><span class="badge b-booked">Booked</span><div class="item-body"><strong>Hotel checkout</strong></div></li>
+<li class="item"><span class="badge b-suggestion">Suggestion</span><div class="item-body"><strong>Airport transfer</strong><span class="item-meta">~20–30 min to Tan Son Nhat International Airport</span></div></li>
+            </ul></div>
+        </section>
+        <section class="slot slot-evening" aria-labelledby="d29-evening-h">
+            <div class="slot-head"><span class="slot-icon" aria-hidden="true">🌙</span><h4 id="d29-evening-h">Evening</h4></div>
+            <p class="slot-summary">Fly home from Ho Chi Minh City (SGN).</p>
+            <button type="button" class="toggle-btn" aria-expanded="false" aria-controls="d29-evening" data-more="Show details" data-less="Hide details">Show details</button>
+            <div class="slot-details" id="d29-evening" hidden><ul class="items">
+<li class="item"><span class="badge b-suggestion">Suggestion</span><div class="item-body"><strong>Fly home from Ho Chi Minh City (SGN)</strong> <span class="item-note">Departure time depends on the international flight schedule.</span></div></li>
+            </ul></div>
+        </section>
+        <p class="callout-tip"><span aria-hidden="true">👗</span> <span><strong>Airport Comfortable:</strong> jogger set or matching sweatsuit, sneakers, light jacket for the flight.</span></p>
+        <p class="day-actions"><a class="map-link" href="#map" data-day="29">View this day on the map</a></p>
+    </article>
     </div>
 </div>
 </section>
@@ -714,7 +985,7 @@
         <li>Date changes are allowed up to 14 days before departure by contacting the cruise to confirm availability</li>
         <li>Free one-way limousine bus from Hanoi Old Quarter hotels (pickup and drop-off at Old Quarter hotels only)</li>
     </ul>
-    <p><a href="https://genesisregalcruise.com/" target="_blank">Visit Website →</a></p>
+    <p><a href="https://genesisregalcruise.com/" target="_blank">Visit Website →</a> &nbsp;|&nbsp; <a href="https://youtu.be/CrKO73u_1cQ?si=Mde7_qbBV14DeStl" target="_blank" rel="noopener noreferrer">Watch the cruise video on YouTube →</a></p>
 
     <h3>Silk Sense Hoi An River Resort (Confirmed)</h3>
     <ul class="clean">
@@ -958,14 +1229,14 @@
     <h3>Featured on Your Route</h3>
     <div class="hotel-grid">
         <div class="hotel-card">
-            <h4>Café Phố Cổ</h4>
-            <p class="meta">Hang Gai, Hoan Kiem, Hanoi · Day 2 (Nov 22)</p>
-            <p>Hidden coffee house at 11 Hang Gai: you walk through a silk shop and up winding stairs to a rooftop terrace overlooking Hoan Kiem Lake. Reviewers single out the lake view, especially toward evening, and the egg coffee and yogurt coffee. It sits on Silk Street, so it slots straight into the Nov 22 shopping block.</p>
+            <h4>The Note Coffee</h4>
+            <p class="meta">64 Luong Van Can, Hoan Kiem, Hanoi · Day 2 (Nov 22)</p>
+            <p>One of Hanoi's most photographed cafes: every wall, beam and table is layered with colorful sticky notes left by visitors from around the world, and your drink arrives with a note of its own. It is tiny and busy, so go mid-afternoon and grab a corner for photos. Reviewers recommend the egg coffee, coconut coffee and salt coffee. It sits a few minutes from Hang Gai and Hoan Kiem Lake, so it slots into the Nov 22 shopping block.</p>
             <ul>
-                <li>Hours: listings show about 8 AM to 11 PM daily</li>
-                <li>The entrance is easy to miss: look for the silk shop on the street frontage</li>
+                <li>Very small and often full; allow time for a seat</li>
+                <li>Confirm opening hours on Google Maps before you go</li>
             </ul>
-            <p><a href="https://www.google.com/maps/search/?api=1&amp;query=Cafe%20Pho%20Co%2C%2011%20Hang%20Gai%2C%20Hoan%20Kiem%2C%20Hanoi" target="_blank" rel="noopener noreferrer">Map →</a> &nbsp;|&nbsp; <a href="https://www.tripadvisor.com.au/Restaurant_Review-g293924-d2413969-Reviews-Cafe_Pho_Co-Hanoi.html" target="_blank" rel="noopener noreferrer">Reviews on Tripadvisor →</a></p>
+            <p><a href="https://www.google.com/maps/search/?api=1&amp;query=The%20Note%20Coffee%2C%2064%20Luong%20Van%20Can%2C%20Hanoi" target="_blank" rel="noopener noreferrer">Map →</a> &nbsp;|&nbsp; <a href="https://www.tripadvisor.com.ph/Restaurant_Review-g293924-d3833551-Reviews-The_Note_Coffee-Hanoi.html" target="_blank" rel="noopener noreferrer">Reviews on Tripadvisor →</a></p>
         </div>
         <div class="hotel-card">
             <h4>Faifo Coffee</h4>
@@ -1066,7 +1337,7 @@
     </table>
     <h3>Shopping Blocks</h3>
     <ul class="clean">
-        <li><strong>Mon Nov 22, afternoon (Hanoi):</strong> Hang Dau and Hang Gai, with a coffee stop at Café Phố Cổ</li>
+        <li><strong>Mon Nov 22, afternoon (Hanoi):</strong> Hang Dau and Hang Gai, with a coffee stop at The Note Coffee</li>
         <li><strong>Thu Nov 25, afternoon (Hoi An):</strong> tailors and leather orders, coffee at Faifo Coffee</li>
         <li><strong>Fri Nov 26, morning (Hoi An):</strong> final fittings and pickups</li>
         <li><strong>Sat Nov 27, afternoon (Saigon):</strong> Dong Khoi Street, Saigon Centre and Takashimaya (Takashimaya is reported open about 9:30 AM to 9:30 or 10 PM; confirm before going)</li>
@@ -1204,6 +1475,7 @@
     <h2>Map</h2>
     <p>Every stop in the plan: hotels, dining, nightlife, cafés, shopping, wellness and transport, including Waterfront Danang Restaurant &amp; Bar. Choose a city and category, then tap a pin for the day and a Google Maps link. Pins marked approximate are area-level estimates, so confirm the exact spot in Google Maps. Map tiles load from OpenStreetMap.</p>
     <div id="mapBody">
+        <p class="small" id="mapDayNote" hidden><span id="mapDayText"></span> <button type="button" class="chip" id="mapDayClear">Show all days</button></p>
         <div class="chip-row" id="mapCityRow" role="group" aria-label="City"></div>
         <div class="chip-row" id="mapCatRow" role="group" aria-label="Category"></div>
         <p class="small" id="mapStatus" role="status">Loading map...</p>
@@ -1407,14 +1679,14 @@
 /* Trip map: Leaflet + OpenStreetMap tiles. Falls back to a list of Google Maps links if the library or tiles fail. (ES5) */
 (function () {
     'use strict';
-    var POINTS = [{"name": "Anatole Hotel Hanoi", "city": "Hanoi", "cat": "hotel", "lat": 21.0283, "lng": 105.849, "day": "Nov 21–23", "approx": true, "gm": "https://www.google.com/maps/search/?api=1&query=Anatole%20Hotel%20Hanoi%2C%2030%20Nha%20Chung%2C%20Hanoi"}, {"name": "Silk Sense Hoi An River Resort", "city": "Hoi An", "cat": "hotel", "lat": 15.884, "lng": 108.326, "day": "Nov 24–26", "approx": true, "gm": "https://www.google.com/maps/search/?api=1&query=Silk%20Sense%20Hoi%20An%20River%20Resort%2C%2001%20Dong%20Da%2C%20Hoi%20An"}, {"name": "Hotel Grand Saigon", "city": "Ho Chi Minh City", "cat": "hotel", "lat": 10.7752, "lng": 106.705, "day": "Nov 26–29", "approx": true, "gm": "https://www.google.com/maps/search/?api=1&query=Hotel%20Grand%20Saigon%2C%20Ho%20Chi%20Minh%20City"}, {"name": "La Maison 1888", "city": "Da Nang", "cat": "dining", "lat": 16.12109, "lng": 108.30614, "day": "Optional Da Nang alternative", "approx": false, "gm": "https://www.google.com/maps/search/?api=1&query=La%20Maison%201888%2C%20InterContinental%20Danang%20Sun%20Peninsula%20Resort"}, {"name": "Nen Danang", "city": "Da Nang", "cat": "dining", "lat": 16.039, "lng": 108.244, "day": "Optional Da Nang alternative", "approx": true, "gm": "https://www.google.com/maps/search/?api=1&query=Nen%20Danang%2C%2016%20My%20Da%20Tay%202%2C%20Da%20Nang"}, {"name": "Waterfront Danang Restaurant & Bar", "city": "Da Nang", "cat": "dining", "lat": 16.069, "lng": 108.223, "day": "Nov 24 evening", "approx": true, "gm": "https://www.google.com/maps/search/?api=1&query=Waterfront%20Danang%2C%20150%20Bach%20Dang%2C%20Da%20Nang"}, {"name": "Ănăn Saigon", "city": "Ho Chi Minh City", "cat": "dining", "lat": 10.77206, "lng": 106.70287, "day": "Nov 28 evening", "approx": false, "gm": "https://www.google.com/maps/search/?api=1&query=Anan%20Saigon%2C%2089%20Ton%20That%20Dam%2C%20Ho%20Chi%20Minh%20City"}, {"name": "AKUNA", "city": "Ho Chi Minh City", "cat": "dining", "lat": 10.77994, "lng": 106.70731, "day": "Back-up Michelin dinner", "approx": false, "gm": "https://www.google.com/maps/search/?api=1&query=AKUNA%20Restaurant%2C%20Le%20Meridien%20Saigon%2C%203C%20Ton%20Duc%20Thang%2C%20Ho%20Chi%20Minh%20City"}, {"name": "Saigon Saigon Rooftop Bar", "city": "Ho Chi Minh City", "cat": "dining", "lat": 10.77615, "lng": 106.70361, "day": "Nov 26 evening", "approx": false, "gm": "https://www.google.com/maps/search/?api=1&query=Saigon%20Saigon%20Rooftop%20Bar%2C%20Caravelle%20Saigon"}, {"name": "Social Club Rooftop Bar", "city": "Ho Chi Minh City", "cat": "dining", "lat": 10.78202, "lng": 106.69714, "day": "Nov 27 evening", "approx": false, "gm": "https://www.google.com/maps/search/?api=1&query=Social%20Club%20Rooftop%20Bar%2C%20Hotel%20des%20Arts%20Saigon"}, {"name": "The Roof Da Nang", "city": "Da Nang", "cat": "nightlife", "lat": 16.065, "lng": 108.2455, "day": "Optional Da Nang add-on", "approx": true, "gm": "https://www.google.com/maps/search/?api=1&query=The%20Roof%20Da%20Nang%2C%201A%20Vo%20Nguyen%20Giap%2C%20Da%20Nang"}, {"name": "BLENDS Social Bar & Kitchen", "city": "Da Nang", "cat": "nightlife", "lat": 16.04833, "lng": 108.24765, "day": "Optional Da Nang add-on", "approx": false, "gm": "https://www.google.com/maps/search/?api=1&query=Blends%20Social%20Bar%20%26%20Kitchen%2C%2049%20Ngo%20Thi%20Si%2C%20Da%20Nang"}, {"name": "SKY36", "city": "Da Nang", "cat": "nightlife", "lat": 16.0708, "lng": 108.2247, "day": "Optional Da Nang add-on", "approx": true, "gm": "https://www.google.com/maps/search/?api=1&query=SKY36%20Novotel%20Danang%20Premier%20Han%20River%2C%2036%20Bach%20Dang%2C%20Da%20Nang"}, {"name": "Weeknd SGN", "city": "Ho Chi Minh City", "cat": "nightlife", "lat": 10.77205, "lng": 106.70135, "day": "Nov 28 night", "approx": false, "gm": "https://www.google.com/maps/search/?api=1&query=Weeknd%20SGN%2C%2066%20Huynh%20Thuc%20Khang%2C%20Ho%20Chi%20Minh%20City"}, {"name": "LOCO Complex", "city": "Ho Chi Minh City", "cat": "nightlife", "lat": 10.7685, "lng": 106.6945, "day": "Nov 28 night option", "approx": true, "gm": "https://www.google.com/maps/search/?api=1&query=LOCO%20Complex%2C%2011%20Nam%20Quoc%20Cang%2C%20Ho%20Chi%20Minh%20City"}, {"name": "Bam Bam Tropical Club", "city": "Ho Chi Minh City", "cat": "nightlife", "lat": 10.76862, "lng": 106.70243, "day": "Nov 28 night option", "approx": false, "gm": "https://www.google.com/maps/search/?api=1&query=Bam%20Bam%20Tropical%20Club%2C%2041%20Nam%20Ky%20Khoi%20Nghia%2C%20Ho%20Chi%20Minh%20City"}, {"name": "PAPI Club Saigon", "city": "Ho Chi Minh City", "cat": "nightlife", "lat": 10.77242, "lng": 106.69968, "day": "Nov 28 night option", "approx": false, "gm": "https://www.google.com/maps/search/?api=1&query=PAPI%20Club%20Saigon%2C%20123%20Le%20Loi%2C%20Ho%20Chi%20Minh%20City"}, {"name": "The Cafe Apartment, 42 Nguyen Hue", "city": "Ho Chi Minh City", "cat": "cafe", "lat": 10.77406, "lng": 106.70413, "day": "Nov 28 morning", "approx": false, "gm": "https://www.google.com/maps/search/?api=1&query=42%20Nguyen%20Hue%2C%20District%201%2C%20Ho%20Chi%20Minh%20City"}, {"name": "The Workshop Coffee", "city": "Ho Chi Minh City", "cat": "cafe", "lat": 10.77341, "lng": 106.70554, "day": "Nov 28 morning", "approx": false, "gm": "https://www.google.com/maps/search/?api=1&query=The%20Workshop%20Coffee%2C%2027%20Ngo%20Duc%20Ke%2C%20Ho%20Chi%20Minh%20City"}, {"name": "Cong Ca Phe (Yersin)", "city": "Ho Chi Minh City", "cat": "cafe", "lat": 10.76808, "lng": 106.69691, "day": "Nov 28 morning", "approx": false, "gm": "https://www.google.com/maps/search/?api=1&query=Cong%20Ca%20Phe%2C%2093%20Yersin%2C%20Ho%20Chi%20Minh%20City"}, {"name": "Saigon Centre / Takashimaya", "city": "Ho Chi Minh City", "cat": "shopping", "lat": 10.7738, "lng": 106.7005, "day": "Nov 27 afternoon", "approx": true, "gm": "https://www.google.com/maps/search/?api=1&query=Takashimaya%20Saigon%20Centre%2C%2065%20Le%20Loi%2C%20Ho%20Chi%20Minh%20City"}, {"name": "Ben Thanh Market", "city": "Ho Chi Minh City", "cat": "shopping", "lat": 10.77253, "lng": 106.69804, "day": "Nov 28 morning, Nov 29", "approx": false, "gm": "https://www.google.com/maps/search/?api=1&query=Ben%20Thanh%20Market%2C%20Ho%20Chi%20Minh%20City"}, {"name": "Dong Khoi Street", "city": "Ho Chi Minh City", "cat": "shopping", "lat": 10.7743, "lng": 106.705, "day": "Nov 27 afternoon", "approx": false, "gm": "https://www.google.com/maps/search/?api=1&query=Dong%20Khoi%20Street%2C%20Ho%20Chi%20Minh%20City"}, {"name": "Han Market", "city": "Da Nang", "cat": "shopping", "lat": 16.06835, "lng": 108.22428, "day": "Optional Da Nang add-on", "approx": false, "gm": "https://www.google.com/maps/search/?api=1&query=Han%20Market%2C%20Da%20Nang"}, {"name": "Con Market", "city": "Da Nang", "cat": "shopping", "lat": 16.06813, "lng": 108.21452, "day": "Optional Da Nang add-on", "approx": false, "gm": "https://www.google.com/maps/search/?api=1&query=Con%20Market%2C%20Da%20Nang"}, {"name": "FV Hospital", "city": "Ho Chi Minh City", "cat": "wellness", "lat": 10.73243, "lng": 106.71788, "day": "Nov 27 option (still deciding)", "approx": false, "gm": "https://www.google.com/maps/search/?api=1&query=FV%20Hospital%2C%206%20Nguyen%20Luong%20Bang%2C%20Ho%20Chi%20Minh%20City"}, {"name": "Café Phố Cổ", "city": "Hanoi", "cat": "cafe", "lat": 21.0323, "lng": 105.8508, "day": "Nov 22 afternoon", "approx": true, "gm": "https://www.google.com/maps/search/?api=1&query=Cafe%20Pho%20Co%2C%2011%20Hang%20Gai%2C%20Hoan%20Kiem%2C%20Hanoi"}, {"name": "Hang Gai (Silk Street)", "city": "Hanoi", "cat": "shopping", "lat": 21.03226, "lng": 105.85058, "day": "Nov 21–22", "approx": false, "gm": "https://www.google.com/maps/search/?api=1&query=Hang%20Gai%20Street%2C%20Hanoi"}, {"name": "Hang Dau (shoe street)", "city": "Hanoi", "cat": "shopping", "lat": 21.03111, "lng": 105.85393, "day": "Nov 21–22", "approx": true, "gm": "https://www.google.com/maps/search/?api=1&query=Hang%20Dau%20Street%2C%20Hanoi"}, {"name": "Hanoi Weekend Night Market (Hang Dao)", "city": "Hanoi", "cat": "nightlife", "lat": 21.03298, "lng": 105.85117, "day": "Nov 21 evening (Fri–Sun only)", "approx": true, "gm": "https://www.google.com/maps/search/?api=1&query=Hang%20Dao%20Street%2C%20Hanoi%20Old%20Quarter"}, {"name": "Noi Bai Airport (HAN)", "city": "Hanoi", "cat": "transport", "lat": 21.2189, "lng": 105.8045, "day": "Nov 21 arrival", "approx": false, "gm": "https://www.google.com/maps/search/?api=1&query=Noi%20Bai%20International%20Airport"}, {"name": "Genesis Regal cruise (Lan Ha Bay area)", "city": "Lan Ha Bay", "cat": "transport", "lat": 20.7667, "lng": 107.05, "day": "Nov 23–24 (approximate cruise area; pier not confirmed)", "approx": true, "gm": "https://www.google.com/maps/search/?api=1&query=Lan%20Ha%20Bay%2C%20Vietnam"}, {"name": "Faifo Coffee", "city": "Hoi An", "cat": "cafe", "lat": 15.87723, "lng": 108.32813, "day": "Nov 25 afternoon", "approx": false, "gm": "https://www.google.com/maps/search/?api=1&query=Faifo%20Coffee%2C%20130%20Tran%20Phu%2C%20Hoi%20An"}, {"name": "A Dong Silk (tailor)", "city": "Hoi An", "cat": "shopping", "lat": 15.87999, "lng": 108.32705, "day": "Nov 25–26", "approx": false, "gm": "https://www.google.com/maps/search/?api=1&query=A%20Dong%20Silk%2C%2062%20Tran%20Hung%20Dao%2C%20Hoi%20An"}, {"name": "Hoi An Night Market", "city": "Hoi An", "cat": "nightlife", "lat": 15.87578, "lng": 108.32593, "day": "Nov 25 evening", "approx": false, "gm": "https://www.google.com/maps/search/?api=1&query=Hoi%20An%20Night%20Market%2C%20Nguyen%20Hoang%2C%20Hoi%20An"}, {"name": "Da Nang Airport (DAD)", "city": "Da Nang", "cat": "transport", "lat": 16.0426, "lng": 108.1972, "day": "Nov 24 arrival, Nov 26 departure", "approx": false, "gm": "https://www.google.com/maps/search/?api=1&query=Da%20Nang%20International%20Airport"}, {"name": "XLIII Specialty Coffee", "city": "Da Nang", "cat": "cafe", "lat": 16.04808, "lng": 108.24598, "day": "Optional Da Nang add-on", "approx": false, "gm": "https://www.google.com/maps/search/?api=1&query=XLIII%20Coffee%2C%20422%20Ngo%20Thi%20Si%2C%20Da%20Nang"}, {"name": "A La Carte rooftop cafe", "city": "Da Nang", "cat": "cafe", "lat": 16.06869, "lng": 108.24462, "day": "Optional Da Nang add-on", "approx": false, "gm": "https://www.google.com/maps/search/?api=1&query=A%20La%20Carte%20Danang%20Beach%2C%20200%20Vo%20Nguyen%20Giap%2C%20Da%20Nang"}, {"name": "Tan Son Nhat Airport (SGN)", "city": "Ho Chi Minh City", "cat": "transport", "lat": 10.818, "lng": 106.6563, "day": "Nov 26 arrival, Nov 29 departure", "approx": false, "gm": "https://www.google.com/maps/search/?api=1&query=Tan%20Son%20Nhat%20International%20Airport"}, {"name": "CUR8 Saigon", "city": "Ho Chi Minh City", "cat": "nightlife", "lat": 10.7723, "lng": 106.6981, "day": "Nov 26–27 night option", "approx": true, "gm": "https://www.google.com/maps/search/?api=1&query=CUR8%20Saigon%2C%2049%20Pho%20Duc%20Chinh%2C%20Ho%20Chi%20Minh%20City"}, {"name": "Neighborhood Saigon (floor 1, 11 Nam Quoc Cang)", "city": "Ho Chi Minh City", "cat": "nightlife", "lat": 10.7685, "lng": 106.6945, "day": "Nov 27–28 night option", "approx": true, "gm": "https://www.google.com/maps/search/?api=1&query=Neighborhood%20Club%2C%2011%20Nam%20Quoc%20Cang%2C%20Ho%20Chi%20Minh%20City"}, {"name": "Little Hanoi Egg Coffee", "city": "Ho Chi Minh City", "cat": "cafe", "lat": 10.7678, "lng": 106.6957, "day": "Optional Nov 28 detour", "approx": true, "gm": "https://www.google.com/maps/search/?api=1&query=Little%20HaNoi%20Egg%20Coffee%2C%20119/5%20Yersin%2C%20Ho%20Chi%20Minh%20City"}];
+    var POINTS = [{"name": "Anatole Hotel Hanoi", "city": "Hanoi", "cat": "hotel", "lat": 21.0283, "lng": 105.849, "day": "Nov 21–23", "approx": true, "gm": "https://www.google.com/maps/search/?api=1&query=Anatole%20Hotel%20Hanoi%2C%2030%20Nha%20Chung%2C%20Hanoi"}, {"name": "Silk Sense Hoi An River Resort", "city": "Hoi An", "cat": "hotel", "lat": 15.884, "lng": 108.326, "day": "Nov 24–26", "approx": true, "gm": "https://www.google.com/maps/search/?api=1&query=Silk%20Sense%20Hoi%20An%20River%20Resort%2C%2001%20Dong%20Da%2C%20Hoi%20An"}, {"name": "Hotel Grand Saigon", "city": "Ho Chi Minh City", "cat": "hotel", "lat": 10.7752, "lng": 106.705, "day": "Nov 26–29", "approx": true, "gm": "https://www.google.com/maps/search/?api=1&query=Hotel%20Grand%20Saigon%2C%20Ho%20Chi%20Minh%20City"}, {"name": "La Maison 1888", "city": "Da Nang", "cat": "dining", "lat": 16.12109, "lng": 108.30614, "day": "Optional Da Nang alternative", "approx": false, "gm": "https://www.google.com/maps/search/?api=1&query=La%20Maison%201888%2C%20InterContinental%20Danang%20Sun%20Peninsula%20Resort"}, {"name": "Nen Danang", "city": "Da Nang", "cat": "dining", "lat": 16.039, "lng": 108.244, "day": "Optional Da Nang alternative", "approx": true, "gm": "https://www.google.com/maps/search/?api=1&query=Nen%20Danang%2C%2016%20My%20Da%20Tay%202%2C%20Da%20Nang"}, {"name": "Waterfront Danang Restaurant & Bar", "city": "Da Nang", "cat": "dining", "lat": 16.069, "lng": 108.223, "day": "Nov 24 evening", "approx": true, "gm": "https://www.google.com/maps/search/?api=1&query=Waterfront%20Danang%2C%20150%20Bach%20Dang%2C%20Da%20Nang"}, {"name": "Ănăn Saigon", "city": "Ho Chi Minh City", "cat": "dining", "lat": 10.77206, "lng": 106.70287, "day": "Nov 28 evening", "approx": false, "gm": "https://www.google.com/maps/search/?api=1&query=Anan%20Saigon%2C%2089%20Ton%20That%20Dam%2C%20Ho%20Chi%20Minh%20City"}, {"name": "AKUNA", "city": "Ho Chi Minh City", "cat": "dining", "lat": 10.77994, "lng": 106.70731, "day": "Back-up Michelin dinner", "approx": false, "gm": "https://www.google.com/maps/search/?api=1&query=AKUNA%20Restaurant%2C%20Le%20Meridien%20Saigon%2C%203C%20Ton%20Duc%20Thang%2C%20Ho%20Chi%20Minh%20City"}, {"name": "Saigon Saigon Rooftop Bar", "city": "Ho Chi Minh City", "cat": "dining", "lat": 10.77615, "lng": 106.70361, "day": "Nov 26 evening", "approx": false, "gm": "https://www.google.com/maps/search/?api=1&query=Saigon%20Saigon%20Rooftop%20Bar%2C%20Caravelle%20Saigon"}, {"name": "Social Club Rooftop Bar", "city": "Ho Chi Minh City", "cat": "dining", "lat": 10.78202, "lng": 106.69714, "day": "Nov 27 evening", "approx": false, "gm": "https://www.google.com/maps/search/?api=1&query=Social%20Club%20Rooftop%20Bar%2C%20Hotel%20des%20Arts%20Saigon"}, {"name": "The Roof Da Nang", "city": "Da Nang", "cat": "nightlife", "lat": 16.065, "lng": 108.2455, "day": "Optional Da Nang add-on", "approx": true, "gm": "https://www.google.com/maps/search/?api=1&query=The%20Roof%20Da%20Nang%2C%201A%20Vo%20Nguyen%20Giap%2C%20Da%20Nang"}, {"name": "BLENDS Social Bar & Kitchen", "city": "Da Nang", "cat": "nightlife", "lat": 16.04833, "lng": 108.24765, "day": "Optional Da Nang add-on", "approx": false, "gm": "https://www.google.com/maps/search/?api=1&query=Blends%20Social%20Bar%20%26%20Kitchen%2C%2049%20Ngo%20Thi%20Si%2C%20Da%20Nang"}, {"name": "SKY36", "city": "Da Nang", "cat": "nightlife", "lat": 16.0708, "lng": 108.2247, "day": "Optional Da Nang add-on", "approx": true, "gm": "https://www.google.com/maps/search/?api=1&query=SKY36%20Novotel%20Danang%20Premier%20Han%20River%2C%2036%20Bach%20Dang%2C%20Da%20Nang"}, {"name": "Weeknd SGN", "city": "Ho Chi Minh City", "cat": "nightlife", "lat": 10.77205, "lng": 106.70135, "day": "Nov 28 night", "approx": false, "gm": "https://www.google.com/maps/search/?api=1&query=Weeknd%20SGN%2C%2066%20Huynh%20Thuc%20Khang%2C%20Ho%20Chi%20Minh%20City"}, {"name": "LOCO Complex", "city": "Ho Chi Minh City", "cat": "nightlife", "lat": 10.7685, "lng": 106.6945, "day": "Nov 28 night option", "approx": true, "gm": "https://www.google.com/maps/search/?api=1&query=LOCO%20Complex%2C%2011%20Nam%20Quoc%20Cang%2C%20Ho%20Chi%20Minh%20City"}, {"name": "Bam Bam Tropical Club", "city": "Ho Chi Minh City", "cat": "nightlife", "lat": 10.76862, "lng": 106.70243, "day": "Nov 28 night option", "approx": false, "gm": "https://www.google.com/maps/search/?api=1&query=Bam%20Bam%20Tropical%20Club%2C%2041%20Nam%20Ky%20Khoi%20Nghia%2C%20Ho%20Chi%20Minh%20City"}, {"name": "PAPI Club Saigon", "city": "Ho Chi Minh City", "cat": "nightlife", "lat": 10.77242, "lng": 106.69968, "day": "Nov 28 night option", "approx": false, "gm": "https://www.google.com/maps/search/?api=1&query=PAPI%20Club%20Saigon%2C%20123%20Le%20Loi%2C%20Ho%20Chi%20Minh%20City"}, {"name": "The Cafe Apartment, 42 Nguyen Hue", "city": "Ho Chi Minh City", "cat": "cafe", "lat": 10.77406, "lng": 106.70413, "day": "Nov 28 morning", "approx": false, "gm": "https://www.google.com/maps/search/?api=1&query=42%20Nguyen%20Hue%2C%20District%201%2C%20Ho%20Chi%20Minh%20City"}, {"name": "The Workshop Coffee", "city": "Ho Chi Minh City", "cat": "cafe", "lat": 10.77341, "lng": 106.70554, "day": "Nov 28 morning", "approx": false, "gm": "https://www.google.com/maps/search/?api=1&query=The%20Workshop%20Coffee%2C%2027%20Ngo%20Duc%20Ke%2C%20Ho%20Chi%20Minh%20City"}, {"name": "Cong Ca Phe (Yersin)", "city": "Ho Chi Minh City", "cat": "cafe", "lat": 10.76808, "lng": 106.69691, "day": "Nov 28 morning", "approx": false, "gm": "https://www.google.com/maps/search/?api=1&query=Cong%20Ca%20Phe%2C%2093%20Yersin%2C%20Ho%20Chi%20Minh%20City"}, {"name": "Saigon Centre / Takashimaya", "city": "Ho Chi Minh City", "cat": "shopping", "lat": 10.7738, "lng": 106.7005, "day": "Nov 27 afternoon", "approx": true, "gm": "https://www.google.com/maps/search/?api=1&query=Takashimaya%20Saigon%20Centre%2C%2065%20Le%20Loi%2C%20Ho%20Chi%20Minh%20City"}, {"name": "Ben Thanh Market", "city": "Ho Chi Minh City", "cat": "shopping", "lat": 10.77253, "lng": 106.69804, "day": "Nov 28 morning, Nov 29", "approx": false, "gm": "https://www.google.com/maps/search/?api=1&query=Ben%20Thanh%20Market%2C%20Ho%20Chi%20Minh%20City"}, {"name": "Dong Khoi Street", "city": "Ho Chi Minh City", "cat": "shopping", "lat": 10.7743, "lng": 106.705, "day": "Nov 27 afternoon", "approx": false, "gm": "https://www.google.com/maps/search/?api=1&query=Dong%20Khoi%20Street%2C%20Ho%20Chi%20Minh%20City"}, {"name": "Han Market", "city": "Da Nang", "cat": "shopping", "lat": 16.06835, "lng": 108.22428, "day": "Optional Da Nang add-on", "approx": false, "gm": "https://www.google.com/maps/search/?api=1&query=Han%20Market%2C%20Da%20Nang"}, {"name": "Con Market", "city": "Da Nang", "cat": "shopping", "lat": 16.06813, "lng": 108.21452, "day": "Optional Da Nang add-on", "approx": false, "gm": "https://www.google.com/maps/search/?api=1&query=Con%20Market%2C%20Da%20Nang"}, {"name": "FV Hospital", "city": "Ho Chi Minh City", "cat": "wellness", "lat": 10.73243, "lng": 106.71788, "day": "Nov 27 option (still deciding)", "approx": false, "gm": "https://www.google.com/maps/search/?api=1&query=FV%20Hospital%2C%206%20Nguyen%20Luong%20Bang%2C%20Ho%20Chi%20Minh%20City"}, {"name": "The Note Coffee", "city": "Hanoi", "cat": "cafe", "lat": 21.03162, "lng": 105.85084, "day": "Nov 22 afternoon", "approx": false, "gm": "https://www.google.com/maps/search/?api=1&query=The%20Note%20Coffee%2C%2064%20Luong%20Van%20Can%2C%20Hanoi"}, {"name": "Hang Gai (Silk Street)", "city": "Hanoi", "cat": "shopping", "lat": 21.03226, "lng": 105.85058, "day": "Nov 21–22", "approx": false, "gm": "https://www.google.com/maps/search/?api=1&query=Hang%20Gai%20Street%2C%20Hanoi"}, {"name": "Hang Dau (shoe street)", "city": "Hanoi", "cat": "shopping", "lat": 21.03111, "lng": 105.85393, "day": "Nov 21–22", "approx": true, "gm": "https://www.google.com/maps/search/?api=1&query=Hang%20Dau%20Street%2C%20Hanoi"}, {"name": "Hanoi Weekend Night Market (Hang Dao)", "city": "Hanoi", "cat": "nightlife", "lat": 21.03298, "lng": 105.85117, "day": "Nov 21 evening (Fri–Sun only)", "approx": true, "gm": "https://www.google.com/maps/search/?api=1&query=Hang%20Dao%20Street%2C%20Hanoi%20Old%20Quarter"}, {"name": "Noi Bai Airport (HAN)", "city": "Hanoi", "cat": "transport", "lat": 21.2189, "lng": 105.8045, "day": "Nov 21 arrival", "approx": false, "gm": "https://www.google.com/maps/search/?api=1&query=Noi%20Bai%20International%20Airport"}, {"name": "Genesis Regal cruise (Lan Ha Bay area)", "city": "Lan Ha Bay", "cat": "transport", "lat": 20.7667, "lng": 107.05, "day": "Nov 23–24 (approximate cruise area; pier not confirmed)", "approx": true, "gm": "https://www.google.com/maps/search/?api=1&query=Lan%20Ha%20Bay%2C%20Vietnam"}, {"name": "Faifo Coffee", "city": "Hoi An", "cat": "cafe", "lat": 15.87723, "lng": 108.32813, "day": "Nov 25 afternoon", "approx": false, "gm": "https://www.google.com/maps/search/?api=1&query=Faifo%20Coffee%2C%20130%20Tran%20Phu%2C%20Hoi%20An"}, {"name": "A Dong Silk (tailor)", "city": "Hoi An", "cat": "shopping", "lat": 15.87999, "lng": 108.32705, "day": "Nov 25–26", "approx": false, "gm": "https://www.google.com/maps/search/?api=1&query=A%20Dong%20Silk%2C%2062%20Tran%20Hung%20Dao%2C%20Hoi%20An"}, {"name": "Hoi An Night Market", "city": "Hoi An", "cat": "nightlife", "lat": 15.87578, "lng": 108.32593, "day": "Nov 25 evening", "approx": false, "gm": "https://www.google.com/maps/search/?api=1&query=Hoi%20An%20Night%20Market%2C%20Nguyen%20Hoang%2C%20Hoi%20An"}, {"name": "Da Nang Airport (DAD)", "city": "Da Nang", "cat": "transport", "lat": 16.0426, "lng": 108.1972, "day": "Nov 24 arrival, Nov 26 departure", "approx": false, "gm": "https://www.google.com/maps/search/?api=1&query=Da%20Nang%20International%20Airport"}, {"name": "XLIII Specialty Coffee", "city": "Da Nang", "cat": "cafe", "lat": 16.04808, "lng": 108.24598, "day": "Optional Da Nang add-on", "approx": false, "gm": "https://www.google.com/maps/search/?api=1&query=XLIII%20Coffee%2C%20422%20Ngo%20Thi%20Si%2C%20Da%20Nang"}, {"name": "A La Carte rooftop cafe", "city": "Da Nang", "cat": "cafe", "lat": 16.06869, "lng": 108.24462, "day": "Optional Da Nang add-on", "approx": false, "gm": "https://www.google.com/maps/search/?api=1&query=A%20La%20Carte%20Danang%20Beach%2C%20200%20Vo%20Nguyen%20Giap%2C%20Da%20Nang"}, {"name": "Tan Son Nhat Airport (SGN)", "city": "Ho Chi Minh City", "cat": "transport", "lat": 10.818, "lng": 106.6563, "day": "Nov 26 arrival, Nov 29 departure", "approx": false, "gm": "https://www.google.com/maps/search/?api=1&query=Tan%20Son%20Nhat%20International%20Airport"}, {"name": "CUR8 Saigon", "city": "Ho Chi Minh City", "cat": "nightlife", "lat": 10.7723, "lng": 106.6981, "day": "Nov 26–27 night option", "approx": true, "gm": "https://www.google.com/maps/search/?api=1&query=CUR8%20Saigon%2C%2049%20Pho%20Duc%20Chinh%2C%20Ho%20Chi%20Minh%20City"}, {"name": "Neighborhood Saigon (floor 1, 11 Nam Quoc Cang)", "city": "Ho Chi Minh City", "cat": "nightlife", "lat": 10.7685, "lng": 106.6945, "day": "Nov 27–28 night option", "approx": true, "gm": "https://www.google.com/maps/search/?api=1&query=Neighborhood%20Club%2C%2011%20Nam%20Quoc%20Cang%2C%20Ho%20Chi%20Minh%20City"}, {"name": "Little Hanoi Egg Coffee", "city": "Ho Chi Minh City", "cat": "cafe", "lat": 10.7678, "lng": 106.6957, "day": "Optional Nov 28 detour", "approx": true, "gm": "https://www.google.com/maps/search/?api=1&query=Little%20HaNoi%20Egg%20Coffee%2C%20119/5%20Yersin%2C%20Ho%20Chi%20Minh%20City"}];
     var CENTERS = {"All stops": {"lat": 16.5, "lng": 107.0, "zoom": 6}, "Hanoi": {"lat": 21.0285, "lng": 105.852, "zoom": 14}, "Lan Ha Bay": {"lat": 20.7667, "lng": 107.05, "zoom": 9}, "Da Nang": {"lat": 16.0544, "lng": 108.2428, "zoom": 12}, "Hoi An": {"lat": 15.8801, "lng": 108.338, "zoom": 14}, "Ho Chi Minh City": {"lat": 10.7745, "lng": 106.7005, "zoom": 14}};
     var CATS = [['all', 'All'], ['hotel', 'Hotels'], ['dining', 'Dining'], ['nightlife', 'Nightlife'], ['cafe', 'Cafés'], ['shopping', 'Shopping'], ['wellness', 'Wellness'], ['transport', 'Transport']];
     var CITY_NAMES = ['All stops', 'Hanoi', 'Lan Ha Bay', 'Da Nang', 'Hoi An', 'Ho Chi Minh City'];
     var cityRow = document.getElementById('mapCityRow'), catRow = document.getElementById('mapCatRow');
     var status = document.getElementById('mapStatus'), mapEl = document.getElementById('tripMap'), listBox = document.getElementById('mapList');
     if (!cityRow || !catRow || !mapEl) { return; }
-    var city = 'All stops', cat = 'all', map = null, layer = null, tilesOk = false, tileErrors = 0;
+    var dayFilter = null, city = 'All stops', cat = 'all', map = null, layer = null, tilesOk = false, tileErrors = 0;
     var cityBtns = {}, catBtns = {};
 
     function mk(tag, text, attrs) {
@@ -1431,9 +1703,22 @@
     CITY_NAMES.forEach(function (c) { cityBtns[c] = chip(c, c === city, function () { city = c; render(); }); cityRow.appendChild(cityBtns[c]); });
     CATS.forEach(function (c) { catBtns[c[0]] = chip(c[1], c[0] === cat, function () { cat = c[0]; render(); }); catRow.appendChild(catBtns[c[0]]); });
 
-    function visible() {
-        return POINTS.filter(function (p) { return (city === 'All stops' || p.city === city) && (cat === 'all' || p.cat === cat); });
+    function matchesDay(str, n) {
+        var re = /Nov\s+(\d+)(?:\s*[\u2013-]\s*(\d+))?/g, m;
+        while ((m = re.exec(str || '')) !== null) {
+            var a = parseInt(m[1], 10), b = m[2] ? parseInt(m[2], 10) : a;
+            if (n >= a && n <= b) { return true; }
+        }
+        return false;
     }
+    function visible() {
+        return POINTS.filter(function (p) {
+            return (city === 'All stops' || p.city === city) && (cat === 'all' || p.cat === cat) && (dayFilter === null || matchesDay(p.day, dayFilter));
+        });
+    }
+    var dayNote = document.getElementById('mapDayNote'), dayClear = document.getElementById('mapDayClear'), dayText = document.getElementById('mapDayText');
+    if (dayClear) { dayClear.addEventListener('click', function () { dayFilter = null; render(); }); }
+    window.tripMapShowDay = function (n) { dayFilter = n; city = 'All stops'; cat = 'all'; render(); };
     function renderList(asFallback) {
         listBox.textContent = '';
         var pts = visible();
@@ -1479,6 +1764,7 @@
         else if (bounds.length === 1) { map.setView(bounds[0], 15); }
         else if (c) { map.setView([c.lat, c.lng], c.zoom); }
         status.textContent = pts.length + ' place' + (pts.length === 1 ? '' : 's') + ' shown' + (city === 'All stops' ? '.' : ' in ' + city + '.');
+        if (dayNote) { dayNote.hidden = dayFilter === null; if (dayText && dayFilter !== null) { dayText.textContent = 'Showing only stops for Nov ' + dayFilter + '.'; } }
         renderList(false);
     }
     function init() {
@@ -1564,60 +1850,85 @@
     });
 })();
 </script>
-<!-- Horizontal day scroller (ES5). -->
+<!-- Day-by-day: sticky chips, active day, show/hide details, map link (ES5). -->
 <script>
 (function () {
     'use strict';
-    function reducedMotion() {
-        return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+    var nav = document.querySelector('nav.nav');
+    function setNavHeight() {
+        if (nav) { document.documentElement.style.setProperty('--nav-h', nav.offsetHeight + 'px'); }
     }
-    function behavior() { return reducedMotion() ? 'auto' : 'smooth'; }
+    setNavHeight();
+    window.addEventListener('resize', setNavHeight);
+    window.addEventListener('load', setNavHeight);
 
-    /* ---- horizontal cell scroller: runs on EVERY .day-track (day cells + card rows) ---- */
-    function initScroller(track) {
-        var scroller = track.parentNode;
-        var prev = scroller.querySelector('.day-scroll-prev');
-        var next = scroller.querySelector('.day-scroll-next');
-        function cells() { return track.querySelectorAll('.day-card'); }
-        function step() {
-            var c = cells();
-            if (!c.length) return track.clientWidth;
-            var gap = 0;
-            if (c.length > 1) gap = c[1].offsetLeft - (c[0].offsetLeft + c[0].offsetWidth);
-            if (gap < 0) gap = 0;
-            return c[0].offsetWidth + gap;
-        }
-        function scrollByCells(n) { track.scrollBy({ left: n * step(), behavior: behavior() }); }
-        function updateButtons() {
-            /* A small tolerance: the scroll mask can leave scrollLeft a pixel or two
-               off zero at rest, so treat near-zero as the left end. */
-            var maxScroll = track.scrollWidth - track.clientWidth - 2;
-            if (prev) prev.disabled = track.scrollLeft <= 2;
-            if (next) next.disabled = track.scrollLeft >= maxScroll;
-        }
-        if (prev) prev.addEventListener('click', function () { scrollByCells(-1); });
-        if (next) next.addEventListener('click', function () { scrollByCells(1); });
-        track.addEventListener('scroll', updateButtons);
-        window.addEventListener('resize', updateButtons);
-        track.addEventListener('keydown', function (e) {
-            var key = e.key || e.keyIdentifier;
-            if (key !== 'ArrowRight' && key !== 'ArrowLeft' && key !== 'Right' && key !== 'Left') return;
-            var c = cells();
-            if (!c.length) return;
-            var current = document.activeElement, idx = -1, i;
-            for (i = 0; i < c.length; i++) { if (c[i] === current) { idx = i; break; } }
-            var dir = (key === 'ArrowRight' || key === 'Right') ? 1 : -1;
-            var target = idx === -1 ? (dir > 0 ? 0 : c.length - 1) : idx + dir;
-            if (target < 0 || target >= c.length) return;
-            e.preventDefault();
-            c[target].focus();
-            c[target].scrollIntoView({ behavior: behavior(), inline: 'start', block: 'nearest' });
-        });
-        updateButtons();
-        window.setTimeout(updateButtons, 300);
+    /* show / hide details */
+    function setOpen(btn, open) {
+        var panel = document.getElementById(btn.getAttribute('aria-controls'));
+        if (!panel) { return; }
+        panel.hidden = !open;
+        btn.setAttribute('aria-expanded', String(open));
+        btn.textContent = open ? btn.getAttribute('data-less') : btn.getAttribute('data-more');
     }
-    var allTracks = document.querySelectorAll('.day-track');
-    for (var ti = 0; ti < allTracks.length; ti++) { initScroller(allTracks[ti]); }
+    var toggles = document.querySelectorAll('#dayList .toggle-btn');
+    Array.prototype.forEach.call(toggles, function (b) {
+        b.addEventListener('click', function () { setOpen(b, b.getAttribute('aria-expanded') !== 'true'); });
+    });
+    var all = document.getElementById('expandAll');
+    if (all) {
+        all.addEventListener('click', function () {
+            var open = all.getAttribute('aria-pressed') !== 'true';
+            all.setAttribute('aria-pressed', String(open));
+            all.textContent = open ? 'Collapse all details' : 'Expand all details';
+            Array.prototype.forEach.call(toggles, function (b) { setOpen(b, open); });
+        });
+    }
+
+    /* sticky day chips: highlight the day in view, keep the active chip visible */
+    var chipBar = document.getElementById('dayNav');
+    var chips = chipBar ? chipBar.querySelectorAll('.day-chip') : [];
+    var cards = document.querySelectorAll('#dayList .day-card');
+    function activate(id) {
+        Array.prototype.forEach.call(chips, function (c) {
+            var on = c.getAttribute('href') === '#' + id;
+            c.classList.toggle('is-active', on);
+            if (on) { c.setAttribute('aria-current', 'true'); } else { c.removeAttribute('aria-current'); }
+            if (on && chipBar.scrollWidth > chipBar.clientWidth) {
+                chipBar.scrollLeft = c.offsetLeft - (chipBar.clientWidth - c.offsetWidth) / 2;
+            }
+        });
+    }
+    function pickActive() {
+        var line = (nav ? nav.offsetHeight : 52) + (chipBar ? chipBar.offsetHeight : 60) + 24, best = null, i, r;
+        for (i = 0; i < cards.length; i++) {
+            r = cards[i].getBoundingClientRect();
+            if (r.top <= line) { best = cards[i]; }
+        }
+        var sec = document.getElementById('itinerary').getBoundingClientRect();
+        if (sec.top > line || sec.bottom < line) { best = null; }
+        if (best) { activate(best.id); }
+        else { Array.prototype.forEach.call(chips, function (c) { c.classList.remove('is-active'); c.removeAttribute('aria-current'); }); }
+    }
+    var ticking = false;
+    window.addEventListener('scroll', function () {
+        if (!ticking) { ticking = true; window.requestAnimationFrame(function () { ticking = false; pickActive(); }); }
+    }, { passive: true });
+    Array.prototype.forEach.call(chips, function (c) {
+        c.addEventListener('click', function () {
+            var card = document.getElementById(c.getAttribute('href').slice(1));
+            if (card) { window.setTimeout(function () { card.focus({ preventScroll: true }); pickActive(); }, 150); }
+        });
+    });
+    window.addEventListener('hashchange', function () { window.setTimeout(pickActive, 150); });
+    pickActive();
+
+    /* "View this day on the map" */
+    var links = document.querySelectorAll('.map-link');
+    Array.prototype.forEach.call(links, function (a) {
+        a.addEventListener('click', function () {
+            if (window.tripMapShowDay) { window.tripMapShowDay(parseInt(a.getAttribute('data-day'), 10)); }
+        });
+    });
 })();
 </script>
 </body>

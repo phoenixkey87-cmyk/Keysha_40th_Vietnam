@@ -84,7 +84,7 @@
 ---
 
 ### Map
-The Map section shows 42 places (hotels, dining, nightlife, cafés, shopping, wellness, airports and the cruise area, including Waterfront Danang). It uses Leaflet from `vendor/leaflet/` and OpenStreetMap tiles. **`vendor/` must be committed and deployed, or the map will not load** (the page falls back to a list of Google Maps links). Some pins are approximate; each popup has a Google Maps link to confirm.
+The Map section shows 42 places (hotels, dining, nightlife, cafés, shopping, wellness, airports and the cruise area, including Waterfront Danang). It uses Leaflet from `vendor/leaflet/` and CARTO basemap tiles (map data from OpenStreetMap). **`vendor/` must be committed and deployed, or the map will not load** (the page falls back to a list of Google Maps links). Some pins are approximate; each popup has a Google Maps link to confirm.
 
 ---
 
@@ -133,9 +133,9 @@ Copy-Item index.html vietnam_itinerary_site.html -Force
 ### Trip Summary
 - **Dates:** November 21–29, 2027
 - **Route:** Hanoi → Genesis Regal cruise → Hoi An (via Da Nang airport) → Ho Chi Minh City
-- **Hanoi Hotel:** Anatole Hotel Hanoi, Nov 21–23 (2 nights, itinerary #73592356274642)
+- **Hanoi Hotel:** Anatole Hotel Hanoi, Nov 21–23 (2 nights)
 - **Cruise:** Genesis Regal Luxury Cruise, Nov 23–24 (2 days / 1 night)
-- **Hoi An Hotel:** Silk Sense Hoi An River Resort, Nov 24–26 (2 nights, itinerary #73592431490681)
+- **Hoi An Hotel:** Silk Sense Hoi An River Resort, Nov 24–26 (2 nights)
 - **HCMC Hotel:** Hotel Grand Saigon, Nov 26–29 (3 nights)
 - **Da Nang dinner:** Waterfront Danang Restaurant & Bar, Nov 24 evening
 - **Flights:** Multi-city (fly INTO Hanoi HAN, fly HOME from HCMC SGN)

@@ -236,7 +236,7 @@
             body::after, .hero::before { display: none !important; }
             .hero { background: none !important; color: #000 !important; padding: 12pt 0 !important; }
             .hero h1, .hero .tagline, .hero .dates, .hero .route { color: #000 !important; }
-            .nav, #copyTextBtn, #copyTextStatus { display: none !important; }
+            .nav { display: none !important; }
             section { padding: 12pt 0 !important; border-bottom: 1px solid #000 !important; break-inside: avoid; }
             #travel-options { break-inside: avoid; background: #fff !important; color: #000 !important; }
             #travel-options a, a { color: #000 !important; text-decoration: underline; }
@@ -274,6 +274,14 @@
     </style>
     <style>
         /* DAY-BY-DAY redesign: vertical cards, sticky day chips, labelled blocks, badges, callouts. */
+        .hero-actions { margin: 18px 0 0; }
+        .print-btn {
+            min-height: 44px; padding: 0 22px; border-radius: 22px; border: 2px solid #fff; background: rgba(255,255,255,0.14);
+            color: #fff; font: inherit; font-weight: 700; font-size: 1rem; cursor: pointer; backdrop-filter: blur(2px);
+        }
+        .print-btn:hover { background: rgba(255,255,255,0.28); }
+        .print-btn:focus-visible { outline: 3px solid var(--bronze); outline-offset: 2px; }
+        @media print { .print-btn, .hero-actions { display: none !important; } }
         :root { --nav-h: 52px; --ink-muted: #595959; --alert-ink: #4A3500; }
         #itinerary .day-list { display: flex; flex-direction: column; gap: 22px; margin-top: 8px; }
         .day-nav {
@@ -352,6 +360,73 @@
             .day-head h3 { font-size: 12pt; }
         }
     </style>
+    <style>
+        /* CLIENT LAYOUT: contrast-safe gold, collapsible topics, stay cards, steps, contact, sticky action bar. */
+        :root { --bronze: #7E5C06; --gold-soft: #FFF8E1; --shadow: 0 2px 10px rgba(91,33,127,0.08); }
+        body { font-size: 1rem; line-height: 1.55; }
+        .hero-welcome { font-size: 1.05rem; color: #fff; margin: 10px 0 0; }
+        .hero .alert { color: #4A3500; }
+        .callout.important { color: #3A2A00; }
+        .section-lead { color: #4D4D4D; font-size: 1rem; }
+        .nav a[href="vietnam_rsvp.html"] { background: var(--bronze) !important; }
+        .nav a { display: inline-flex; align-items: center; min-height: 44px; font-size: 0.9rem; }
+        section.group-head { padding: 40px 0 6px; border-bottom: none; }
+        .group-title { font-size: 1.75rem; border-bottom: 3px solid var(--bronze); }
+        section.fold-section { padding: 10px 0; border-bottom: none; }
+        details.fold { background: var(--white); border: 1px solid var(--border); border-radius: 14px; box-shadow: var(--shadow); }
+        details.fold > summary {
+            list-style: none; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 12px;
+            min-height: 56px; padding: 12px 18px; border-radius: 14px;
+        }
+        details.fold > summary::-webkit-details-marker { display: none; }
+        details.fold > summary h2 { margin: 0; padding: 0; border: 0; font-size: 1.25rem; }
+        .fold-hint::after { content: '+'; display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; background: var(--soft-purple); color: var(--deep-purple); font-weight: 700; font-size: 1.3rem; }
+        details.fold[open] > summary .fold-hint::after { content: '\2212'; }
+        details.fold > summary:hover { background: var(--soft-purple); }
+        details.fold > summary:focus-visible, details.mini-fold > summary:focus-visible { outline: 3px solid var(--medium-purple); outline-offset: 2px; }
+        .fold-body { padding: 4px 18px 18px; }
+        .stay-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
+        @media (min-width: 768px) { .stay-grid { grid-template-columns: 1fr 1fr; } }
+        .stay-card { background: var(--white); border: 1px solid var(--border); border-radius: 14px; box-shadow: var(--shadow); padding: 18px; display: flex; flex-direction: column; }
+        .stay-top { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+        .stay-when { margin: 0; font-weight: 700; color: var(--medium-purple); font-size: 0.95rem; }
+        .status-pill { background: #E3F4E6; color: #14532D; border: 1px solid #8CC79A; border-radius: 999px; padding: 2px 12px; font-size: 0.85rem; font-weight: 700; white-space: nowrap; }
+        .stay-card h3 { margin: 6px 0 10px; font-size: 1.2rem; color: var(--deep-purple); }
+        .stay-facts { margin: 0; display: grid; gap: 8px; }
+        .stay-facts dt { font-size: 0.85rem; font-weight: 700; color: var(--deep-purple); text-transform: uppercase; letter-spacing: 0.03em; }
+        .stay-facts dd { margin: 0; font-size: 1rem; }
+        .stay-facts a, .stay-links a, .steps a, .section-lead a { color: var(--medium-purple); }
+        details.mini-fold { margin: 12px 0 0; border-top: 1px solid var(--border); padding-top: 6px; }
+        details.mini-fold > summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; font-weight: 700; color: var(--deep-purple); }
+        .stay-links { margin: auto 0 0; padding-top: 12px; display: flex; flex-wrap: wrap; gap: 4px 18px; }
+        .stay-links a { display: inline-flex; align-items: center; min-height: 44px; font-weight: 600; }
+        ol.steps { list-style: none; padding: 0; margin: 0 0 14px; display: grid; gap: 12px; }
+        ol.steps li { display: flex; gap: 14px; align-items: flex-start; background: var(--white); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; box-shadow: var(--shadow); font-size: 1rem; }
+        .step-n { flex: 0 0 auto; width: 34px; height: 34px; border-radius: 50%; background: var(--deep-purple); color: #fff; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; }
+        .contact-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
+        @media (min-width: 768px) { .contact-grid { grid-template-columns: repeat(3, 1fr); } }
+        .contact-btn { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 52px; padding: 0 18px; border-radius: 26px; border: 2px solid var(--deep-purple); color: var(--deep-purple); background: var(--white); text-decoration: none; font-weight: 700; font-size: 1.05rem; text-align: center; }
+        .contact-btn.primary { background: var(--deep-purple); color: #fff; }
+        .contact-btn:hover { filter: brightness(0.96); }
+        .contact-btn:focus-visible, .action-bar a:focus-visible { outline: 3px solid var(--bronze); outline-offset: 2px; }
+        .action-bar { display: none; }
+        @media (max-width: 900px) {
+            .action-bar {
+                display: flex; gap: 8px; align-items: center; position: fixed; left: 0; right: 0; bottom: 0; z-index: 200;
+                padding: 8px 12px calc(8px + env(safe-area-inset-bottom)); background: rgba(255,255,255,0.97);
+                border-top: 1px solid var(--border); box-shadow: 0 -4px 16px rgba(0,0,0,0.08);
+            }
+            .action-bar .ab-main { flex: 1 1 auto; display: flex; align-items: center; justify-content: center; min-height: 48px; border-radius: 24px; background: var(--deep-purple); color: #fff; font-weight: 700; text-decoration: none; font-size: 1.05rem; }
+            .action-bar .ab-icon { flex: 0 0 auto; display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 56px; min-height: 48px; border-radius: 12px; border: 1px solid var(--border); color: var(--deep-purple); text-decoration: none; font-size: 0.8rem; font-weight: 700; line-height: 1.1; }
+            body { padding-bottom: calc(72px + env(safe-area-inset-bottom)); }
+            .nav a[href="vietnam_rsvp.html"] { position: static !important; }
+        }
+        @media print {
+            .action-bar, .fold-hint, #contact .contact-grid { display: none !important; }
+            details.fold, .stay-card, ol.steps li { box-shadow: none !important; border: 1px solid #000 !important; }
+            section.fold-section { break-inside: auto; }
+        }
+    </style>
     <link rel="stylesheet" href="flight-monitor/ui/flight-monitor.css">
     <style>
         /* Flight Monitor (additive): map shared --fm-* variables to the purple/bronze palette. */
@@ -394,41 +469,32 @@
 </head>
 <body>
 <!-- HERO -->
-<div class="hero">
-    <img src="Phoenix-01-320.webp" width="320" height="259" alt="Phoenix Travels Logo">
+<header class="hero">
+    <img src="Phoenix-01-320.webp" width="320" height="259" alt="Phoenix Travels Logo" decoding="async" fetchpriority="high">
     <h1>Keysha's 40th Birthday Escape</h1>
     <div class="tagline">Luxury, Culture & Coastal Bliss</div>
+    <p class="hero-welcome">Join us in Vietnam to celebrate Keysha's 40th birthday.</p>
     <div class="dates">Vietnam &nbsp;|&nbsp; November 21–29, 2027</div>
     <div class="route">Hanoi &rarr; Genesis Regal Luxury Cruise &rarr; Da Nang / Hoi An &rarr; Ho Chi Minh City</div>
     <div class="alert">
         ✈️ <strong>Multi-City Flight Required:</strong> Fly INTO Hanoi (HAN) &bull; Fly HOME from Ho Chi Minh City (SGN). This is NOT a round trip.
     </div>
-</div>
+    <p class="hero-actions"><button type="button" class="print-btn" id="printBtn"><span aria-hidden="true">🖨️</span> Print itinerary</button></p>
+</header>
 
 <!-- NAV -->
-<nav class="nav">
-    <a href="#welcome">Welcome</a>
-    <a href="#snapshot">Snapshot</a>
-    <a href="#flights">Flights</a>
-    <a href="#travel-options">Travel Options</a>
-    <a href="#destinations">Destinations</a>
-    <a href="#itinerary">Day-by-Day</a>
+<nav class="nav" aria-label="Sections">
+    <a href="#welcome">Overview</a>
+    <a href="#itinerary">Itinerary</a>
     <a href="#hotels">Hotels</a>
-    <a href="#dining">Dining</a>
-    <a href="#nightlife">Nightlife</a>
-    <a href="#cafes">Cafés</a>
-    <a href="#shopping">Shopping</a>
-    <a href="#wellness">Wellness</a>
-    <a href="#budget">Budget</a>
+    <a href="#booking">Booking</a>
+    <a href="#explore">Explore</a>
     <a href="#map">Map</a>
-    <a href="#safety">Safety</a>
-    <a href="#weather">Weather</a>
-    <a href="#packing">Packing</a>
-    <a href="#payment">Payment</a>
-    <a href="#visa">Visa</a>
-    <a href="#tips">Tips</a>
+    <a href="#know">Know Before You Go</a>
+    <a href="#contact">Contact</a>
     <a href="vietnam_rsvp.html" style="background:var(--bronze);color:var(--white);border-radius:20px;animation:flash 2s ease-out infinite;">RSVP Now — by 12/4/26</a>
 </nav>
+<main id="main">
 <!-- WELCOME -->
 <section id="welcome">
 <div class="container">
@@ -476,65 +542,6 @@
             <tr><td>Da Nang Dinner</td><td>Selected</td><td>Waterfront Danang Restaurant &amp; Bar on the river, Nov 24 evening</td></tr>
         </tbody>
     </table>
-</div>
-</section>
-<!-- FLIGHT MONITOR -->
-<section id="flights">
-<div class="container">
-    <h2>Flight Monitor</h2>
-    <p>Lowest round-trip fares per person from St. Louis (STL) into Hanoi (HAN), home from Ho Chi Minh City (SGN), checked daily. Fares the data source did not return are marked not verified, never estimated.</p>
-    <div data-flight-monitor data-itinerary="original" data-origin="STL" data-arrive="HAN" data-depart="SGN"></div>
-</div>
-</section>
-<!-- TRAVEL OPTIONS (inline summary; the live Flight Monitor is above) -->
-<section id="travel-options">
-<div class="container">
-    <h2>Travel Options</h2>
-    <p>
-        A quick summary for this itinerary (arrive Hanoi, depart Ho Chi Minh City). The live fare
-        and departure-timing view is the Flight Monitor above. For the two domestic legs, compare airlines and
-        times with these Google Flights searches (search links only, not bookings):
-        <a href="https://www.google.com/travel/flights?q=Flights%20from%20HAN%20to%20DAD%20on%202027-11-24%20oneway" target="_blank" rel="noopener noreferrer" style="color:var(--medium-purple)">Hanoi to Da Nang, Nov 24</a>
-        &bull;
-        <a href="https://www.google.com/travel/flights?q=Flights%20from%20DAD%20to%20SGN%20on%202027-11-26%20oneway" target="_blank" rel="noopener noreferrer" style="color:var(--medium-purple)">Da Nang to Ho Chi Minh City, Nov 26</a>.
-    </p>
-    <div class="callout">
-        <strong>Recommended provisional departure:</strong> November 19, 2027 from St. Louis (STL).
-        Landing in Vietnam on November 21, 2027 is fixed; the departure date stays provisional until Part 1
-        schedule data exists.<br>
-        <strong>Mixed cabin</strong> (business long-haul + economy elsewhere, not a single-ticket quote):
-        <strong>not verified</strong> — a per-person headline shows only when live fares return for both
-        searches, and group totals wait on a confirmed traveler count.
-    </div>
-    <p class="wear">
-        All fares and times are not verified until checked for your November 2027 dates. Nothing is booked.
-        <button type="button" id="copyTextBtn" style="margin-left:8px;background:var(--deep-purple);color:var(--white);border:none;border-radius:20px;padding:6px 16px;min-height:44px;font-size:1rem;font-weight:600;cursor:pointer;">Copy as text</button>
-        <span id="copyTextStatus" aria-live="polite" style="margin-left:8px;font-size:0.82rem;color:var(--bronze);"></span>
-    </p>
-</div>
-</section>
-<!-- DESTINATIONS -->
-<section id="destinations">
-<div class="container">
-    <h2>Your Destinations</h2>
-
-    <h3>Hanoi</h3>
-    <p>Vietnam's capital is a city of contrasts — ancient temples sit beside French colonial architecture, and buzzing motorbike streets open onto peaceful lakes. The Old Quarter is a sensory experience of narrow lanes packed with street food vendors, silk shops, and coffee houses. November brings mild, comfortable weather perfect for exploring on foot.</p>
-    <p><strong style="color:var(--medium-purple)">Known For:</strong> Pho (rich bone broth with fresh herbs and rice noodles), bun cha (grilled pork with vermicelli, made famous by Obama's visit), egg coffee (ca phe trung — creamy whipped egg yolk over strong Vietnamese coffee), and banh mi (crispy baguette sandwiches with pate, pickled vegetables, and herbs). Hanoi's food is subtle, aromatic, and built on layered broths.</p>
-
-    <h3>Lan Ha Bay / Ha Long Bay</h3>
-    <p>A UNESCO World Heritage landscape of thousands of limestone karsts and islands rising from emerald waters. Cruising through the bay feels otherworldly — expect dramatic cliff faces, hidden caves, floating fishing villages, and stunning sunrises. The Genesis Regal cruise navigates the less-crowded Lan Ha Bay area for a more intimate, boutique experience.</p>
-    <p><strong style="color:var(--medium-purple)">Known For:</strong> Fresh seafood prepared onboard — whole grilled prawns, steamed fish with ginger and lime, crab spring rolls, and Vietnamese-style seafood hot pot. The cruise sources directly from local fishing villages. Expect full-board fine dining plus cooking classes where you can learn to make spring rolls and pho.</p>
-
-    <h3>Da Nang & Hoi An</h3>
-    <p>Da Nang is a modern coastal city with long stretches of white-sand beach, luxury resorts, and a relaxed pace. Just 30 minutes away, Hoi An Ancient Town is a UNESCO site known for its lantern-lined streets, centuries-old architecture, and world-famous tailor shops where you can get custom clothing made in 24–48 hours.</p>
-    <p><strong style="color:var(--medium-purple)">Known For:</strong> Cao lau (thick noodles with pork, herbs, and crispy croutons — only made in Hoi An), banh xeo (sizzling crispy crepes stuffed with shrimp and bean sprouts), mi quang (turmeric noodles), and white rose dumplings (delicate shrimp dumplings unique to Hoi An). The food is colorful, fresh, and deeply regional.</p>
-
-    <p><strong style="color:var(--medium-purple)">Optional Da Nang add-ons (not scheduled):</strong> if your Nov 24 flight lands early, nearby extras include Han Market (fabric, souvenirs, local snacks), Con Market, and the Marble Mountains (entry listed at 40,000 VND per adult plus 30,000 VND for the round-trip elevator). Cafes, rooftop bars and dinner alternatives are in the <a href="#cafes">Cafés</a>, <a href="#nightlife">Nightlife</a> and <a href="#dining">Dining</a> sections.</p>
-
-    <h3>Ho Chi Minh City (Saigon)</h3>
-    <p>Vietnam's largest city is energetic, modern, and full of nightlife. District 1 is the heart of the action — rooftop bars, Michelin-starred restaurants, designer boutiques, and bustling markets like Ben Thanh. This is where the trip reaches its glamorous finale with the All Black Everything evening.</p>
-    <p><strong style="color:var(--medium-purple)">Known For:</strong> Bold southern-style Vietnamese food — broken rice with grilled pork (com tam), fresh spring rolls (goi cuon), hu tieu (southern pork noodle soup), and banh trang tron (rice paper salad snack). Anan Saigon (your farewell dinner) holds a Michelin star for reimagining street food into elevated plates. Expect sweeter flavors, more coconut milk, and tropical fruit.</p>
 </div>
 </section>
 <!-- DAY-BY-DAY ITINERARY -->
@@ -959,60 +966,220 @@
 <!-- HOTELS -->
 <section id="hotels">
 <div class="container">
-    <h2>Hotel & Cruise Details</h2>
+    <h2>Hotel &amp; Cruise Details</h2>
+    <p class="section-lead">Every stay is booked. Tap a card's links for the hotel website and video tour.</p>
+    <div class="stay-grid">
+    <article class="stay-card">
+        <div class="stay-top"><p class="stay-when">Nov 21–23 · Hanoi</p><span class="status-pill">Confirmed</span></div>
+        <h3>Anatole Hotel Hanoi</h3>
+        <dl class="stay-facts">
+            <div><dt>Stay</dt><dd>2 nights, November 21–23 (check-in Sun Nov 21, check-out Tue Nov 23)</dd></div>
+            <div><dt>Room</dt><dd>Grand Executive Twin City View, 1 room, 2 guests</dd></div>
+            <div><dt>Address</dt><dd>30 Nha Chung, Hanoi, near Hoan Kiem Lake and the Old Quarter</dd></div>
+            <div><dt>Included</dt><dd>Breakfast included, free WiFi, welcome drink, pool, fitness center</dd></div>
+        </dl>
+        <p class="stay-links"><a href="https://www.youtube.com/watch?v=ZbrvwWcnzxQ" target="_blank" rel="noopener noreferrer">Watch the hotel video on YouTube →</a></p>
+    </article>
+    <article class="stay-card">
+        <div class="stay-top"><p class="stay-when">Nov 23–24 · Lan Ha Bay</p><span class="status-pill">Confirmed</span></div>
+        <h3>Genesis Regal Luxury Cruise</h3>
+        <dl class="stay-facts">
+            <div><dt>Stay</dt><dd>2 days / 1 night, November 23–24. Check-in 12:00 PM on Nov 23, check-out 9:30 AM on Nov 24</dd></div>
+            <div><dt>Style</dt><dd>Boutique luxury, balcony cabins, intimate experience</dd></div>
+            <div><dt>Highlights</dt><dd>Full-board meals, pool/jacuzzi, activities, sightseeing fees, tour guide, onboard insurance. Birthday celebration on November 23</dd></div>
+            <div><dt>Included</dt><dd>En-suite room on board, all meals, tea, coffee and water in the room, entrance and sightseeing fees, onboard insurance and service charges</dd></div>
+            <div><dt>Not included</dt><dd>Spa and massage, beverages, tips, personal expenses. Paying by credit card adds a 4% bank charge</dd></div>
+            <div><dt>Transfer</dt><dd>Free one-way limousine bus from Hanoi Old Quarter hotels (pickup and drop-off at Old Quarter hotels only)</dd></div>
+        </dl>
+        <details class="mini-fold">
+            <summary>Payment, cancellation and date changes</summary>
+            <ul class="clean">
+                <li>Payment: 30% deposit at booking, balance due 15 days before arrival (Nov 8, 2027)</li>
+                <li>Cancel or change more than 29 days before arrival (before Oct 25): 30% charged. 29 to 14 days (Oct 25 to Nov 9): 50%. 14 to 7 days (Nov 9 to Nov 16): 75%. Under 7 days or no-show: 100%</li>
+                <li>Date changes are allowed up to 14 days before departure by contacting the cruise to confirm availability</li>
+            </ul>
+        </details>
+        <p class="stay-links"><a href="https://genesisregalcruise.com/" target="_blank" rel="noopener noreferrer">Visit Website →</a> <a href="https://youtu.be/CrKO73u_1cQ?si=Mde7_qbBV14DeStl" target="_blank" rel="noopener noreferrer">Watch the cruise video on YouTube →</a></p>
+    </article>
+    <article class="stay-card">
+        <div class="stay-top"><p class="stay-when">Nov 24–26 · Hoi An</p><span class="status-pill">Confirmed</span></div>
+        <h3>Silk Sense Hoi An River Resort</h3>
+        <dl class="stay-facts">
+            <div><dt>Stay</dt><dd>2 nights, November 24–26 (check-in Wed Nov 24 from 2:00 PM, check-out Fri Nov 26 by noon)</dd></div>
+            <div><dt>Room</dt><dd>Deluxe Double or Twin Room, Bathtub, Garden View (Private Garden), 2 guests</dd></div>
+            <div><dt>Address</dt><dd>01 Dong Da Street, Hoi An (about 45 minutes from Da Nang airport)</dd></div>
+            <div><dt>Included</dt><dd>Breakfast included, free WiFi, free self parking, 24-hour room service</dd></div>
+            <div><dt>Spa</dt><dd>On-site spa (listed as Lotus Spa) for massage, facials and body treatments</dd></div>
+            <div><dt>Airport pickup</dt><dd>Airport pickup available (extra charge may apply): contact the resort at least 48 hours before arrival (Tel: <a href="tel:+842353754999">+84 235 3754999</a>)</dd></div>
+            <div><dt>Cancellation</dt><dd>Free cancellation until Nov 17, 2027</dd></div>
+        </dl>
+        <p class="stay-links"><a href="https://silksenseresort.com/" target="_blank" rel="noopener noreferrer">Visit Website →</a> <a href="https://www.youtube.com/watch?v=E0z37uusYqE" target="_blank" rel="noopener noreferrer">Watch the hotel video on YouTube →</a></p>
+    </article>
+    <article class="stay-card">
+        <div class="stay-top"><p class="stay-when">Nov 26–29 · Ho Chi Minh City</p><span class="status-pill">Confirmed</span></div>
+        <h3>Hotel Grand Saigon</h3>
+        <dl class="stay-facts">
+            <div><dt>Stay</dt><dd>3 nights, November 26–29 (check-in Fri Nov 26, check-out Mon Nov 29)</dd></div>
+            <div><dt>Room</dt><dd>Senior Deluxe Twin, 2 guests</dd></div>
+            <div><dt>Address</dt><dd>No. 8 Dong Khoi Street, District 1, Ho Chi Minh City</dd></div>
+            <div><dt>Included</dt><dd>Breakfast buffet included, free WiFi, air conditioning, 24-hour room service, full-service spa</dd></div>
+            <div><dt>Price</dt><dd>Total ₫12,599,997 for 3 nights including taxes and fees (about $492 at 25,631 VND per USD), paid at the property</dd></div>
+        </dl>
+        <p class="stay-links"><a href="https://www.hotelgrandsaigon.com/" target="_blank" rel="noopener noreferrer">Visit Website →</a> <a href="https://www.youtube.com/watch?v=x68gevz5U1M" target="_blank" rel="noopener noreferrer">Watch the hotel video on YouTube →</a></p>
+    </article>
+    </div>
+</div>
+</section>
+<!-- HOW BOOKING WORKS -->
+<section id="booking">
+<div class="container">
+    <h2>How Booking Works</h2>
+    <ol class="steps">
+        <li><span class="step-n" aria-hidden="true">1</span><div><strong>RSVP by 12/4/26.</strong> Use the <a href="vietnam_rsvp.html">RSVP form</a> to let us know you're coming.</div></li>
+        <li><span class="step-n" aria-hidden="true">2</span><div><strong>Secure your spot.</strong> The $250 deposit is due January 2027 (non-refundable).</div></li>
+        <li><span class="step-n" aria-hidden="true">3</span><div><strong>Pay gradually.</strong> The rest is paid in installments timed to when each part of the trip is booked. See the Payment Schedule below.</div></li>
+        <li><span class="step-n" aria-hidden="true">4</span><div><strong>Book your own international flight.</strong> Multi-city: fly INTO Hanoi (HAN) and HOME from Ho Chi Minh City (SGN). Hotels, the cruise and domestic flights are in the land package.</div></li>
+    </ol>
+    <p class="section-lead">Questions before you RSVP? <a href="#contact">Text or call us</a>.</p>
+</div>
+</section>
+<!-- PAYMENT -->
+<section id="payment">
+<div class="container">
+    <h2>Payment Schedule</h2>
+    <p>The payment plan lets you pay gradually instead of one large lump sum. Payments are timed to when each part of the trip is booked. International airfare is booked separately.</p>
+    <table>
+        <thead><tr><th>Due Date</th><th>Amount</th><th>What It Covers</th></tr></thead>
+        <tbody>
+            <tr><td>January 2027</td><td>$250</td><td>Deposit — secures your spot (non-refundable)</td></tr>
+            <tr><td>March 2027</td><td>$900</td><td>Genesis Regal Luxury Cruise (2 days / 1 night, full board)</td></tr>
+            <tr><td>May 2027</td><td>$750</td><td>Hotels — Hanoi (2 nights), Hoi An (2 nights), Ho Chi Minh City (3 nights)</td></tr>
+            <tr><td>July 2027</td><td>$350</td><td>Domestic flights — Hanoi → Da Nang and Da Nang → HCMC</td></tr>
+            <tr><td>September 2027</td><td>$500</td><td>Transfers, Hoi An day trip transport, farewell dinner, group activities</td></tr>
+            <tr><td>October 2027</td><td>Final balance</td><td>Any remaining balance; final itinerary and pre-departure meeting</td></tr>
+        </tbody>
+    </table>
+    <div class="callout">
+        <strong>Estimated total:</strong> $2,750–$3,250 per person depending on final hotel and activity selections. Amounts above are estimates and may shift slightly once November 2027 rates are confirmed.
+    </div>
+    <div class="callout">
+        <strong>Payment Methods:</strong><br>
+        <a href="https://venmo.com/PhoenixTravel" target="_blank" style="color:var(--deep-purple); font-weight:700; text-decoration:underline;">Venmo @PhoenixTravel</a> &nbsp;|&nbsp;
+        <a href="https://cash.app/$PhoenixTravel" target="_blank" style="color:var(--deep-purple); font-weight:700; text-decoration:underline;">CashApp $PhoenixTravel</a> &nbsp;|&nbsp;
+        <a href="https://paypal.me/ohphoenix" target="_blank" style="color:var(--deep-purple); font-weight:700; text-decoration:underline;">PayPal @ohphoenix</a>
+    </div>
 
-    <h3>Anatole Hotel Hanoi (Confirmed)</h3>
+    <h3>Included in Land Package</h3>
     <ul class="clean">
-        <li>2 nights, November 21–23 (check-in Sun Nov 21, check-out Tue Nov 23)</li>
-        <li>Grand Executive Twin City View, 1 room, 2 guests</li>
-        <li>30 Nha Chung, Hanoi, near Hoan Kiem Lake and the Old Quarter</li>
-        <li>Breakfast included, free WiFi, welcome drink, pool, fitness center</li>
-        <li>Booking reference: Itinerary #73592356274642</li>
+        <li>Hotels</li>
+        <li>Genesis Regal Luxury Cruise</li>
+        <li>Domestic flights within Vietnam</li>
+        <li>Airport transfers within Vietnam</li>
+        <li>Cruise transfers</li>
+        <li>Breakfast at hotels where included</li>
+        <li>All meals during the cruise</li>
+        <li>Farewell birthday dinner</li>
+        <li>Scheduled group activities / transportation</li>
     </ul>
-    <p><a href="https://www.youtube.com/watch?v=ZbrvwWcnzxQ" target="_blank" rel="noopener noreferrer">Watch the hotel video on YouTube →</a></p>
 
-    <h3>Genesis Regal Luxury Cruise (Confirmed)</h3>
+    <h3>Not Included</h3>
     <ul class="clean">
-        <li>2 days / 1 night, November 23–24</li>
-        <li>Boutique luxury, balcony cabins, intimate experience</li>
-        <li>Full-board meals, pool/jacuzzi, activities, sightseeing fees, tour guide, onboard insurance</li>
-        <li>Birthday celebration on November 23</li>
-        <li>Check-in 12:00 PM on Nov 23, check-out 9:30 AM on Nov 24</li>
-        <li>Included: en-suite room on board, all meals, tea, coffee and water in the room, entrance and sightseeing fees, onboard insurance and service charges</li>
-        <li>Not included: spa and massage, beverages, tips, personal expenses. Paying by credit card adds a 4% bank charge</li>
-        <li>Payment: 30% deposit at booking, balance due 15 days before arrival (Nov 8, 2027)</li>
-        <li>Cancel or change more than 29 days before arrival (before Oct 25): 30% charged. 29 to 14 days (Oct 25 to Nov 9): 50%. 14 to 7 days (Nov 9 to Nov 16): 75%. Under 7 days or no-show: 100%</li>
-        <li>Date changes are allowed up to 14 days before departure by contacting the cruise to confirm availability</li>
-        <li>Free one-way limousine bus from Hanoi Old Quarter hotels (pickup and drop-off at Old Quarter hotels only)</li>
+        <li>International airfare from the U.S. to Vietnam</li>
+        <li>Travel insurance</li>
+        <li>Passport fees</li>
+        <li>Vietnam visa fees</li>
+        <li>Shopping</li>
+        <li>Alcoholic beverages</li>
+        <li>Meals not listed as included</li>
+        <li>Optional excursions</li>
+        <li>Personal spending money</li>
+        <li>Grab / Uber rides (personal transportation outside of scheduled group transfers)</li>
     </ul>
-    <p><a href="https://genesisregalcruise.com/" target="_blank">Visit Website →</a> &nbsp;|&nbsp; <a href="https://youtu.be/CrKO73u_1cQ?si=Mde7_qbBV14DeStl" target="_blank" rel="noopener noreferrer">Watch the cruise video on YouTube →</a></p>
+</div>
+</section>
+<!-- VISA -->
+<section class="fold-section" id="visa">
+<div class="container">
+<details class="fold">
+<summary><h2>Vietnam Visa & Entry Requirements</h2><span class="fold-hint" aria-hidden="true"></span></summary>
+<div class="fold-body">
 
-    <h3>Silk Sense Hoi An River Resort (Confirmed)</h3>
     <ul class="clean">
-        <li>2 nights, November 24–26 (check-in Wed Nov 24 from 2:00 PM, check-out Fri Nov 26 by noon)</li>
-        <li>Deluxe Double or Twin Room, Bathtub, Garden View (Private Garden), 2 guests</li>
-        <li>01 Dong Da Street, Hoi An (about 45 minutes from Da Nang airport)</li>
-        <li>Breakfast included, free WiFi, free self parking, 24-hour room service</li>
-        <li>Airport pickup available (extra charge may apply): contact the resort at least 48 hours before arrival (Tel: +84 235 3754999)</li>
-        <li>Free cancellation until Nov 17, 2027</li>
-        <li>On-site spa (listed as Lotus Spa) for massage, facials and body treatments</li>
-        <li>Booking reference: Itinerary #73592431490681</li>
+        <li>Most U.S. travelers need a visa to enter Vietnam</li>
+        <li>Estimated single-entry e-visa cost: approximately $25 USD</li>
+        <li>This itinerary should only require single entry</li>
+        <li>Begin reviewing requirements 90–120 days before departure</li>
+        <li>Submit the e-visa application at least 8 weeks before departure (by late September 2027)</li>
+        <li>Passport must be valid for at least 6 months beyond arrival with blank pages available</li>
+        <li>Print and save digital copies of passport, visa, flights, hotel confirmations, and travel insurance</li>
     </ul>
-    <p><a href="https://www.youtube.com/watch?v=E0z37uusYqE" target="_blank" rel="noopener noreferrer">Watch the hotel video on YouTube →</a></p>
-    <h3>Hotel Grand Saigon (Confirmed)</h3>
-    <ul class="clean">
-        <li>3 nights, November 26–29 (check-in Fri Nov 26, check-out Mon Nov 29)</li>
-        <li>No. 8 Dong Khoi Street, District 1, Ho Chi Minh City</li>
-        <li>Senior Deluxe Twin, 2 guests, breakfast buffet included, free WiFi, air conditioning, 24-hour room service, full-service spa</li>
-        <li>Total ₫12,599,997 for 3 nights including taxes and fees (about $492 at 25,631 VND per USD), paid at the property</li>
-    </ul>
-    <p><a href="https://www.youtube.com/watch?v=x68gevz5U1M" target="_blank" rel="noopener noreferrer">Watch the hotel video on YouTube →</a></p>
+    <div class="callout important">
+        <strong>Do not wait until the last minute</strong> to apply for the Vietnam e-visa. Travelers without required documents may be denied boarding or entry.
+    </div>
+    <p><strong>Apply here (official government site):</strong> <a href="https://evisa.gov.vn" target="_blank" style="color:var(--medium-purple); font-weight:600;">evisa.gov.vn →</a></p>
+    <p style="font-size:0.82rem; color:#888;">⚠️ Only use the official .gov.vn website. Avoid third-party sites that charge extra fees.</p>
+
+    <h3>Register with the U.S. Embassy</h3>
+    <p>Enroll in the <strong>Smart Traveler Enrollment Program (STEP)</strong> — a free service from the U.S. Department of State. It sends you safety alerts and helps the embassy reach you in an emergency abroad.</p>
+    <p><a href="https://step.state.gov" target="_blank" style="color:var(--medium-purple); font-weight:600;">Register at step.state.gov →</a></p>
+</div>
+</details>
+</div>
+</section>
+<!-- FLIGHT MONITOR -->
+<section class="fold-section" id="flights">
+<div class="container">
+<details class="fold">
+<summary><h2>Flight Monitor</h2><span class="fold-hint" aria-hidden="true"></span></summary>
+<div class="fold-body">
+
+    <p>Lowest round-trip fares per person from St. Louis (STL) into Hanoi (HAN), home from Ho Chi Minh City (SGN), checked daily. Fares the data source did not return are marked not verified, never estimated.</p>
+    <div data-flight-monitor data-itinerary="original" data-origin="STL" data-arrive="HAN" data-depart="SGN"></div>
+</div>
+</details>
+</div>
+</section>
+<!-- TRAVEL OPTIONS (inline summary; the live Flight Monitor is above) -->
+<section class="fold-section" id="travel-options">
+<div class="container">
+<details class="fold">
+<summary><h2>Travel Options</h2><span class="fold-hint" aria-hidden="true"></span></summary>
+<div class="fold-body">
+
+    <p>
+        A quick summary for this itinerary (arrive Hanoi, depart Ho Chi Minh City). The live fare
+        and departure-timing view is the Flight Monitor above. For the two domestic legs, compare airlines and
+        times with these Google Flights searches (search links only, not bookings):
+        <a href="https://www.google.com/travel/flights?q=Flights%20from%20HAN%20to%20DAD%20on%202027-11-24%20oneway" target="_blank" rel="noopener noreferrer" style="color:var(--medium-purple)">Hanoi to Da Nang, Nov 24</a>
+        &bull;
+        <a href="https://www.google.com/travel/flights?q=Flights%20from%20DAD%20to%20SGN%20on%202027-11-26%20oneway" target="_blank" rel="noopener noreferrer" style="color:var(--medium-purple)">Da Nang to Ho Chi Minh City, Nov 26</a>.
+    </p>
+    <div class="callout">
+        <strong>Recommended provisional departure:</strong> November 19, 2027 from St. Louis (STL).
+        Landing in Vietnam on November 21, 2027 is fixed; the departure date stays provisional until Part 1
+        schedule data exists.<br>
+        <strong>Mixed cabin</strong> (business long-haul + economy elsewhere, not a single-ticket quote):
+        <strong>not verified</strong> — a per-person headline shows only when live fares return for both
+        searches, and group totals wait on a confirmed traveler count.
+    </div>
+</div>
+</details>
+</div>
+</section>
+<!-- GROUP: EXPLORE VIETNAM -->
+<section id="explore" class="group-head">
+<div class="container">
+    <h2 class="group-title">Explore Vietnam</h2>
+    <p class="section-lead">Dining, nightlife, coffee, shopping and wellness. Tap a topic to open it.</p>
 </div>
 </section>
 <!-- DINING -->
-<section id="dining">
+<section class="fold-section" id="dining">
 <div class="container">
-    <h2>Dining & Celebration Moments</h2>
+<details class="fold">
+<summary><h2>Dining & Celebration Moments</h2><span class="fold-hint" aria-hidden="true"></span></summary>
+<div class="fold-body">
+
 
     <h3>November 23 — Birthday at Sea</h3>
     <ul class="clean">
@@ -1067,11 +1234,16 @@
         <li><strong>Social Club Rooftop Bar</strong> (Hotel des Arts Saigon, District 3): rooftop terrace with an infinity pool; used for the Nov 27 evening. <a href="https://www.hoteldesartssaigon.com/restaurants-bars/social-club-rooftop-bar/" target="_blank" rel="noopener noreferrer">Reserve →</a></li>
     </ul>
 </div>
+</details>
+</div>
 </section>
 <!-- NIGHTLIFE -->
-<section id="nightlife">
+<section class="fold-section" id="nightlife">
 <div class="container">
-    <h2>Nightlife</h2>
+<details class="fold">
+<summary><h2>Nightlife</h2><span class="fold-hint" aria-hidden="true"></span></summary>
+<div class="fold-body">
+
     <p>R&amp;B, hip-hop and Afrobeats are the brief, with night markets and rooftops for the quieter evenings. Venue details come from listings dated November 2026; no event schedule is confirmed for November 2027.</p>
 
     <h3>Evening-by-Evening</h3>
@@ -1220,11 +1392,16 @@
         </div>
     </div>
 </div>
+</details>
+</div>
 </section>
 <!-- CAFES -->
-<section id="cafes">
+<section class="fold-section" id="cafes">
 <div class="container">
-    <h2>Beautiful Coffee Shops</h2>
+<details class="fold">
+<summary><h2>Beautiful Coffee Shops</h2><span class="fold-hint" aria-hidden="true"></span></summary>
+<div class="fold-body">
+
     <p>Two scenic stops are placed on the route: one in Hanoi and one in Hoi An. Saigon gets a cafe route on Nov 28. Da Nang cafes are optional add-ons if the Nov 24 flight lands early.</p>
     <h3>Featured on Your Route</h3>
     <div class="hotel-grid">
@@ -1321,11 +1498,16 @@
     </div>
     <p class="small">The earlier "Hoi An cafes" idea is now Faifo Coffee. XLIII Coffee also has a Hoi An shop at 326 Ly Thuong Kiet.</p>
 </div>
+</details>
+</div>
 </section>
 <!-- SHOPPING -->
-<section id="shopping">
+<section class="fold-section" id="shopping">
 <div class="container">
-    <h2>Shopping Guide</h2>
+<details class="fold">
+<summary><h2>Shopping Guide</h2><span class="fold-hint" aria-hidden="true"></span></summary>
+<div class="fold-body">
+
     <table>
         <thead><tr><th>City</th><th>Shopping Plan</th></tr></thead>
         <tbody>
@@ -1353,12 +1535,16 @@
     </ul>
     <div class="callout important">Suggested personal shopping budget: $300–$500. Pack a foldable duffel bag or leave suitcase space.</div>
 </div>
+</details>
+</div>
 </section>
-
 <!-- WELLNESS -->
-<section id="wellness">
+<section class="fold-section" id="wellness">
 <div class="container">
-    <h2>Wellness, Medical &amp; Beauty</h2>
+<details class="fold">
+<summary><h2>Wellness, Medical &amp; Beauty</h2><span class="fold-hint" aria-hidden="true"></span></summary>
+<div class="fold-body">
+
     <h3>Two Wellness Days</h3>
     <ul class="clean">
         <li><strong>Thu Nov 25 (Hoi An):</strong> slow recovery day after the cruise-and-flight day. Resort breakfast, pool and a massage or facial at the Silk Sense spa (listed as Lotus Spa, with massage, aromatherapy, sauna and yoga reported). The afternoon is a gentle tailor and coffee stroll.</li>
@@ -1441,39 +1627,14 @@
         </div>
     </div>
 </div>
-</section>
-<!-- BUDGET -->
-<section id="budget">
-<div class="container">
-    <h2>Budget Planner</h2>
-    <p>Planning estimates only, in USD. Items marked "Not priced yet" have no verified price. Amounts convert at about 25,631 VND per USD (State Bank of Vietnam reference rate, Nov 2, 2026; a late-2026 rate, not a 2027 forecast). The Payment Schedule below remains the group payment plan.</p>
-    <table>
-        <thead><tr><th>Item</th><th>Quantity</th><th>Planning Figure</th><th>Notes</th></tr></thead>
-        <tbody>
-            <tr><td>Hotels</td><td>7 nights</td><td>Booked</td><td>7 hotel nights (Hanoi 2, Hoi An 2, Ho Chi Minh City 3); the Nov 23 night is on the cruise. All three hotels are booked and paid at the property; see the Hotel &amp; Cruise Details.</td></tr>
-            <tr><td>Domestic flights</td><td>2 tickets</td><td>Not priced yet</td><td>Hanoi to Da Nang on Nov 24 and Da Nang to Ho Chi Minh City on Nov 26. Fares not researched; enter quotes.</td></tr>
-            <tr><td>Airport transfers</td><td>4 transfers</td><td>Not priced yet</td><td>Private transfers at both airports, in and out. No quotes yet.</td></tr>
-            <tr><td>Michelin dining</td><td>1 dinners</td><td>US$115 per dinner</td><td>Anan Saigon Saigon Tasting Menu, food only, listed at US$115 per person (Nov 2026). Drink pairings extra; check the 2027 price when booking.</td></tr>
-            <tr><td>Birthday extras on the cruise</td><td>1 package</td><td>Not priced yet</td><td>The birthday dinner is onboard the Genesis Regal cruise (full-board meals are included). Enter the cost of any cake, decorations or drinks requested from the cruise.</td></tr>
-            <tr><td>Nightlife</td><td>3 nights</td><td>Not priced yet</td><td>Cover and table minimums are mostly unpublished. Third-party guides mention table minimums from about VND 3.5 million.</td></tr>
-            <tr><td>Medical physical</td><td>1 exam</td><td>US$652 per exam</td><td>FV Executive programme list price of 16,700,000 VND, about US$650. Standard (4,800,000 VND) and Extensive (7,800,000 VND) packages cost less.</td></tr>
-            <tr><td>Dental cleaning</td><td>1 visit</td><td>US$36 per visit</td><td>HCMC Dental lists a deep clean from US$36 (scaling from US$12) on its own site.</td></tr>
-            <tr><td>Facial treatments</td><td>1 treatment</td><td>Not priced yet</td><td>No verified price.</td></tr>
-            <tr><td>Body contouring</td><td>1 consultation</td><td>Not priced yet</td><td>Consultation first; any treatment cost depends on a physician&#x27;s advice. No guaranteed results.</td></tr>
-            <tr><td>Spa &amp; massages</td><td>3 treatments</td><td>Not priced yet</td><td>Hotel spa menus not captured.</td></tr>
-            <tr><td>Shopping</td><td>1 budget</td><td>Not priced yet</td><td>Defaults to 0 and is left out of fixed totals until you enter an amount.</td></tr>
-            <tr><td>Excursions</td><td>1 outing</td><td>US$3 per outing</td><td>Marble Mountains entry is 40,000 VND per adult plus 30,000 VND for a round-trip elevator, about US$3 in total. Add other outings as you choose them.</td></tr>
-            <tr><td>Food &amp; beverages</td><td>9 days</td><td>US$50 per day</td><td>Planning allowance per day for meals other than the dinners above. Edit me.</td></tr>
-            <tr><td>Contingency fund</td><td>1 fund</td><td>Not priced yet</td><td>Set aside an amount for changes and surprises.</td></tr>
-        </tbody>
-    </table>
+</details>
 </div>
 </section>
 <!-- MAP -->
 <section id="map">
 <div class="container">
     <h2>Map</h2>
-    <p>Every stop in the plan: hotels, dining, nightlife, cafés, shopping, wellness and transport, including Waterfront Danang Restaurant &amp; Bar. Choose a city and category, then tap a pin for the day and a Google Maps link. Pins marked approximate are area-level estimates, so confirm the exact spot in Google Maps. Map tiles load from OpenStreetMap.</p>
+    <p>Every stop in the plan: hotels, dining, nightlife, cafés, shopping, wellness and transport, including Waterfront Danang Restaurant &amp; Bar. Choose a city and category, then tap a pin for the day and a Google Maps link. Pins marked approximate are area-level estimates, so confirm the exact spot in Google Maps. Map data from OpenStreetMap, tiles by CARTO.</p>
     <div id="mapBody">
         <p class="small" id="mapDayNote" hidden><span id="mapDayText"></span> <button type="button" class="chip" id="mapDayClear">Show all days</button></p>
         <div class="chip-row" id="mapCityRow" role="group" aria-label="City"></div>
@@ -1484,24 +1645,49 @@
     </div>
 </div>
 </section>
-
-<!-- SAFETY -->
-<section id="safety">
+<!-- GROUP: KNOW BEFORE YOU GO -->
+<section id="know" class="group-head">
 <div class="container">
-    <h2>Night Out & Safety Plan</h2>
-    <ul class="clean">
-        <li>Stay in or near central areas with easy Grab access</li>
-        <li>Use Grab instead of hailing taxis whenever possible</li>
-        <li>Travel together at night and return together after the club</li>
-        <li>Avoid staying directly on extremely noisy party streets if sleep is important</li>
-        <li>Club shortlist: Piu Piu, Mershe Saigon, Weeknd SGN, Afro Chill Lounge, CUR8 Saigon, Neighborhood Saigon, LOCO Complex, Bam Bam, PAPI (details in <a href="#nightlife" style="color:var(--medium-purple)">Nightlife</a>)</li>
-    </ul>
+    <h2 class="group-title">Know Before You Go</h2>
+    <p class="section-lead">Destinations, weather, packing, safety, tips and the budget planner. Tap a topic to open it.</p>
+</div>
+</section>
+<!-- DESTINATIONS -->
+<section class="fold-section" id="destinations">
+<div class="container">
+<details class="fold">
+<summary><h2>Your Destinations</h2><span class="fold-hint" aria-hidden="true"></span></summary>
+<div class="fold-body">
+
+
+    <h3>Hanoi</h3>
+    <p>Vietnam's capital is a city of contrasts — ancient temples sit beside French colonial architecture, and buzzing motorbike streets open onto peaceful lakes. The Old Quarter is a sensory experience of narrow lanes packed with street food vendors, silk shops, and coffee houses. November brings mild, comfortable weather perfect for exploring on foot.</p>
+    <p><strong style="color:var(--medium-purple)">Known For:</strong> Pho (rich bone broth with fresh herbs and rice noodles), bun cha (grilled pork with vermicelli, made famous by Obama's visit), egg coffee (ca phe trung — creamy whipped egg yolk over strong Vietnamese coffee), and banh mi (crispy baguette sandwiches with pate, pickled vegetables, and herbs). Hanoi's food is subtle, aromatic, and built on layered broths.</p>
+
+    <h3>Lan Ha Bay / Ha Long Bay</h3>
+    <p>A UNESCO World Heritage landscape of thousands of limestone karsts and islands rising from emerald waters. Cruising through the bay feels otherworldly — expect dramatic cliff faces, hidden caves, floating fishing villages, and stunning sunrises. The Genesis Regal cruise navigates the less-crowded Lan Ha Bay area for a more intimate, boutique experience.</p>
+    <p><strong style="color:var(--medium-purple)">Known For:</strong> Fresh seafood prepared onboard — whole grilled prawns, steamed fish with ginger and lime, crab spring rolls, and Vietnamese-style seafood hot pot. The cruise sources directly from local fishing villages. Expect full-board fine dining plus cooking classes where you can learn to make spring rolls and pho.</p>
+
+    <h3>Da Nang & Hoi An</h3>
+    <p>Da Nang is a modern coastal city with long stretches of white-sand beach, luxury resorts, and a relaxed pace. Just 30 minutes away, Hoi An Ancient Town is a UNESCO site known for its lantern-lined streets, centuries-old architecture, and world-famous tailor shops where you can get custom clothing made in 24–48 hours.</p>
+    <p><strong style="color:var(--medium-purple)">Known For:</strong> Cao lau (thick noodles with pork, herbs, and crispy croutons — only made in Hoi An), banh xeo (sizzling crispy crepes stuffed with shrimp and bean sprouts), mi quang (turmeric noodles), and white rose dumplings (delicate shrimp dumplings unique to Hoi An). The food is colorful, fresh, and deeply regional.</p>
+
+    <p><strong style="color:var(--medium-purple)">Optional Da Nang add-ons (not scheduled):</strong> if your Nov 24 flight lands early, nearby extras include Han Market (fabric, souvenirs, local snacks), Con Market, and the Marble Mountains (entry listed at 40,000 VND per adult plus 30,000 VND for the round-trip elevator). Cafes, rooftop bars and dinner alternatives are in the <a href="#cafes">Cafés</a>, <a href="#nightlife">Nightlife</a> and <a href="#dining">Dining</a> sections.</p>
+
+    <h3>Ho Chi Minh City (Saigon)</h3>
+    <p>Vietnam's largest city is energetic, modern, and full of nightlife. District 1 is the heart of the action — rooftop bars, Michelin-starred restaurants, designer boutiques, and bustling markets like Ben Thanh. This is where the trip reaches its glamorous finale with the All Black Everything evening.</p>
+    <p><strong style="color:var(--medium-purple)">Known For:</strong> Bold southern-style Vietnamese food — broken rice with grilled pork (com tam), fresh spring rolls (goi cuon), hu tieu (southern pork noodle soup), and banh trang tron (rice paper salad snack). Anan Saigon (your farewell dinner) holds a Michelin star for reimagining street food into elevated plates. Expect sweeter flavors, more coconut milk, and tropical fruit.</p>
+</div>
+</details>
 </div>
 </section>
 <!-- WEATHER -->
-<section id="weather">
+<section class="fold-section" id="weather">
 <div class="container">
-    <h2>Weather & What to Wear</h2>
+<details class="fold">
+<summary><h2>Weather & What to Wear</h2><span class="fold-hint" aria-hidden="true"></span></summary>
+<div class="fold-body">
+
     <table>
         <thead><tr><th>Dates</th><th>Location</th><th>Weather</th><th>What to Wear</th></tr></thead>
         <tbody>
@@ -1513,12 +1699,16 @@
         </tbody>
     </table>
 </div>
+</details>
+</div>
 </section>
-
 <!-- PACKING -->
-<section id="packing">
+<section class="fold-section" id="packing">
 <div class="container">
-    <h2>Packing Checklist</h2>
+<details class="fold">
+<summary><h2>Packing Checklist</h2><span class="fold-hint" aria-hidden="true"></span></summary>
+<div class="fold-body">
+
     <table>
         <thead><tr><th>Category</th><th>Items</th></tr></thead>
         <tbody>
@@ -1532,90 +1722,34 @@
         </tbody>
     </table>
 </div>
-</section>
-<!-- PAYMENT -->
-<section id="payment">
-<div class="container">
-    <h2>Payment Schedule</h2>
-    <p>The payment plan lets you pay gradually instead of one large lump sum. Payments are timed to when each part of the trip is booked. International airfare is booked separately.</p>
-    <table>
-        <thead><tr><th>Due Date</th><th>Amount</th><th>What It Covers</th></tr></thead>
-        <tbody>
-            <tr><td>January 2027</td><td>$250</td><td>Deposit — secures your spot (non-refundable)</td></tr>
-            <tr><td>March 2027</td><td>$900</td><td>Genesis Regal Luxury Cruise (2 days / 1 night, full board)</td></tr>
-            <tr><td>May 2027</td><td>$750</td><td>Hotels — Hanoi (2 nights), Hoi An (2 nights), Ho Chi Minh City (3 nights)</td></tr>
-            <tr><td>July 2027</td><td>$350</td><td>Domestic flights — Hanoi → Da Nang and Da Nang → HCMC</td></tr>
-            <tr><td>September 2027</td><td>$500</td><td>Transfers, Hoi An day trip transport, farewell dinner, group activities</td></tr>
-            <tr><td>October 2027</td><td>Final balance</td><td>Any remaining balance; final itinerary and pre-departure meeting</td></tr>
-        </tbody>
-    </table>
-    <div class="callout">
-        <strong>Estimated total:</strong> $2,750–$3,250 per person depending on final hotel and activity selections. Amounts above are estimates and may shift slightly once November 2027 rates are confirmed.
-    </div>
-    <div class="callout">
-        <strong>Payment Methods:</strong><br>
-        <a href="https://venmo.com/PhoenixTravel" target="_blank" style="color:var(--deep-purple); font-weight:700; text-decoration:underline;">Venmo @PhoenixTravel</a> &nbsp;|&nbsp;
-        <a href="https://cash.app/$PhoenixTravel" target="_blank" style="color:var(--deep-purple); font-weight:700; text-decoration:underline;">CashApp $PhoenixTravel</a> &nbsp;|&nbsp;
-        <a href="https://paypal.me/ohphoenix" target="_blank" style="color:var(--deep-purple); font-weight:700; text-decoration:underline;">PayPal @ohphoenix</a>
-    </div>
-
-    <h3>Included in Land Package</h3>
-    <ul class="clean">
-        <li>Hotels</li>
-        <li>Genesis Regal Luxury Cruise</li>
-        <li>Domestic flights within Vietnam</li>
-        <li>Airport transfers within Vietnam</li>
-        <li>Cruise transfers</li>
-        <li>Breakfast at hotels where included</li>
-        <li>All meals during the cruise</li>
-        <li>Farewell birthday dinner</li>
-        <li>Scheduled group activities / transportation</li>
-    </ul>
-
-    <h3>Not Included</h3>
-    <ul class="clean">
-        <li>International airfare from the U.S. to Vietnam</li>
-        <li>Travel insurance</li>
-        <li>Passport fees</li>
-        <li>Vietnam visa fees</li>
-        <li>Shopping</li>
-        <li>Alcoholic beverages</li>
-        <li>Meals not listed as included</li>
-        <li>Optional excursions</li>
-        <li>Personal spending money</li>
-        <li>Grab / Uber rides (personal transportation outside of scheduled group transfers)</li>
-    </ul>
+</details>
 </div>
 </section>
-<!-- VISA -->
-<section id="visa">
+<!-- SAFETY -->
+<section class="fold-section" id="safety">
 <div class="container">
-    <h2>Vietnam Visa & Entry Requirements</h2>
-    <ul class="clean">
-        <li>Most U.S. travelers need a visa to enter Vietnam</li>
-        <li>Estimated single-entry e-visa cost: approximately $25 USD</li>
-        <li>This itinerary should only require single entry</li>
-        <li>Begin reviewing requirements 90–120 days before departure</li>
-        <li>Submit the e-visa application at least 8 weeks before departure (by late September 2027)</li>
-        <li>Passport must be valid for at least 6 months beyond arrival with blank pages available</li>
-        <li>Print and save digital copies of passport, visa, flights, hotel confirmations, and travel insurance</li>
-    </ul>
-    <div class="callout important">
-        <strong>Do not wait until the last minute</strong> to apply for the Vietnam e-visa. Travelers without required documents may be denied boarding or entry.
-    </div>
-    <p><strong>Apply here (official government site):</strong> <a href="https://evisa.gov.vn" target="_blank" style="color:var(--medium-purple); font-weight:600;">evisa.gov.vn →</a></p>
-    <p style="font-size:0.82rem; color:#888;">⚠️ Only use the official .gov.vn website. Avoid third-party sites that charge extra fees.</p>
+<details class="fold">
+<summary><h2>Night Out & Safety Plan</h2><span class="fold-hint" aria-hidden="true"></span></summary>
+<div class="fold-body">
 
-    <h3>Register with the U.S. Embassy</h3>
-    <p>Enroll in the <strong>Smart Traveler Enrollment Program (STEP)</strong> — a free service from the U.S. Department of State. It sends you safety alerts and helps the embassy reach you in an emergency abroad.</p>
-    <p><a href="https://step.state.gov" target="_blank" style="color:var(--medium-purple); font-weight:600;">Register at step.state.gov →</a></p>
+    <ul class="clean">
+        <li>Stay in or near central areas with easy Grab access</li>
+        <li>Use Grab instead of hailing taxis whenever possible</li>
+        <li>Travel together at night and return together after the club</li>
+        <li>Avoid staying directly on extremely noisy party streets if sleep is important</li>
+        <li>Club shortlist: Piu Piu, Mershe Saigon, Weeknd SGN, Afro Chill Lounge, CUR8 Saigon, Neighborhood Saigon, LOCO Complex, Bam Bam, PAPI (details in <a href="#nightlife" style="color:var(--medium-purple)">Nightlife</a>)</li>
+    </ul>
+</div>
+</details>
 </div>
 </section>
-
 <!-- TIPS -->
-<section id="tips">
+<section class="fold-section" id="tips">
 <div class="container">
-    <h2>Helpful Tips & Know Before You Go</h2>
+<details class="fold">
+<summary><h2>Helpful Tips & Know Before You Go</h2><span class="fold-hint" aria-hidden="true"></span></summary>
+<div class="fold-body">
+
 
     <h3>Apps to Download</h3>
     <ul class="clean">
@@ -1666,8 +1800,61 @@
     <p>Travel insurance is strongly recommended for international trips. We suggest:</p>
     <p><a href="https://www.allianztravelinsurance.com/" target="_blank" style="color:var(--medium-purple); font-weight:600;">Allianz Travel Insurance →</a></p>
 </div>
+</details>
+</div>
 </section>
+<!-- BUDGET -->
+<section class="fold-section" id="budget">
+<div class="container">
+<details class="fold">
+<summary><h2>Budget Planner</h2><span class="fold-hint" aria-hidden="true"></span></summary>
+<div class="fold-body">
+
+    <p>Planning estimates only, in USD. Items marked "Not priced yet" have no verified price. Amounts convert at about 25,631 VND per USD (State Bank of Vietnam reference rate, Nov 2, 2026; a late-2026 rate, not a 2027 forecast). The Payment Schedule below remains the group payment plan.</p>
+    <table>
+        <thead><tr><th>Item</th><th>Quantity</th><th>Planning Figure</th><th>Notes</th></tr></thead>
+        <tbody>
+            <tr><td>Hotels</td><td>7 nights</td><td>Booked</td><td>7 hotel nights (Hanoi 2, Hoi An 2, Ho Chi Minh City 3); the Nov 23 night is on the cruise. All three hotels are booked and paid at the property; see the Hotel &amp; Cruise Details.</td></tr>
+            <tr><td>Domestic flights</td><td>2 tickets</td><td>Not priced yet</td><td>Hanoi to Da Nang on Nov 24 and Da Nang to Ho Chi Minh City on Nov 26. Fares not researched; enter quotes.</td></tr>
+            <tr><td>Airport transfers</td><td>4 transfers</td><td>Not priced yet</td><td>Private transfers at both airports, in and out. No quotes yet.</td></tr>
+            <tr><td>Michelin dining</td><td>1 dinners</td><td>US$115 per dinner</td><td>Anan Saigon Saigon Tasting Menu, food only, listed at US$115 per person (Nov 2026). Drink pairings extra; check the 2027 price when booking.</td></tr>
+            <tr><td>Birthday extras on the cruise</td><td>1 package</td><td>Not priced yet</td><td>The birthday dinner is onboard the Genesis Regal cruise (full-board meals are included). Enter the cost of any cake, decorations or drinks requested from the cruise.</td></tr>
+            <tr><td>Nightlife</td><td>3 nights</td><td>Not priced yet</td><td>Cover and table minimums are mostly unpublished. Third-party guides mention table minimums from about VND 3.5 million.</td></tr>
+            <tr><td>Medical physical</td><td>1 exam</td><td>US$652 per exam</td><td>FV Executive programme list price of 16,700,000 VND, about US$650. Standard (4,800,000 VND) and Extensive (7,800,000 VND) packages cost less.</td></tr>
+            <tr><td>Dental cleaning</td><td>1 visit</td><td>US$36 per visit</td><td>HCMC Dental lists a deep clean from US$36 (scaling from US$12) on its own site.</td></tr>
+            <tr><td>Facial treatments</td><td>1 treatment</td><td>Not priced yet</td><td>No verified price.</td></tr>
+            <tr><td>Body contouring</td><td>1 consultation</td><td>Not priced yet</td><td>Consultation first; any treatment cost depends on a physician&#x27;s advice. No guaranteed results.</td></tr>
+            <tr><td>Spa &amp; massages</td><td>3 treatments</td><td>Not priced yet</td><td>Hotel spa menus not captured.</td></tr>
+            <tr><td>Shopping</td><td>1 budget</td><td>Not priced yet</td><td>Defaults to 0 and is left out of fixed totals until you enter an amount.</td></tr>
+            <tr><td>Excursions</td><td>1 outing</td><td>US$3 per outing</td><td>Marble Mountains entry is 40,000 VND per adult plus 30,000 VND for a round-trip elevator, about US$3 in total. Add other outings as you choose them.</td></tr>
+            <tr><td>Food &amp; beverages</td><td>9 days</td><td>US$50 per day</td><td>Planning allowance per day for meals other than the dinners above. Edit me.</td></tr>
+            <tr><td>Contingency fund</td><td>1 fund</td><td>Not priced yet</td><td>Set aside an amount for changes and surprises.</td></tr>
+        </tbody>
+    </table>
+</div>
+</details>
+</div>
+</section>
+<!-- CONTACT -->
+<section id="contact">
+<div class="container">
+    <h2>Contact Phoenix Travels</h2>
+    <p class="section-lead">Questions about the trip, payments or your room? Text or call any time.</p>
+    <div class="contact-grid">
+        <a class="contact-btn primary" href="vietnam_rsvp.html"><span aria-hidden="true">✅</span> RSVP Now — by 12/4/26</a>
+        <a class="contact-btn" href="sms:+13143074921"><span aria-hidden="true">💬</span> Text 314-307-4921</a>
+        <a class="contact-btn" href="tel:+13143074921"><span aria-hidden="true">📞</span> Call 314-307-4921</a>
+    </div>
+</div>
+</section>
+</main>
+
 <!-- FOOTER -->
+<div class="action-bar" role="region" aria-label="Quick actions">
+    <a class="ab-main" href="vietnam_rsvp.html">Reserve Your Spot</a>
+    <a class="ab-icon" href="sms:+13143074921" aria-label="Text Phoenix Travels at 314-307-4921"><span aria-hidden="true">💬</span><span class="ab-lbl">Text</span></a>
+    <a class="ab-icon" href="tel:+13143074921" aria-label="Call Phoenix Travels at 314-307-4921"><span aria-hidden="true">📞</span><span class="ab-lbl">Call</span></a>
+</div>
 <footer>
     <p><strong>Phoenix Travels</strong> — Travel Agency</p>
     <p style="margin-top:6px; opacity:0.8;">Prepared as a working itinerary for Keysha's 40th birthday group trip.<br>
@@ -1772,8 +1959,9 @@
         try {
             var c0 = CENTERS['All stops'];
             map = window.L.map(mapEl, { scrollWheelZoom: false, dragging: !window.L.Browser.mobile }).setView([c0.lat, c0.lng], c0.zoom);
-            var tiles = window.L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                maxZoom: 19, attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            var tiles = window.L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+                subdomains: 'abcd', maxZoom: 19,
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
             });
             tiles.on('tileload', function () { tilesOk = true; });
             tiles.on('tileerror', function () {
@@ -1794,62 +1982,6 @@
 </script>
 <script src="flight-monitor/data/latest.js"></script>
 <script src="flight-monitor/ui/flight-monitor.js"></script>
-<!-- Copy-as-text for the inline Travel Options summary. Builds a plain-text summary
-     from values ALREADY on the page; copies with navigator.clipboard and falls back to
-     a hidden textarea + document.execCommand('copy'). Vanilla ES5, no dependencies. -->
-<script>
-(function () {
-    var btn = document.getElementById('copyTextBtn');
-    if (!btn) { return; }
-    var status = document.getElementById('copyTextStatus');
-
-    function clean(s) { return s ? s.replace(/\s+/g, ' ').replace(/\u00a0/g, ' ').trim() : ''; }
-
-    function buildSummary() {
-        var lines = ['Vietnam (Itinerary A) - Travel Options summary'];
-        var sec = document.getElementById('travel-options');
-        if (sec) {
-            var callout = sec.getElementsByClassName('callout')[0];
-            if (callout) { lines.push(''); lines.push(clean(callout.textContent)); }
-        }
-        lines.push('');
-        lines.push('All fares and times are not verified until checked for your November 2027 dates. Nothing is booked.');
-        return lines.join('\n');
-    }
-
-    function fallbackCopy(text) {
-        var ta = document.createElement('textarea');
-        ta.value = text;
-        ta.setAttribute('readonly', '');
-        ta.style.position = 'absolute';
-        ta.style.left = '-9999px';
-        document.body.appendChild(ta);
-        ta.select();
-        var ok = false;
-        try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
-        document.body.removeChild(ta);
-        return ok;
-    }
-
-    function flash(msg) {
-        if (status) {
-            status.textContent = msg;
-            setTimeout(function () { status.textContent = ''; }, 2000);
-        }
-    }
-
-    btn.addEventListener('click', function () {
-        var text = buildSummary();
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-            navigator.clipboard.writeText(text).then(function () { flash('Copied'); }, function () {
-                flash(fallbackCopy(text) ? 'Copied' : 'Copy failed');
-            });
-        } else {
-            flash(fallbackCopy(text) ? 'Copied' : 'Copy failed');
-        }
-    });
-})();
-</script>
 <!-- Day-by-day: sticky chips, active day, show/hide details, map link (ES5). -->
 <script>
 (function () {
@@ -1928,6 +2060,39 @@
         a.addEventListener('click', function () {
             if (window.tripMapShowDay) { window.tripMapShowDay(parseInt(a.getAttribute('data-day'), 10)); }
         });
+    });
+    /* Print button. The print CSS shows every day's details expanded and hides chips, buttons and the map. */
+    var printBtn = document.getElementById('printBtn');
+    if (printBtn) { printBtn.addEventListener('click', function () { window.print(); }); }
+})();
+</script>
+<!-- Collapsible topics: open the right one for in-page links, open everything for printing (ES5). -->
+<script>
+(function () {
+    'use strict';
+    function openFor(id) {
+        var el = id && document.getElementById(id);
+        if (!el) { return; }
+        var n = el;
+        while (n) { if (n.tagName === 'DETAILS') { n.open = true; } n = n.parentElement; }
+        var inner = el.querySelector && el.querySelector('details.fold');
+        if (inner) { inner.open = true; }
+    }
+    function fromHash() { openFor((window.location.hash || '').slice(1)); }
+    document.addEventListener('click', function (e) {
+        var a = e.target.closest ? e.target.closest('a[href^="#"]') : null;
+        if (a) { openFor(a.getAttribute('href').slice(1)); }
+    });
+    window.addEventListener('hashchange', fromHash);
+    fromHash();
+    var saved = [];
+    window.addEventListener('beforeprint', function () {
+        saved = [];
+        Array.prototype.forEach.call(document.querySelectorAll('details'), function (d) { saved.push([d, d.open]); d.open = true; });
+        Array.prototype.forEach.call(document.querySelectorAll('.slot-details[hidden]'), function (d) { saved.push([d, 'hidden']); d.hidden = false; });
+    });
+    window.addEventListener('afterprint', function () {
+        saved.forEach(function (s) { if (s[1] === 'hidden') { s[0].hidden = true; } else { s[0].open = s[1]; } });
     });
 })();
 </script>

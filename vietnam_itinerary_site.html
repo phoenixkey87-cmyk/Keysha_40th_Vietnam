@@ -1959,16 +1959,30 @@
         try {
             var c0 = CENTERS['All stops'];
             map = window.L.map(mapEl, { scrollWheelZoom: false, dragging: !window.L.Browser.mobile }).setView([c0.lat, c0.lng], c0.zoom);
-            var tiles = window.L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-                subdomains: 'abcd', maxZoom: 19,
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
-            });
-            tiles.on('tileload', function () { tilesOk = true; });
-            tiles.on('tileerror', function () {
-                tileErrors++;
-                if (!tilesOk && tileErrors >= 4) { status.textContent = 'Map tiles could not be loaded. Pins and Google Maps links below still work.'; renderList(true); }
-            });
-            tiles.addTo(map);
+            /* Base map tiles with automatic fallback: CARTO first, then Esri World Street Map.
+               (OpenStreetMap's own tile servers block third-party sites, which caused "Access blocked".) */
+            var PROVIDERS = [
+                { url: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
+                  opts: { subdomains: 'abcd', maxZoom: 19, attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>' } },
+                { url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',
+                  opts: { maxZoom: 19, attribution: 'Tiles &copy; Esri &mdash; Sources: Esri, HERE, Garmin, USGS, OpenStreetMap contributors' } }
+            ];
+            var tiles = null, provider = 0;
+            function useProvider(n) {
+                if (tiles) { map.removeLayer(tiles); }
+                provider = n; tilesOk = false; tileErrors = 0;
+                tiles = window.L.tileLayer(PROVIDERS[n].url, PROVIDERS[n].opts);
+                tiles.on('tileload', function () { tilesOk = true; });
+                tiles.on('tileerror', function () {
+                    tileErrors++;
+                    if (tilesOk || tileErrors < 3) { return; }
+                    if (provider + 1 < PROVIDERS.length) { useProvider(provider + 1); }
+                    else { status.textContent = 'Map tiles could not be loaded. Pins and Google Maps links below still work.'; renderList(true); }
+                });
+                tiles.addTo(map);
+                tiles.bringToBack();
+            }
+            useProvider(0);
             layer = window.L.layerGroup().addTo(map);
             render();
             if ('IntersectionObserver' in window) {

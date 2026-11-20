@@ -1634,7 +1634,7 @@
 <section id="map">
 <div class="container">
     <h2>Map</h2>
-    <p>Every stop in the plan: hotels, dining, nightlife, cafés, shopping, wellness and transport, including Waterfront Danang Restaurant &amp; Bar. Choose a city and category, then tap a pin for the day and a Google Maps link. Pins marked approximate are area-level estimates, so confirm the exact spot in Google Maps. Map data from OpenStreetMap, tiles by CARTO.</p>
+    <p>Every stop in the plan: hotels, dining, nightlife, cafés, shopping, wellness and transport, including Waterfront Danang Restaurant &amp; Bar. Choose a city and category, then tap a pin for the day and a Google Maps link. Pins marked approximate are area-level estimates, so confirm the exact spot in Google Maps. Map tiles by Esri.</p>
     <div id="mapBody">
         <p class="small" id="mapDayNote" hidden><span id="mapDayText"></span> <button type="button" class="chip" id="mapDayClear">Show all days</button></p>
         <div class="chip-row" id="mapCityRow" role="group" aria-label="City"></div>
@@ -1959,12 +1959,12 @@
         try {
             var c0 = CENTERS['All stops'];
             map = window.L.map(mapEl, { scrollWheelZoom: false, dragging: !window.L.Browser.mobile }).setView([c0.lat, c0.lng], c0.zoom);
-            /* Base map tiles with automatic fallback: CARTO first, then Esri World Street Map.
-               (OpenStreetMap's own tile servers block third-party sites, which caused "Access blocked".) */
+            /* Base map tiles: Esri World Street Map, with Esri World Topo as a fallback. No API key needed.
+               (OpenStreetMap's own servers block third-party sites, and CARTO now requires an API key.) */
             var PROVIDERS = [
-                { url: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
-                  opts: { subdomains: 'abcd', maxZoom: 19, attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>' } },
                 { url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',
+                  opts: { maxZoom: 19, attribution: 'Tiles &copy; Esri &mdash; Sources: Esri, HERE, Garmin, USGS, OpenStreetMap contributors' } },
+                { url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}',
                   opts: { maxZoom: 19, attribution: 'Tiles &copy; Esri &mdash; Sources: Esri, HERE, Garmin, USGS, OpenStreetMap contributors' } }
             ];
             var tiles = null, provider = 0;

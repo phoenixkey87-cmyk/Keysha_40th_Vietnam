@@ -388,6 +388,12 @@
         .stay-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
         @media (min-width: 768px) { .stay-grid { grid-template-columns: 1fr 1fr; } }
         .stay-card { background: var(--white); border: 1px solid var(--border); border-radius: 14px; box-shadow: var(--shadow); padding: 18px; display: flex; flex-direction: column; }
+        .stay-media { position: relative; display: block; margin: -18px -18px 14px; border-radius: 14px 14px 0 0; overflow: hidden; background: var(--soft-purple); aspect-ratio: 16 / 9; }
+        .stay-media img { display: block; width: 100%; height: 100%; object-fit: cover; }
+        .play-badge { position: absolute; left: 12px; bottom: 12px; background: rgba(0,0,0,0.75); color: #fff; font-weight: 700; font-size: 0.9rem; padding: 6px 12px; border-radius: 999px; }
+        .stay-media:hover img { filter: brightness(0.92); }
+        .stay-media:focus-visible { outline: 3px solid var(--medium-purple); outline-offset: 2px; }
+        @media print { .stay-media { display: none !important; } }
         .stay-top { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
         .stay-when { margin: 0; font-weight: 700; color: var(--medium-purple); font-size: 0.95rem; }
         .status-pill { background: #E3F4E6; color: #14532D; border: 1px solid #8CC79A; border-radius: 999px; padding: 2px 12px; font-size: 0.85rem; font-weight: 700; white-space: nowrap; }
@@ -970,6 +976,10 @@
     <p class="section-lead">Every stay is booked. Tap a card's links for the hotel website and video tour.</p>
     <div class="stay-grid">
     <article class="stay-card">
+        <a class="stay-media" href="https://www.youtube.com/watch?v=ZbrvwWcnzxQ" target="_blank" rel="noopener noreferrer" aria-label="Watch the hotel video: Anatole Hotel Hanoi on YouTube">
+            <img src="https://i.ytimg.com/vi/ZbrvwWcnzxQ/maxresdefault.jpg" alt="Preview image from the Anatole Hotel Hanoi video" width="640" height="360" loading="lazy" decoding="async">
+            <span class="play-badge" aria-hidden="true">&#9654; Watch the hotel video</span>
+        </a>
         <div class="stay-top"><p class="stay-when">Nov 21–23 · Hanoi</p><span class="status-pill">Confirmed</span></div>
         <h3>Anatole Hotel Hanoi</h3>
         <dl class="stay-facts">
@@ -981,6 +991,10 @@
         <p class="stay-links"><a href="https://www.youtube.com/watch?v=ZbrvwWcnzxQ" target="_blank" rel="noopener noreferrer">Watch the hotel video on YouTube →</a></p>
     </article>
     <article class="stay-card">
+        <a class="stay-media" href="https://youtu.be/CrKO73u_1cQ?si=Mde7_qbBV14DeStl" target="_blank" rel="noopener noreferrer" aria-label="Watch the cruise video: Genesis Regal Luxury Cruise on YouTube">
+            <img src="https://i.ytimg.com/vi/CrKO73u_1cQ/hqdefault.jpg" alt="Preview image from the Genesis Regal Luxury Cruise video" width="640" height="360" loading="lazy" decoding="async">
+            <span class="play-badge" aria-hidden="true">&#9654; Watch the cruise video</span>
+        </a>
         <div class="stay-top"><p class="stay-when">Nov 23–24 · Lan Ha Bay</p><span class="status-pill">Confirmed</span></div>
         <h3>Genesis Regal Luxury Cruise</h3>
         <dl class="stay-facts">
@@ -1002,6 +1016,10 @@
         <p class="stay-links"><a href="https://genesisregalcruise.com/" target="_blank" rel="noopener noreferrer">Visit Website →</a> <a href="https://youtu.be/CrKO73u_1cQ?si=Mde7_qbBV14DeStl" target="_blank" rel="noopener noreferrer">Watch the cruise video on YouTube →</a></p>
     </article>
     <article class="stay-card">
+        <a class="stay-media" href="https://www.youtube.com/watch?v=E0z37uusYqE" target="_blank" rel="noopener noreferrer" aria-label="Watch the hotel video: Silk Sense Hoi An River Resort on YouTube">
+            <img src="https://i.ytimg.com/vi/E0z37uusYqE/hqdefault.jpg" alt="Preview image from the Silk Sense Hoi An River Resort video" width="640" height="360" loading="lazy" decoding="async">
+            <span class="play-badge" aria-hidden="true">&#9654; Watch the hotel video</span>
+        </a>
         <div class="stay-top"><p class="stay-when">Nov 24–26 · Hoi An</p><span class="status-pill">Confirmed</span></div>
         <h3>Silk Sense Hoi An River Resort</h3>
         <dl class="stay-facts">
@@ -1016,6 +1034,10 @@
         <p class="stay-links"><a href="https://silksenseresort.com/" target="_blank" rel="noopener noreferrer">Visit Website →</a> <a href="https://www.youtube.com/watch?v=E0z37uusYqE" target="_blank" rel="noopener noreferrer">Watch the hotel video on YouTube →</a></p>
     </article>
     <article class="stay-card">
+        <a class="stay-media" href="https://www.youtube.com/watch?v=x68gevz5U1M" target="_blank" rel="noopener noreferrer" aria-label="Watch the hotel video: Hotel Grand Saigon on YouTube">
+            <img src="https://i.ytimg.com/vi/x68gevz5U1M/maxresdefault.jpg" alt="Preview image from the Hotel Grand Saigon video" width="640" height="360" loading="lazy" decoding="async">
+            <span class="play-badge" aria-hidden="true">&#9654; Watch the hotel video</span>
+        </a>
         <div class="stay-top"><p class="stay-when">Nov 26–29 · Ho Chi Minh City</p><span class="status-pill">Confirmed</span></div>
         <h3>Hotel Grand Saigon</h3>
         <dl class="stay-facts">
@@ -1036,9 +1058,8 @@
     <h2>How Booking Works</h2>
     <ol class="steps">
         <li><span class="step-n" aria-hidden="true">1</span><div><strong>RSVP by 12/4/26.</strong> Use the <a href="vietnam_rsvp.html">RSVP form</a> to let us know you're coming.</div></li>
-        <li><span class="step-n" aria-hidden="true">2</span><div><strong>Secure your spot.</strong> The $250 deposit is due January 2027 (non-refundable).</div></li>
-        <li><span class="step-n" aria-hidden="true">3</span><div><strong>Pay gradually.</strong> The rest is paid in installments timed to when each part of the trip is booked. See the Payment Schedule below.</div></li>
-        <li><span class="step-n" aria-hidden="true">4</span><div><strong>Book your own international flight.</strong> Multi-city: fly INTO Hanoi (HAN) and HOME from Ho Chi Minh City (SGN). Hotels, the cruise and domestic flights are in the land package.</div></li>
+        <li><span class="step-n" aria-hidden="true">2</span><div><strong>Pay gradually.</strong> The trip is paid in installments timed to when each part of the trip is booked. See the Payment Schedule below.</div></li>
+        <li><span class="step-n" aria-hidden="true">3</span><div><strong>Book your own international flight.</strong> Multi-city: fly INTO Hanoi (HAN) and HOME from Ho Chi Minh City (SGN). Hotels, the cruise and domestic flights are in the land package.</div></li>
     </ol>
     <p class="section-lead">Questions before you RSVP? <a href="#contact">Text or call us</a>.</p>
 </div>
@@ -1051,7 +1072,6 @@
     <table>
         <thead><tr><th>Due Date</th><th>Amount</th><th>What It Covers</th></tr></thead>
         <tbody>
-            <tr><td>January 2027</td><td>$250</td><td>Deposit — secures your spot (non-refundable)</td></tr>
             <tr><td>March 2027</td><td>$900</td><td>Genesis Regal Luxury Cruise (2 days / 1 night, full board)</td></tr>
             <tr><td>May 2027</td><td>$750</td><td>Hotels — Hanoi (2 nights), Hoi An (2 nights), Ho Chi Minh City (3 nights)</td></tr>
             <tr><td>July 2027</td><td>$350</td><td>Domestic flights — Hanoi → Da Nang and Da Nang → HCMC</td></tr>

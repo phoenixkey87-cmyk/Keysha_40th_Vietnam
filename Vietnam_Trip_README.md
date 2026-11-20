@@ -52,7 +52,6 @@
 ### Payment Schedule
 | Due Date | Amount | Covers |
 |----------|--------|--------|
-| January 2027 | $250 | Deposit (non-refundable) |
 | March 2027 | $900 | Genesis Regal Luxury Cruise |
 | May 2027 | $750 | Hotels (Hanoi, Hoi An, HCMC) |
 | July 2027 | $350 | Domestic flights |
